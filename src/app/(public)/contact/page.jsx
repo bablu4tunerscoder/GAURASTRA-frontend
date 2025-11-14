@@ -1,4 +1,3 @@
-"use client";
 import HeroBanner from "@/components/HeroBanner";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
