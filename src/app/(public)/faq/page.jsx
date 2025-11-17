@@ -67,7 +67,7 @@ export default function FAQPage() {
     },
   ];
 
-  const [openIndex, setOpenIndex] = useState(nullO);
+  const [openIndex, setOpenIndex] = useState(1);
   const toggleFAQ = (index) => setOpenIndex(openIndex === index ? null : index);
 
   return (
