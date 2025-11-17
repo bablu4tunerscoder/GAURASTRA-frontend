@@ -6,7 +6,7 @@ export default function Home() {
     <section className="relative min-h-[90vh] flex items-center justify-center px-6 md:px-16 lg:px-32 py-12 bg-gray-900 text-white overflow-hidden">
       {/* 🔹 Background Image */}
       <Image
-        src="/assets/fastionbg.png"
+        src="/assets/fastionb.jpeg"
         alt="Luxury Designer Shirt Background"
         fill
         className="object-cover opacity-40"

@@ -42,10 +42,12 @@ const Header = () => {
             <Link
               key={link.name}
               href={link.href}
+              prefetch={true}
               className="hover:text-blue-600 transition"
             >
               {link.name}
             </Link>
+
           ))}
         </nav>
 
@@ -62,7 +64,7 @@ const Header = () => {
               onClick={toggleUserMenu}
             />
             {userMenuOpen && (
-              <div onClick={()=>setUserMenuOpen(false)} className="absolute right-0 mt-3 w-40 bg-white shadow-lg border rounded-lg p-2 z-50">
+              <div onClick={() => setUserMenuOpen(false)} className="absolute right-0 mt-3 w-40 bg-white shadow-lg border rounded-lg p-2 z-50">
                 <Link
                   href="/login"
                   className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
