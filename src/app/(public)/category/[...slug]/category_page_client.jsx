@@ -1,109 +1,173 @@
 "use client";
 
-import React, { memo } from "react";
-import Link from "next/link";
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import ProductCard from "@/components/ProductCard";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
+import Sidebar from "./Sidebar";
 
-// Memoized Sidebar for fast rendering
-const Sidebar = memo(({ slug = [] }) => {
-  const categorySlug = slug[0] || "";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+const API_URL = BASE_URL + "/api/Productes/filter-Products";
 
-  const browseCategories = [
-    { label: "All Products", slug: "all-products" },
-    { label: "New Arrivals", slug: "new-arrivals" },
-    {
-      label: "Men",
-      slug: "men",
-      children: [{ label: "Shirts", slug: "men/shirts" }],
-    },
-    {
-      label: "Women",
-      slug: "women",
-      children: [
-        { label: "Festive Wear", slug: "women/festive-wear" },
-        { label: "Short Kurti", slug: "women/short-kurti" },
-      ],
-    },
-    {
-      label: "Ethnic Wear",
-      slug: "ethnic-wear",
-      children: [
-        { label: "Bridal Lehenga", slug: "ethnic-wear/bridal-lehenga" },
-        { label: "Groom Sherwani", slug: "ethnic-wear/groom-sherwani" },
-        { label: "Indo-Western", slug: "ethnic-wear/indo-western" },
-        { label: "Men's Kurta", slug: "ethnic-wear/mens-kurta" },
-      ],
-    },
-  ];
+export default function CategoryPageClient({ initialProducts = [], initialSlug = ["all-products"] }) {
+  // console.log(initialProducts)
+  const [products, setProducts] = useState(initialProducts);
+  const [slug, setSlug] = useState(initialSlug);
+  const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    search: "",
+    min_price: "",
+    max_price: "",
+    sort: "",
+    on_sale: false,
+  });
 
-  return (
-    <aside className="col-span-12 md:col-span-3 border p-4 rounded-lg h-fit z-30 sticky top-24 bg-white">
-      <h2 className="text-xl font-semibold mb-4">Browse by</h2>
-      <div className="flex flex-col gap-2">
-        {browseCategories.map((cat) => {
-          const isActiveParent = categorySlug === cat.slug.split("/")[0];
-          return (
-            <div key={cat.label}>
-              <Link
-                href={`/category/${cat.slug}`}
-                className={`w-full block px-2 py-1 rounded ${isActiveParent ? "bg-black text-white" : "hover:bg-gray-100"
-                  }`}
-              >
-                {cat.label}
-              </Link>
 
-              {cat.children && (
-                <div className="ml-4 mt-1 flex flex-col gap-1 border-l pl-2">
-                  {cat.children.map((child) => {
-                    const isActiveChild = slug.join("/") === child.slug;
-                    return (
-                      <Link
-                        key={child.label}
-                        href={`/category/${child.slug}`}
-                        className={`text-left px-2 py-1 rounded text-sm ${isActiveChild ? "bg-gray-800 text-white" : "hover:bg-gray-100"
-                          }`}
-                      >
-                        {child.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </aside>
-  );
-});
+  // Debounce hook
+  const useDebounce = (value, delay) => {
+    const [debouncedValue, setDebouncedValue] = useState(value);
 
-const CategoryPageClient = ({ products = [], slug = [] }) => {
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+
+      return () => {
+        clearTimeout(handler);
+      };
+    }, [value, delay]);
+
+    return debouncedValue;
+  };
+
+  // Debounced filter values
+  const debouncedFilters = useDebounce(filters, 500);
+
+  const handleFilterChange = (key, value) => {
+    if (key === "clear") {
+      setFilters({
+        search: "",
+        min_price: "",
+        max_price: "",
+        sort: "",
+        on_sale: false,
+      });
+    } else {
+      setFilters((prev) => ({ ...prev, [key]: value }));
+    }
+  };
+
+  // Fetch products from API with filters
+  const fetchProducts = useCallback(async (slugStr, filterParams = {}) => {
+    const [category, subcategory] = slugStr.split("/");
+    setLoading(true);
+    try {
+      const payload = {
+        category_name: category,
+        subcategory_name: subcategory || null,
+      };
+
+      // Add filters to payload if they have values
+      if (filterParams.search) {
+        payload.search = filterParams.search;
+      }
+      if (filterParams.min_price && filterParams.max_price) {
+        payload.min_price = parseFloat(filterParams.min_price);
+      }
+      if (filterParams.max_price) {
+        payload.max_price = parseFloat(filterParams.max_price);
+      }
+      if (filterParams.sort) {
+        payload.sort = filterParams.sort;
+      }
+      if (filterParams.on_sale) {
+        payload.on_sale = filterParams.on_sale;
+      }   
+      console.log(payload)
+
+      const { data } = await axios.post(API_URL, payload);
+
+      setProducts(data?.data || []);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Effect to fetch products when debounced filters change
+  useEffect(() => {
+    fetchProducts(slug.join("/"), debouncedFilters);
+  }, [debouncedFilters, slug, fetchProducts]);
+
+  // On sidebar category click
+  const handleChange = (slugStr) => {
+    const parts = slugStr.split("/");
+    setSlug(parts);
+    window.history.pushState({ slug: parts }, "", `/category/${slugStr}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Browser back/forward
+  useEffect(() => {
+    const handler = (e) => {
+      const stateSlug = e.state?.slug || [];
+      setSlug(stateSlug);
+    };
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, []);
+
   return (
     <section className="px-4 py-6">
       <div className="grid grid-cols-12 gap-6">
         {/* Sidebar */}
-        <Sidebar slug={slug} />
+        <Sidebar
+          slug={slug}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onChange={handleChange}
+        />
 
         {/* Products */}
         <div className="col-span-12 md:col-span-9">
-          <h2 className="text-2xl font-semibold capitalize">{slug.join("/") || "All Products"}</h2>
-          <p className="text-md text-gray-500 mb-4">Discover {slug[0]} at Gaurastra
-            <br />
-            {products.length} products
+          <h2 className="text-2xl font-semibold capitalize mb-2">
+            {slug.length === 1
+              ? `${slug[0].replace(/-/g, " ")}'s Wear`
+              : slug.join(" / ").replace(/-/g, " ")}
+          </h2>
+
+
+          <p className="text-md text-gray-500 mb-4">
+            {products.length} product{products.length !== 1 ? "s" : ""}
           </p>
-          {products.length > 0 ? (
+
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : products.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map((p) => (
                 <ProductCard key={p.product_id} product={p} />
               ))}
             </div>
           ) : (
-            <p className="text-lg text-gray-500">No products available.</p>
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">No products found.</p>
+              <button
+                onClick={() => handleFilterChange("clear", null)}
+                className="mt-4 px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
+              >
+                Clear All Filters
+              </button>
+            </div>
           )}
         </div>
       </div>
     </section>
   );
-};
-
-export default CategoryPageClient;
+}

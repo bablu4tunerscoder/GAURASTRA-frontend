@@ -73,7 +73,7 @@ const eventSlice = createSlice({
         state.loading = false;
         state.error = null;
         // Log the response when the event is successfully sent
-        console.log("Event sent to Facebook:", action.payload);
+        // console.log("Event sent to Facebook:", action.payload);
       })
       .addCase(sendEvent.rejected, (state, action) => {
         state.loading = false;

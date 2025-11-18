@@ -1,37 +1,33 @@
-import axios, { AxiosError } from "axios";
-import DynamicCategoryClientPage from "./category_page_client";
+// server component (app/(public)/category/[...slug]/page.jsx)
 
-import React from "react";
+// import { BASE_URL } from "@/Helper/axiosinstance"; // or use hardcoded
+import axios from "axios";
+import CategoryPageClient from "./category_page_client";
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 
 async function GetData(slugArray) {
   try {
+    const category = slugArray[0] || null;
+    const subcategory = slugArray[1] || null;
     const { data } = await axios.post(
-      `https://backend.gaurastra.com/api/Productes/filter-Products`,
+      `${BASE_URL}/api/Productes/filter-Products`,
       {
-        category_name: slugArray[0] ,
-        subcategory_name: slugArray[1],
+        category_name: category,
+        subcategory_name: subcategory,
       }
     );
-    return data.data;
+    console.log(data.data)
+    return data.data || [];
   } catch (error) {
-    if (error instanceof AxiosError) {
-      console.error("API Error:", error.response?.data?.message);
-    } else {
-      console.error("Unknown Error:", error);
-    }
+    console.error("Server fetch error", error);
     return [];
   }
 }
 
 export default async function DynamicCategoryPage({ params }) {
-  const {slug} = await params || []; // <-- Always safe
-  
+  const { slug }= await params ?? [];
   const products = await GetData(slug);
- 
 
-  return (
-    <>
-      <DynamicCategoryClientPage products={products} slug={slug} />
-    </>
-  );
+  return <CategoryPageClient initialProducts={products} initialSlug={slug} />;
 }
