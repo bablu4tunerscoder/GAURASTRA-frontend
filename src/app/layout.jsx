@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Providers } from "@/Redux/provider";
 import DiscountPopup from "@/components/DiscountPopup";
+import ToasterProvider from "@/components/ToasterProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
       >
         <Providers>
+          <ToasterProvider /> 
           {/* Discount Popup */}
           <DiscountPopup />
           
