@@ -1,11 +1,10 @@
 import axios from "axios";
 
-const BASE_URL =  "https://backend.gaurastra.com";
+export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: BASE_URL,       // example: https://yourdomain.com
   withCredentials: true,
 });
 
 export default axiosInstance;
-export { BASE_URL };

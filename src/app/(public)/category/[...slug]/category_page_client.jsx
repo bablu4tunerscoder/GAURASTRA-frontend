@@ -5,12 +5,13 @@ import axios from "axios";
 import ProductCard from "@/components/ProductCard";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import Sidebar from "./Sidebar";
+import axiosInstance from "@/Helper/axiosinstance";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 const API_URL = BASE_URL + "/api/Productes/filter-Products";
 
 export default function CategoryPageClient({ initialProducts = [], initialSlug = ["all-products"] }) {
-  // console.log(initialProducts)
+
   const [products, setProducts] = useState(initialProducts);
   const [slug, setSlug] = useState(initialSlug);
   const [loading, setLoading] = useState(false);
@@ -59,7 +60,9 @@ export default function CategoryPageClient({ initialProducts = [], initialSlug =
 
   // Fetch products from API with filters
   const fetchProducts = useCallback(async (slugStr, filterParams = {}) => {
-    const [category, subcategory] = slugStr.split("/");
+    let [category, subcategory] = slugStr.split("/");
+    category = category?.split("-")?.join(" ");
+    subcategory = subcategory?.split("-")?.join(" ");
     setLoading(true);
     try {
       const payload = {
@@ -82,10 +85,10 @@ export default function CategoryPageClient({ initialProducts = [], initialSlug =
       }
       if (filterParams.on_sale) {
         payload.on_sale = filterParams.on_sale;
-      }   
-      console.log(payload)
+      }
 
-      const { data } = await axios.post(API_URL, payload);
+      const { data } = await axiosInstance.post(
+      "/api/Productes/filter-Products", payload);
 
       setProducts(data?.data || []);
     } catch (error) {
@@ -133,10 +136,17 @@ export default function CategoryPageClient({ initialProducts = [], initialSlug =
         {/* Products */}
         <div className="col-span-12 md:col-span-9">
           <h2 className="text-2xl font-semibold capitalize mb-2">
-            {slug.length === 1
-              ? `${slug[0].replace(/-/g, " ")}'s Wear`
-              : slug.join(" / ").replace(/-/g, " ")}
+            {slug.length === 1 ? (
+              slug[0] === "men"
+                ? "Men's Wear"
+                : slug[0] === "women"
+                  ? "Women's Wear"
+                  : slug[0].replace(/-/g, " ")
+            ) : (
+              slug.join(" / ").replace(/-/g, " ")
+            )}
           </h2>
+
 
 
           <p className="text-md text-gray-500 mb-4">

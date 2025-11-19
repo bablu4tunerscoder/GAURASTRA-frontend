@@ -27,7 +27,7 @@ const Header = () => {
     
       <header className="w-full bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 z-40">
         {/* Announcement bar goes here */}
-        <AnnouncementBar/>
+        {/* <AnnouncementBar/> */}
         <div className="max-w-7xl mx-auto flex items-center justify-between md:px-6 px-2  py-4">
           {/* Left Section - Logo */}
           <Link href="/" className="flex items-center gap-2">
