@@ -8,7 +8,9 @@ import { useSelector } from "react-redux";
 
 
 const Header = () => {
-  const cartItems = useSelector(state=>state?.cart?.items).length
+  const cartItems = useSelector(state => state?.cart?.items).length
+  const auth = useSelector(state => state?.auth)
+  console.log(auth)
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -26,7 +28,7 @@ const Header = () => {
 
   return (
     <>
-    
+
       <header className="w-full bg-white border-b border-gray-200 shadow-sm fixed top-0 left-0 z-40">
         {/* Announcement bar goes here */}
         {/* <AnnouncementBar/> */}
@@ -62,29 +64,50 @@ const Header = () => {
           <div className="flex items-center gap-5 relative">
             <Link href="/cart">
               <ShoppingCart className="w-5 h-5 text-gray-700 hover:text-blue-600 cursor-pointer" />
-              {cartItems>0 && <span className="absolute -top-2  left-2 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">{cartItems}</span>}
+              {cartItems > 0 && <span className="absolute -top-2  left-2 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">{cartItems}</span>}
             </Link>
 
             {/* User Icon with Dropdown */}
             <div className="relative">
+              
               <User
                 className="w-5 h-5 text-gray-700 hover:text-blue-600 cursor-pointer"
                 onClick={toggleUserMenu}
               />
               {userMenuOpen && (
-                <div onClick={() => setUserMenuOpen(false)} className="absolute right-0 mt-3 w-40 bg-white shadow-lg border rounded-lg p-2 z-50">
-                  <Link
-                    href="/login"
-                    className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
-                  >
-                    Signup
-                  </Link>
+                <div onClick={() => setUserMenuOpen(false)} className="absolute right-0 mt-4 w-40 bg-white shadow-lg border rounded-lg p-2 z-50">
+                  {
+                    auth.isAuthenticated ?
+                      <>
+                        <Link
+                          href="/profile"
+                          className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
+                        >
+                          Profile
+                        </Link>
+                        <Link
+                          href="/logout"
+                          className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
+                        >
+                          Logout
+                        </Link>
+                      </>
+                      :
+                      <>
+                        <Link
+                          href="/login"
+                          className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
+                        >
+                          Login
+                        </Link>
+                        <Link
+                          href="/signup"
+                          className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
+                        >
+                          Signup
+                        </Link>
+                      </>
+                  }
                 </div>
               )}
             </div>

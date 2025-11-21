@@ -11,6 +11,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 const API_URL = BASE_URL + "/api/Productes/filter-Products";
 
 export default function CategoryPageClient({ initialProducts = [], initialSlug = ["all-products"] }) {
+  
 
   const [products, setProducts] = useState(initialProducts);
   const [slug, setSlug] = useState(initialSlug);

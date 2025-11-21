@@ -1,7 +1,8 @@
 "use client";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "../../Helper/axiosinstance";
+import { BASE_URL } from "@/Helper/axiosinstance";
+
 
 // ✅ Check if code runs in browser
 const isBrowser = typeof window !== "undefined";
