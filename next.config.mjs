@@ -17,16 +17,10 @@ const nextConfig = {
       },
       {
         protocol: 'http',
-        hostname: '192.168.1.6',
+        hostname: '192.168.1.5',
         port: '9090',
         pathname: '/**',
       },
-      {
-        protocol: 'http',
-        hostname: '192.168.1.8',
-        port: '9090',
-        pathname: '/**',
-      }
     ],
   },
 };

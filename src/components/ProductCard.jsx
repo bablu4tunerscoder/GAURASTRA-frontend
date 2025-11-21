@@ -1,12 +1,11 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart } from "lucide-react";
 
 const DEFAULT_IMAGE = "/assets/default-product.png";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-const ProductCard = ({ product, onAddToCart = () => { } }) => {
+const ProductCard = ({ product}) => {
   if (!product) return null;
 
   // IMAGE
@@ -28,6 +27,7 @@ const ProductCard = ({ product, onAddToCart = () => { } }) => {
     price > discountedPrice
       ? Math.round(((price - discountedPrice) / price) * 100)
       : 0;
+      
   return (
     <div className="border border-gray-300 rounded-xl overflow-hidden bg-white transition hover:shadow relative">
       {/* CLICKABLE AREA */}
@@ -70,17 +70,7 @@ const ProductCard = ({ product, onAddToCart = () => { } }) => {
               </>
             )}
           </div>
-          {/* ADD BUTTON */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddToCart();
-            }}
-            className="w-full mt-2 flex items-center justify-center gap-1 bg-black hover:bg-gray-800 text-white text-sm py-1.5 rounded-md transition"
-          >
-            <ShoppingCart size={16} />
-            Add
-          </button>
+          
         </div>
       </div>
 

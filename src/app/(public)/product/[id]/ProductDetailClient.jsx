@@ -1,10 +1,15 @@
 "use client"
+import { addToCart } from '@/Redux/Slices/cartSlice';
 import Image from 'next/image';
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
 
 const ProductDetailClient = ({ initialProducts }) => {
+  const dispatch = useDispatch();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
+  const [quantity, setQuantity] = useState(1);
 
   // Extract product data
   const product = initialProducts;
@@ -50,6 +55,55 @@ const ProductDetailClient = ({ initialProducts }) => {
 
   const { details } = parseDescription(description);
 
+  const getStockForSize = (size) => {
+    const stockItem = stockDetails.find(s => s.size === size);
+    return stockItem?.stock_quantity || 0;
+  };
+
+  const handleSizeChange = (size) => {
+    setSelectedSize(size);
+    setQuantity(1);
+  };
+
+  const handleIncreaseQuantity = () => {
+    const currentStock = getStockForSize(selectedSize);
+    if (quantity >= currentStock) {
+      toast.error(`Only ${currentStock} items in stock!`, {
+        duration: 3000,
+        position: 'top-right',
+      });
+      return;
+    }
+    setQuantity(prev => prev + 1);
+  };
+
+  const handleDecreaseQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(prev => prev - 1);
+    }
+  };
+
+  const handleAddToBag = () => {
+    if (!selectedSize) {
+      toast.error("Please select a size", {
+        duration: 3000,
+      });
+      return;
+    }
+    const stock = getStockForSize(selectedSize);
+    if (quantity > stock) {
+      toast.error(`Only ${stock} items in stock!`, {
+        duration: 3000,
+      });
+      return;
+    }
+    // Add to bag logic here
+    dispatch(addToCart({ ...product, selectedSize, quantity }));
+    toast.success("Item added to bag", {
+      duration: 3000,
+    });
+  };
+
   return (
     <section className="py-4">
 
@@ -62,7 +116,7 @@ const ProductDetailClient = ({ initialProducts }) => {
           {/* Main Image */}
           <div className="w-full rounded-lg overflow-hidden bg-gray-50">
             <Image
-              src={displayImages[selectedImageIndex]}
+              src={displayImages[selectedImageIndex] || "/placeholder.svg"}
               width={600}
               height={600}
               alt="main-product"
@@ -80,7 +134,7 @@ const ProductDetailClient = ({ initialProducts }) => {
                   }`}
               >
                 <Image
-                  src={src}
+                  src={src || "/placeholder.svg"}
                   width={80}
                   height={80}
                   alt={`product-thumb-${i}`}
@@ -119,7 +173,7 @@ const ProductDetailClient = ({ initialProducts }) => {
                   }`}
               >
                 <Image
-                  src={src}
+                  src={src || "/placeholder.svg"}
                   width={48}
                   height={48}
                   alt={`variant-${i}`}
@@ -137,7 +191,7 @@ const ProductDetailClient = ({ initialProducts }) => {
                 {availableSizes.map((size) => (
                   <button
                     key={size}
-                    onClick={() => setSelectedSize(size)}
+                    onClick={() => handleSizeChange(size)}
                     className={`border px-4 py-2 rounded transition ${selectedSize === size
                       ? 'bg-black text-white'
                       : 'hover:bg-black hover:text-white'
@@ -147,6 +201,37 @@ const ProductDetailClient = ({ initialProducts }) => {
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+
+          {selectedSize && (
+            <div className="mt-4">
+              <p className="font-medium mb-2">Quantity</p>
+              <div className="flex items-center gap-3 border border-gray-300 w-fit rounded">
+                <button
+                  onClick={handleDecreaseQuantity}
+                  className="px-4 py-2 hover:bg-gray-100 transition text-lg font-semibold"
+                >
+                  −
+                </button>
+                <span className="px-4 py-2 font-semibold text-lg min-w-12 text-center">
+                  {quantity}
+                </span>
+                <button
+                  onClick={handleIncreaseQuantity}
+                  className="px-4 py-2 hover:bg-gray-100 transition text-lg font-semibold"
+                >
+                  +
+                </button>
+              </div>
+              <p className="text-sm mt-2 text-gray-700">
+                Only{" "}
+                <span className="font-semibold text-lg">
+                  {getStockForSize(selectedSize)}
+                </span>{" "}
+                items left!
+              </p>
+
             </div>
           )}
 
@@ -163,13 +248,14 @@ const ProductDetailClient = ({ initialProducts }) => {
           <div className="flex gap-4 mt-6">
             <button
               className="px-6 py-3 cursor-pointer bg-black text-white rounded w-full hover:bg-gray-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-              disabled={availableSizes.length === 0}
+              disabled={availableSizes.length === 0 || !selectedSize}
             >
               Buy Now
             </button>
             <button
               className="px-6 py-3 cursor-pointer border border-black rounded w-full hover:bg-gray-50 transition disabled:border-gray-400 disabled:text-gray-400 disabled:cursor-not-allowed"
-              disabled={availableSizes.length === 0}
+              disabled={availableSizes.length === 0 || !selectedSize}
+              onClick={handleAddToBag}
             >
               Add to Bag
             </button>

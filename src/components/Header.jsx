@@ -3,10 +3,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ShoppingCart, User, Menu, X } from "lucide-react";
 import Image from "next/image";
-import AnnouncementBar from "./AnnouncementBar";
+// import AnnouncementBar from "./AnnouncementBar";
+import { useSelector } from "react-redux";
 
 
 const Header = () => {
+  const cartItems = useSelector(state=>state?.cart?.items).length
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -60,6 +62,7 @@ const Header = () => {
           <div className="flex items-center gap-5 relative">
             <Link href="/cart">
               <ShoppingCart className="w-5 h-5 text-gray-700 hover:text-blue-600 cursor-pointer" />
+              {cartItems>0 && <span className="absolute -top-2  left-2 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">{cartItems}</span>}
             </Link>
 
             {/* User Icon with Dropdown */}

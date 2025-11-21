@@ -1,10 +1,33 @@
 "use client";
 
+import axiosInstance from "@/Helper/axiosinstance";
+import { Lock, LogIn, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Phone, Lock, LogIn } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
+  const router = useRouter()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  // Handle form submission
+  const onSubmit = async (data) => {
+    try {
+      const response = await axiosInstance.post("/api/auth/allLogins", data); // Adjust to your 
+      toast.success(response?.data?.message||"Login successful!");
+      router.back();
+
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Login failed");
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gray-900 text-white overflow-hidden">
       {/* 🔹 Background Image */}
@@ -20,7 +43,7 @@ export default function LoginPage() {
 
       {/* 🔹 Layout Container */}
       <div className="relative z-10 w-full max-w-5xl flex flex-col lg:flex-row items-center justify-between bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-white/20 m-6">
-        
+
         {/* 🔹 Left Section (Logo + Google) */}
         <div className="flex flex-col items-center justify-center w-full lg:w-1/2 p-8 lg:p-12 text-center space-y-6">
           <Image
@@ -62,22 +85,30 @@ export default function LoginPage() {
             Access your account to explore handcrafted streetwear.
           </p>
 
-          <form className="space-y-5">
+          {/* Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Phone Number */}
             <div>
               <label htmlFor="phone" className="block text-sm mb-1 text-gray-300">
-                Phone Number
+                Phone Number or Email
               </label>
               <div className="flex items-center bg-white/10 border border-gray-500 rounded-lg px-3 py-2 focus-within:border-blue-400">
                 <Phone size={18} className="text-gray-400 mr-2" />
                 <input
-                  type="tel"
+                  type="text"
                   id="phone"
-                  name="phone"
-                  placeholder="Enter your phone number"
+                  placeholder="Enter your phone number or email"
                   className="bg-transparent w-full text-white placeholder-gray-400 outline-none"
+                  {...register("emailOrPhone", {
+                    required: "Phone number or email is required",
+                    pattern: {
+                      value: /\S+@\S+\.\S+/,
+                      message: "Enter a valid email address",
+                    },
+                  })}
                 />
               </div>
+              {errors.emailOrPhone && <p className="text-red-400 text-sm mt-1">{errors.emailOrPhone.message}</p>}
             </div>
 
             {/* Password */}
@@ -90,20 +121,25 @@ export default function LoginPage() {
                 <input
                   type="password"
                   id="password"
-                  name="password"
                   placeholder="Enter your password"
                   className="bg-transparent w-full text-white placeholder-gray-400 outline-none"
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
                 />
               </div>
+              {errors.password && <p className="text-red-400 text-sm mt-1">{errors.password.message}</p>}
             </div>
 
             {/* 🔹 Submit Button */}
             <button
               type="submit"
               className="w-full mt-4 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-lg font-medium transition"
+              disabled={isSubmitting}
             >
-              <LogIn size={18} /> Login
+              {isSubmitting ? "Logging in..." : <><LogIn size={18} /> Login</>}
             </button>
+            {errors.login && <p className="text-red-400 text-center mt-4">{errors.login.message}</p>}
           </form>
 
           {/* 🔹 Link to Signup */}
