@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
       >
         <Providers>
-          <ToasterProvider /> 
+          {/* <ToasterProvider />  */}
           {/* Discount Popup */}
           <DiscountPopup />
           

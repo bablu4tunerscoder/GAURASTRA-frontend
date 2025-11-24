@@ -7,15 +7,16 @@ import { Lock, LogIn, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch();
-  // const { user, status, error } = useSelector((state) => state.auth);
-  
+  const { user, status, error } = useSelector((state) => state.auth);
+ 
   const {
     register,
     handleSubmit,
@@ -25,14 +26,18 @@ export default function LoginPage() {
   // Handle form submission
   const onSubmit = async (data) => {
     try {
-      loginUser(data);
-      // const response = await axiosInstance.post("/api/auth/allLogins", data); // Adjust to your API endpoint
-      toast.success("Login successful!");
-      router.back();
+      dispatch(loginUser(data));
+      // router.back();
+
     } catch (error) {
       toast.error(error?.response?.data?.message || "Login failed");
     }
   };
+  useEffect(() => {
+    if (user) {
+      router.back();
+    }
+  }, [user]);
 
   const handleGoogleLogin = async () => {
     try {

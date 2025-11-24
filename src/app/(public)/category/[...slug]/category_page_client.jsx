@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
 import ProductCard from "@/components/ProductCard";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
-import Sidebar from "./Sidebar";
 import axiosInstance from "@/Helper/axiosinstance";
+import { useCallback, useEffect, useState } from "react";
+import Sidebar from "./Sidebar";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 const API_URL = BASE_URL + "/api/Productes/filter-Products";

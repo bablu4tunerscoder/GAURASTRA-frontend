@@ -90,6 +90,7 @@ const ProductDetailClient = ({ initialProducts }) => {
       });
       return;
     }
+
     const stock = getStockForSize(selectedSize);
     if (quantity > stock) {
       toast.error(`Only ${stock} items in stock!`, {
@@ -97,8 +98,23 @@ const ProductDetailClient = ({ initialProducts }) => {
       });
       return;
     }
-    // Add to bag logic here
-    dispatch(addToCart({ ...product, selectedSize, quantity }));
+
+    // Dispatch with complete product structure
+    dispatch(
+      addToCart({
+        id: product.product_id,
+        product_id: product.product_id,
+        product_name: productName,
+        brand: product.brand || "GAURASTRA",
+        selectedSize: selectedSize,
+        quantity: quantity,
+        discountedPrice: discountedPrice,
+        originalPrice: originalPrice,
+        images: product.images,
+        attributes: product.attributes,
+      })
+    );
+
     toast.success("Item added to bag", {
       duration: 3000,
     });

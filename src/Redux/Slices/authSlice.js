@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { BASE_URL } from "@/Helper/axiosinstance";
+import toast from "react-hot-toast";
 
 
 // ✅ Check if code runs in browser
@@ -43,7 +44,11 @@ export const loginUser = createAsyncThunk(
         `${BASE_URL}/api/auth/allLogins`,
         credentials
       );
+
       const user = response.data.data;
+      if(user){
+        toast.success("Login successful!");
+      }
 
       if (isBrowser) {
         localStorage.setItem("token", user.token);
