@@ -3,7 +3,7 @@ import "./globals.css";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Providers } from "@/Redux/provider";
-import DiscountPopup from "@/components/DiscountPopup";
+
 import ToasterProvider from "@/components/ToasterProvider";
 
 const geistSans = Geist({
@@ -29,13 +29,14 @@ export default function RootLayout({ children }) {
       >
         <Providers>
           <ToasterProvider /> 
+<<<<<<< Updated upstream
           {/* Discount Popup */}
           {/* <DiscountPopup /> */}
           
           {/* Header */}
+=======
+>>>>>>> Stashed changes
           <Header />
-
-          {/* Main Content */}
           <main className="pt-16 max-w-7xl mx-auto min-h-[50vh] md:px-6 px-2 ">
             {children}
           </main>

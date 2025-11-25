@@ -17,7 +17,17 @@ const nextConfig = {
       },
       {
         protocol: 'http',
+<<<<<<< Updated upstream
         hostname: '192.168.1.8',
+=======
+        hostname: 'localhost',
+        port: '9090',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+>>>>>>> Stashed changes
         port: '9090',
         pathname: '/**',
       },
