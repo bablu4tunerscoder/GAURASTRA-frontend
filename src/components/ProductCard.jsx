@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 const DEFAULT_IMAGE = "/assets/default-product.png";
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const ProductCard = ({ product}) => {
   if (!product) return null;
@@ -15,7 +14,7 @@ const ProductCard = ({ product}) => {
     rawImg?.startsWith("http")
       ? rawImg
       : rawImg
-        ? BASE_URL + rawImg
+        ? "https://backend.gaurastra.com" + rawImg
         : DEFAULT_IMAGE;
 
   // PRICE

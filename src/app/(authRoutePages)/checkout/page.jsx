@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { BASE_URL } from "@/Helper/axiosinstance";
 import Image from "next/image";
 
@@ -44,6 +45,26 @@ const CheckoutPage = ({ searchParams }) => {
     const [orderDetails, setOrderDetails] = useState(null);
     const [addressSaved, setAddressSaved] = useState(false);
     const [foundCoupon, setFoundCoupon] = useState(null);
+
+    // React Hook Form setup
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        setValue,
+        getValues,
+    } = useForm({
+        defaultValues: {
+            full_name: storedUser?.name || "",
+            phone: storedUser?.phone === "0" ? "" : storedUser?.phone || "",
+            flat_number: "",
+            street: storedUser?.address || "",
+            landmark: "",
+            city: "",
+            state: "",
+            pincode: "",
+        },
+    });
 
     useEffect(() => {
         dispatch(resetPayment());
@@ -136,73 +157,16 @@ const CheckoutPage = ({ searchParams }) => {
         }
     };
 
-    const [address, setAddress] = useState({
-        full_name: storedUser?.name || "",
-        phone: storedUser?.phone === "0" ? "" : storedUser?.phone || "",
-        flat_number: "",
-        street: storedUser?.address || "",
-        landmark: "",
-        city: "",
-        state: "",
-        pincode: "",
-        isEditing: false,
-    });
-
-    const [errorMessages, setErrorMessages] = useState({
-        full_name: "",
-        phone: "",
-        street: "",
-        city: "",
-        state: "",
-        pincode: "",
-    });
-
-    const handleChange = (e) => {
-        setAddress({ ...address, [e.target.name]: e.target.value });
-    };
-
-    const validate = () => {
-        let errors = {};
-        let isValid = true;
-
-        const check = (field, message, condition) => {
-            if (condition) {
-                errors[field] = message;
-                isValid = false;
-            } else errors[field] = "";
-        };
-
-        check("full_name", "Full Name is required.", !address.full_name);
-        check(
-            "phone",
-            "Phone number must be 10 digits.",
-            !address.phone || !/^\d{10}$/.test(address.phone)
-        );
-        check("street", "Street is required.", !address.street);
-        check("city", "City is required.", !address.city);
-        check("state", "State is required.", !address.state);
-        check(
-            "pincode",
-            "Pincode must be 6 digits.",
-            !address.pincode || !/^\d{6}$/.test(address.pincode)
-        );
-
-        setErrorMessages(errors);
-        return isValid;
-    };
-
-    const handleSaveAddress = async () => {
-        if (!validate()) return;
-
+    const onSaveAddress = async (data) => {
         try {
-            const fullAddress = `${address.flat_number}, ${address.street}, ${address.landmark}, ${address.city}, ${address.state}, ${address.pincode}`;
+            const fullAddress = `${data.flat_number}, ${data.street}, ${data.landmark}, ${data.city}, ${data.state}, ${data.pincode}`;
 
             const result = await dispatch(
                 updateUser({
                     userId: storedUser.user_id,
                     updatedData: {
-                        name: address.full_name,
-                        phone: address.phone,
+                        name: data.full_name,
+                        phone: data.phone,
                         address: fullAddress,
                     },
                 })
@@ -217,8 +181,8 @@ const CheckoutPage = ({ searchParams }) => {
                 if (newCoupon) setFoundCoupon(newCoupon);
             }
 
-            setAddress({ ...address, isEditing: false });
             setAddressSaved(true);
+            toast.success("Address saved successfully!");
 
             setTimeout(() => setAddressSaved(false), 2500);
         } catch (err) {
@@ -227,12 +191,7 @@ const CheckoutPage = ({ searchParams }) => {
         }
     };
 
-    const handleProceedToPayment = () => {
-        if (!validate()) {
-            toast.error("Please fill all required address fields.");
-            return;
-        }
-
+    const onProceedToPayment = (data) => {
         if (typeof window !== "undefined" && window.fbq) {
             window.fbq("track", "InitiateCheckout");
         }
@@ -252,7 +211,7 @@ const CheckoutPage = ({ searchParams }) => {
         const order = {
             user_id: storedUser?.user_id || null,
             email: storedUser?.email,
-            delivery_address: address,
+            delivery_address: data,
             products: itemsToDisplay.map((item, index) => ({
                 product_id: item.id || item.product_id,
                 product_name: item.name || item.product_name,
@@ -301,7 +260,7 @@ const CheckoutPage = ({ searchParams }) => {
                                         item.images?.[0] ||
                                         { image_url: "" };
 
-                                    const discountedPrice =item.discountedPrice
+                                    const discountedPrice = item.discountedPrice;
 
                                     const originalPrice = item.originalPrice;
 
@@ -309,7 +268,6 @@ const CheckoutPage = ({ searchParams }) => {
                                         discountedPrice != null &&
                                         originalPrice != null &&
                                         Number(discountedPrice) < Number(originalPrice);
-
 
                                     const displayPrice = showDiscount
                                         ? discountedPrice
@@ -404,33 +362,37 @@ const CheckoutPage = ({ searchParams }) => {
                             <div className="bg-white rounded-lg shadow p-6">
                                 <h3 className="text-xl font-semibold mb-4">Shipping Address</h3>
 
-                                <div className="space-y-4">
+                                <form onSubmit={handleSubmit(onSaveAddress)} className="space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <div>
                                             <input
-                                                name="full_name"
-                                                value={address.full_name}
-                                                onChange={handleChange}
+                                                {...register("full_name", {
+                                                    required: "Full Name is required.",
+                                                })}
                                                 placeholder="Full Name"
                                                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none"
                                             />
-                                            {errorMessages.full_name && (
+                                            {errors.full_name && (
                                                 <p className="text-red-500 text-sm mt-1">
-                                                    {errorMessages.full_name}
+                                                    {errors.full_name.message}
                                                 </p>
                                             )}
                                         </div>
                                         <div>
                                             <input
-                                                name="phone"
-                                                value={address.phone}
-                                                onChange={handleChange}
+                                                {...register("phone", {
+                                                    required: "Phone number is required.",
+                                                    pattern: {
+                                                        value: /^\d{10}$/,
+                                                        message: "Phone number must be 10 digits.",
+                                                    },
+                                                })}
                                                 placeholder="Phone Number"
                                                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none"
                                             />
-                                            {errorMessages.phone && (
+                                            {errors.phone && (
                                                 <p className="text-red-500 text-sm mt-1">
-                                                    {errorMessages.phone}
+                                                    {errors.phone.message}
                                                 </p>
                                             )}
                                         </div>
@@ -438,23 +400,21 @@ const CheckoutPage = ({ searchParams }) => {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <input
-                                            name="flat_number"
-                                            value={address.flat_number}
-                                            onChange={handleChange}
+                                            {...register("flat_number")}
                                             placeholder="Flat Number"
                                             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none"
                                         />
                                         <div>
                                             <input
-                                                name="street"
-                                                value={address.street}
-                                                onChange={handleChange}
+                                                {...register("street", {
+                                                    required: "Street is required.",
+                                                })}
                                                 placeholder="Street"
                                                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none"
                                             />
-                                            {errorMessages.street && (
+                                            {errors.street && (
                                                 <p className="text-red-500 text-sm mt-1">
-                                                    {errorMessages.street}
+                                                    {errors.street.message}
                                                 </p>
                                             )}
                                         </div>
@@ -462,23 +422,21 @@ const CheckoutPage = ({ searchParams }) => {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <input
-                                            name="landmark"
-                                            value={address.landmark}
-                                            onChange={handleChange}
+                                            {...register("landmark")}
                                             placeholder="Landmark"
                                             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none"
                                         />
                                         <div>
                                             <input
-                                                name="city"
-                                                value={address.city}
-                                                onChange={handleChange}
+                                                {...register("city", {
+                                                    required: "City is required.",
+                                                })}
                                                 placeholder="City"
                                                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none"
                                             />
-                                            {errorMessages.city && (
+                                            {errors.city && (
                                                 <p className="text-red-500 text-sm mt-1">
-                                                    {errorMessages.city}
+                                                    {errors.city.message}
                                                 </p>
                                             )}
                                         </div>
@@ -487,29 +445,34 @@ const CheckoutPage = ({ searchParams }) => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <div>
                                             <input
-                                                name="state"
-                                                value={address.state}
-                                                onChange={handleChange}
+                                                {...register("state", {
+                                                    required: "State is required.",
+                                                })}
                                                 placeholder="State"
                                                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none"
                                             />
-                                            {errorMessages.state && (
+                                            {errors.state && (
                                                 <p className="text-red-500 text-sm mt-1">
-                                                    {errorMessages.state}
+                                                    {errors.state.message}
                                                 </p>
                                             )}
                                         </div>
                                         <div>
                                             <input
-                                                name="pincode"
-                                                value={address.pincode}
-                                                onChange={handleChange}
+                                                {...register("pincode", {
+                                                    required: "Pincode is required.",
+                                                    pattern: {
+                                                        value: /^\d{6}$/,
+                                                        message: "Pincode must be 6 digits.",
+                                                    },
+                                                })}
                                                 placeholder="Pincode"
+                                                type="number"
                                                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-black focus:border-transparent outline-none"
                                             />
-                                            {errorMessages.pincode && (
+                                            {errors.pincode && (
                                                 <p className="text-red-500 text-sm mt-1">
-                                                    {errorMessages.pincode}
+                                                    {errors.pincode.message}
                                                 </p>
                                             )}
                                         </div>
@@ -517,7 +480,7 @@ const CheckoutPage = ({ searchParams }) => {
 
                                     <div className="flex items-center gap-3">
                                         <button
-                                            onClick={handleSaveAddress}
+                                            type="submit"
                                             className="px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
                                         >
                                             Save Address
@@ -529,7 +492,7 @@ const CheckoutPage = ({ searchParams }) => {
                                             </span>
                                         )}
                                     </div>
-                                </div>
+                                </form>
                             </div>
 
                             {/* Order Summary */}
@@ -569,7 +532,7 @@ const CheckoutPage = ({ searchParams }) => {
 
                                 <button
                                     className="w-full mt-6 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition font-medium"
-                                    onClick={handleProceedToPayment}
+                                    onClick={handleSubmit(onProceedToPayment)}
                                 >
                                     Proceed to Payment
                                 </button>

@@ -1,15 +1,20 @@
 "use client"
-import { addToCart } from '@/Redux/Slices/cartSlice';
+import { BASE_URL } from '@/Helper/axiosinstance';
+import { addToCart, setBuyNowItem } from '@/Redux/Slices/cartSlice';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ProductDetailClient = ({ initialProducts }) => {
   const dispatch = useDispatch();
+  // const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
+  // const { user } = useSelector((state) => state.auth);
+
 
   // Extract product data
   const product = initialProducts;
@@ -21,7 +26,8 @@ const ProductDetailClient = ({ initialProducts }) => {
   const discountPercent = pricing?.discount_percent || 0;
   const stockDetails = product?.stock_details || [];
   const images = product?.images || [];
-
+  
+// console.log(product)
   // Get available sizes from stock details
   const availableSizes = stockDetails
     .filter(stock => stock.is_available && stock.stock_quantity > 0)
@@ -30,7 +36,14 @@ const ProductDetailClient = ({ initialProducts }) => {
   // Prepare product images from the data
   const productImages = images
     .sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0))
-    .map(img => img.image_url);
+    .map(img => {
+      if (img.image_url.startsWith("http")) {
+        return img.image_url;
+      } else {
+        return "https://backend.gaurastra.com" + img.image_url;
+      }
+    });
+
 
   // Fallback if no images
   const displayImages = productImages.length > 0
@@ -119,6 +132,48 @@ const ProductDetailClient = ({ initialProducts }) => {
       duration: 3000,
     });
   };
+
+//   const handleBuyNow = () => {
+//   if (!selectedSize) {
+//     return toast.error("Please select a size before proceeding.");
+//   }
+
+//   if (!initialProducts) return;
+
+//   // If user NOT logged in → Save temporarily + redirect to login
+//   if (!user) {
+//     if (typeof window !== "undefined") {
+//       localStorage.setItem(
+//         "pendingBuyNowProduct",
+//         JSON.stringify({
+//           product: initialProducts,
+//           selectedSize,
+//           quantity,
+//           returnUrl: window.location.pathname,
+//         })
+//       );
+//     }
+
+//     router.push(
+//       `/login?from=buyNow`
+//     );
+
+//     return;
+//   }
+
+//   // User logged in → set Buy Now item
+//   dispatch(
+//     setBuyNowItem({
+//       ...initialProducts,
+//       selectedSize,
+//       quantity,
+//     })
+//   );
+
+//   // Redirect to checkout
+//   router.push("/checkout");
+// };
+
 
   return (
     <section className="py-4">
@@ -263,6 +318,7 @@ const ProductDetailClient = ({ initialProducts }) => {
           {/* Buttons */}
           <div className="flex gap-4 mt-6">
             <button
+              // onClick={handleBuyNow}
               className="px-6 py-3 cursor-pointer bg-black text-white rounded w-full hover:bg-gray-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
               disabled={availableSizes.length === 0 || !selectedSize}
             >

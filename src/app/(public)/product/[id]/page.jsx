@@ -2,7 +2,6 @@
 import axiosInstance from "@/Helper/axiosinstance";
 import ProductDetailClient from "./ProductDetailClient";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 async function GetData(id) {
   try {
     const { data } = await axiosInstance.get(

@@ -1,13 +1,68 @@
 "use client";
 
+import { auth, googleAuthProvider } from "@/Helper/fireBaseConfig";
+import { googleAuthUser, registerUser } from "@/Redux/Slices/authSlice";
+import { signInWithPopup } from "firebase/auth";
+import { LogIn, Mail, Phone, Lock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { User, Mail, Phone, Lock, MapPin, UserPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export default function SignupPage() {
+
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm();
+
+  // Submit signup form
+  const onSubmit = async (data) => {
+    try {
+      const res = await dispatch(registerUser(data)).unwrap();
+      toast.success("Account created successfully!");
+      router.push("/");
+    } catch (error) {
+      toast.error(error?.message || "Signup failed");
+    }
+  };
+
+  // Redirect if logged in
+  useEffect(() => {
+    if (user) {
+      toast.success("Signup successful!");
+      router.back();}
+  }, [user]);
+
+  // Google Signup
+  const handleGoogleSignup = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleAuthProvider);
+      const token = await result.user.getIdToken();
+
+      dispatch(googleAuthUser(token))
+        .unwrap()
+        .then(() => {
+          toast.success("Google signup successful!");
+          router.push("/");
+        })
+        .catch(() => toast.error("Error during Google signup."));
+    } catch (error) {
+      toast.error("Google signup failed.");
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gray-900 text-white overflow-hidden">
-      {/* 🔹 Background Image */}
+
       <Image
         src="/assets/EthnicSection011.jpg"
         alt="Background"
@@ -18,28 +73,28 @@ export default function SignupPage() {
       />
       <div className="absolute inset-0 bg-black/60" />
 
-      {/* 🔹 Layout Container */}
       <div className="relative z-10 w-full max-w-5xl flex flex-col lg:flex-row items-center justify-between bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-white/20 m-6">
-        
-        {/* 🔹 Left Section (Logo + Google) */}
-        <div className="flex flex-col items-center justify-center w-full lg:w-1/2 p-8 lg:p-12 text-center space-y-6">
+
+        {/* LEFT SECTION */}
+        <div className="flex flex-col items-center justify-center w-full lg:w-1/2 p-10 text-center space-y-6">
           <Image
             src="/assets/loginbg.webp"
-            alt="Gaurastra Logo"
+            alt="Logo"
             width={140}
             height={140}
             className="rounded-full"
             priority
           />
-          <h2 className="text-3xl font-semibold">Join Gaurastra</h2>
+          <h2 className="text-3xl font-semibold">Create Your Account 🎉</h2>
           <p className="text-gray-300 text-sm max-w-xs">
-            Step into a world of handcrafted streetwear inspired by Indian heritage.
+            Join <span className="text-blue-400 font-semibold">Gaurastra</span> and start your fashion journey!
           </p>
 
-          {/* 🔹 Google Signup */}
+          {/* GOOGLE SIGNUP */}
           <button
             type="button"
             className="flex items-center justify-center w-full sm:w-3/4 py-3 rounded-lg bg-white text-gray-800 font-medium hover:bg-gray-100 transition"
+            onClick={handleGoogleSignup}
           >
             <Image
               src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -52,111 +107,91 @@ export default function SignupPage() {
           </button>
         </div>
 
-        {/* 🔹 Right Section (Form) */}
+        {/* RIGHT SECTION (FORM) */}
         <div className="w-full lg:w-1/2 p-8 lg:p-12 bg-black/40 backdrop-blur-md">
-          <h2 className="text-3xl font-semibold text-center mb-2">
-            Create Your Account ✨
-          </h2>
+          <h2 className="text-3xl font-semibold text-center mb-2">Create Account</h2>
           <p className="text-center text-gray-300 mb-6">
-            Start your style journey with <span className="text-blue-400 font-semibold">Gaurastra</span>.
+            Fill the details to get started.
           </p>
 
-          <form className="space-y-5">
-            {/* Name */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+
+            {/* NAME */}
             <div>
-              <label htmlFor="name" className="block text-sm mb-1 text-gray-300">
-                Full Name
-              </label>
-              <div className="flex items-center bg-white/10 border border-gray-500 rounded-lg px-3 py-2 focus-within:border-blue-400">
-                <User size={18} className="text-gray-400 mr-2" />
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  placeholder="Enter your full name"
-                  className="bg-transparent w-full text-white placeholder-gray-400 outline-none"
-                />
-              </div>
+              <label className="block text-sm mb-1 text-gray-300">Full Name</label>
+              <input
+                type="text"
+                placeholder="Enter your full name"
+                className="w-full bg-white/10 border border-gray-500 rounded-lg px-3 py-2 text-white placeholder-gray-400 outline-none"
+                {...register("name", { required: "Name is required" })}
+              />
+              {errors.name && <p className="text-red-400 text-sm">{errors.name.message}</p>}
             </div>
 
-            {/* Email */}
+            {/* EMAIL */}
             <div>
-              <label htmlFor="email" className="block text-sm mb-1 text-gray-300">
-                Email Address
-              </label>
-              <div className="flex items-center bg-white/10 border border-gray-500 rounded-lg px-3 py-2 focus-within:border-blue-400">
+              <label className="block text-sm mb-1 text-gray-300">Email</label>
+              <div className="flex items-center bg-white/10 border border-gray-500 rounded-lg px-3 py-2">
                 <Mail size={18} className="text-gray-400 mr-2" />
                 <input
                   type="email"
-                  id="email"
-                  name="email"
                   placeholder="Enter your email"
-                  className="bg-transparent w-full text-white placeholder-gray-400 outline-none"
+                  className="bg-transparent w-full text-white outline-none placeholder-gray-400"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /\S+@\S+\.\S+/,
+                      message: "Invalid email format",
+                    },
+                  })}
                 />
               </div>
+              {errors.email && <p className="text-red-400 text-sm">{errors.email.message}</p>}
             </div>
 
-            {/* Phone */}
+            {/* PHONE */}
             <div>
-              <label htmlFor="phone" className="block text-sm mb-1 text-gray-300">
-                Phone Number
-              </label>
-              <div className="flex items-center bg-white/10 border border-gray-500 rounded-lg px-3 py-2 focus-within:border-blue-400">
+              <label className="block text-sm mb-1 text-gray-300">Phone Number</label>
+              <div className="flex items-center bg-white/10 border border-gray-500 rounded-lg px-3 py-2">
                 <Phone size={18} className="text-gray-400 mr-2" />
                 <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  placeholder="Enter your phone number"
-                  className="bg-transparent w-full text-white placeholder-gray-400 outline-none"
+                  type="text"
+                  placeholder="Enter phone number"
+                  className="bg-transparent w-full text-white outline-none placeholder-gray-400"
+                  {...register("phone", {
+                    required: "Phone number is required",
+                    minLength: { value: 10, message: "Minimum 10 digits" },
+                  })}
                 />
               </div>
+              {errors.phone && <p className="text-red-400 text-sm">{errors.phone.message}</p>}
             </div>
 
-            {/* Password */}
+            {/* PASSWORD */}
             <div>
-              <label htmlFor="password" className="block text-sm mb-1 text-gray-300">
-                Password
-              </label>
-              <div className="flex items-center bg-white/10 border border-gray-500 rounded-lg px-3 py-2 focus-within:border-blue-400">
+              <label className="block text-sm mb-1 text-gray-300">Password</label>
+              <div className="flex items-center bg-white/10 border border-gray-500 rounded-lg px-3 py-2">
                 <Lock size={18} className="text-gray-400 mr-2" />
                 <input
                   type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  className="bg-transparent w-full text-white placeholder-gray-400 outline-none"
+                  placeholder="Enter password"
+                  className="bg-transparent w-full text-white outline-none placeholder-gray-400"
+                  {...register("password", { required: "Password is required" })}
                 />
               </div>
+              {errors.password && <p className="text-red-400 text-sm">{errors.password.message}</p>}
             </div>
 
-            {/* Address */}
-            <div>
-              <label htmlFor="address" className="block text-sm mb-1 text-gray-300">
-                Address
-              </label>
-              <div className="flex items-start bg-white/10 border border-gray-500 rounded-lg px-3 py-2 focus-within:border-blue-400">
-                <MapPin size={18} className="text-gray-400 mt-1 mr-2" />
-                <textarea
-                  id="address"
-                  name="address"
-                  rows={2}
-                  placeholder="Enter your full address"
-                  className="bg-transparent w-full text-white placeholder-gray-400 outline-none resize-none"
-                />
-              </div>
-            </div>
-
-            {/* 🔹 Submit Button */}
+            {/* SUBMIT */}
             <button
               type="submit"
-              className="w-full mt-4 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-lg font-medium transition"
+              disabled={isSubmitting}
+              className="w-full mt-4 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 py-3 rounded-lg text-lg font-medium transition"
             >
-              <UserPlus size={18} /> Sign Up
+              {isSubmitting ? "Creating Account..." : <>Create Account <LogIn size={18} /></>}
             </button>
           </form>
 
-          {/* Already have an account */}
           <p className="text-center text-gray-400 text-sm mt-6">
             Already have an account?{" "}
             <Link href="/login" className="text-blue-400 hover:underline">

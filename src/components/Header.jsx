@@ -65,7 +65,7 @@ const Header = () => {
           <div className="flex items-center gap-5 relative">
             <Link href="/cart">
               <ShoppingCart className="w-5 h-5 text-gray-700 hover:text-blue-600 cursor-pointer" />
-              {cartItems > 0 && <span className="absolute -top-2  left-2 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">{cartItems}</span>}
+              {cartItems > 0 && <span className="absolute -top-2  -left-2 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">{cartItems}</span>}
             </Link>
 
             {/* User Icon with Dropdown */}
@@ -88,7 +88,7 @@ const Header = () => {
                         </Link>
                         <button
                           onClick={() => dispatch(logoutUser())}
-                          className="block px-3 py-2 rounded-md hover:bg-gray-100 text-gray-700"
+                          className="block px-3 py-2 w-full text-left rounded-md hover:bg-gray-100 text-gray-700"
                         >
                           Logout
                         </button>

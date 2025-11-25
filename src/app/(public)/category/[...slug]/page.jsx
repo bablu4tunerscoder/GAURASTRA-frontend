@@ -28,6 +28,8 @@ async function GetData(slugArray) {
 export default async function DynamicCategoryPage({ params }) {
   const { slug }= await params ?? [];
   const products = await GetData(slug);
+  console.log(products[0])
+  console.log(products[12])
   
 
   return <CategoryPageClient initialProducts={products} initialSlug={slug} />;
