@@ -26,11 +26,24 @@ const CartPage = () => {
   const totalAmount = subtotal + shippingCharge;
 
   // Get primary image or first image
-  const getProductImage = (images) => {
-    if (!images || images.length === 0) return "/assets/default-product.png";
-    const primaryImage = images.find((img) => img.is_primary);
-    return primaryImage ? primaryImage.image_url : images[0].image_url;
-  };
+const getProductImage = (images) => {
+  if (!images || images.length === 0) return "/assets/default-product.png";
+
+  const primary =
+    images.find((img) => img.is_primary) ||
+    images[0] ||
+    { image_url: "" };
+
+  let url = primary.image_url || "";
+
+  // 🔥 If URL does NOT start with http or https → add backend prefix
+  if (!url.startsWith("http")) {
+    url = `https://backend.gaurastra.com${url}`;
+  }
+
+  return url;
+};
+
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16">

@@ -1,5 +1,4 @@
 "use client"
-import { BASE_URL } from '@/Helper/axiosinstance';
 import { addToCart, setBuyNowItem } from '@/Redux/Slices/cartSlice';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -9,11 +8,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const ProductDetailClient = ({ initialProducts }) => {
   const dispatch = useDispatch();
-  // const router = useRouter();
+  const router = useRouter();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
-  // const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
 
   // Extract product data
@@ -27,22 +26,20 @@ const ProductDetailClient = ({ initialProducts }) => {
   const stockDetails = product?.stock_details || [];
   const images = product?.images || [];
   
-// console.log(product)
   // Get available sizes from stock details
   const availableSizes = stockDetails
     .filter(stock => stock.is_available && stock.stock_quantity > 0)
     .map(stock => stock.size);
 
   // Prepare product images from the data
-  const productImages = images
-    .sort((a, b) => (b.is_primary ? 1 : 0) - (a.is_primary ? 1 : 0))
-    .map(img => {
-      if (img.image_url.startsWith("http")) {
-        return img.image_url;
-      } else {
-        return "https://backend.gaurastra.com" + img.image_url;
-      }
-    });
+ const productImages = images
+  .sort((a, b) => Number(b.is_primary) - Number(a.is_primary))
+  .map(img =>
+    img.image_url.startsWith("http")
+      ? img.image_url
+      : `https://backend.gaurastra.com${img.image_url}`
+  );
+
 
 
   // Fallback if no images
@@ -133,46 +130,44 @@ const ProductDetailClient = ({ initialProducts }) => {
     });
   };
 
-//   const handleBuyNow = () => {
-//   if (!selectedSize) {
-//     return toast.error("Please select a size before proceeding.");
-//   }
+  const handleBuyNow = () => {
+  if (!selectedSize) {
+    return toast.error("Please select a size before proceeding.");
+  }
+  if (!initialProducts) return;
 
-//   if (!initialProducts) return;
+  // If user NOT logged in → Save temporarily + redirect to login
+  if (!user) {
+      localStorage.setItem(
+        "pendingBuyNowProduct",
+        JSON.stringify({
+          product: initialProducts,
+          selectedSize,
+          quantity,
+          returnUrl: window.location.pathname,
+        })
+      );
+    
 
-//   // If user NOT logged in → Save temporarily + redirect to login
-//   if (!user) {
-//     if (typeof window !== "undefined") {
-//       localStorage.setItem(
-//         "pendingBuyNowProduct",
-//         JSON.stringify({
-//           product: initialProducts,
-//           selectedSize,
-//           quantity,
-//           returnUrl: window.location.pathname,
-//         })
-//       );
-//     }
+    router.push(
+      `/login?from=buyNow`
+    );
 
-//     router.push(
-//       `/login?from=buyNow`
-//     );
+    return;
+  }
 
-//     return;
-//   }
+  // User logged in → set Buy Now item
+  dispatch(
+    setBuyNowItem({
+      ...initialProducts,
+      selectedSize,
+      quantity,
+    })
+  );
 
-//   // User logged in → set Buy Now item
-//   dispatch(
-//     setBuyNowItem({
-//       ...initialProducts,
-//       selectedSize,
-//       quantity,
-//     })
-//   );
-
-//   // Redirect to checkout
-//   router.push("/checkout");
-// };
+  // Redirect to checkout
+  router.push("/checkout");
+};
 
 
   return (
@@ -318,7 +313,7 @@ const ProductDetailClient = ({ initialProducts }) => {
           {/* Buttons */}
           <div className="flex gap-4 mt-6">
             <button
-              // onClick={handleBuyNow}
+              onClick={handleBuyNow}
               className="px-6 py-3 cursor-pointer bg-black text-white rounded w-full hover:bg-gray-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
               disabled={availableSizes.length === 0 || !selectedSize}
             >

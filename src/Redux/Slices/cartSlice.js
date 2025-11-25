@@ -58,6 +58,7 @@ const cartSlice = createSlice({
       state.items = [];
     },
     setBuyNowItem: (state, action) => {
+      console.log(action.payload)
       state.buyNowItem = action.payload;
     },
     clearBuyNowItem: (state) => {

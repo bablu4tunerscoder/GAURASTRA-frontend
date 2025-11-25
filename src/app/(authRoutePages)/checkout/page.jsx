@@ -1,45 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { BASE_URL } from "@/Helper/axiosinstance";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
     clearBuyNowItem,
     setBuyNowItem,
     updateQuantity,
 } from "@/Redux/Slices/cartSlice";
-import { clearCoupon } from "@/Redux/Slices/couponSlice";
 import { clearOrder } from "@/Redux/Slices/orderSlice";
 import { resetPayment } from "@/Redux/Slices/paymentSlice";
 import { updateUser } from "@/Redux/Slices/userSlice";
 
+import toast from "react-hot-toast";
 import CouponComponent from "./CouponComponent";
 import PaymentComponent from "./PaymentComponent";
-import toast from "react-hot-toast";
 
-const CheckoutPage = ({ searchParams }) => {
+const CheckoutPage = () => {
     const dispatch = useDispatch();
-    const router = useRouter();
-
-    const passedProduct = searchParams?.product
-        ? JSON.parse(searchParams.product)
-        : null;
-
-    const passedSize = searchParams?.size || null;
-    const passedQty = searchParams?.quantity ? Number(searchParams.quantity) : 1;
-
+    
     const cartItems = useSelector((state) => state.cart.items);
     const buyNowItem = useSelector((state) => state.cart.buyNowItem);
     const couponState = useSelector((state) => state.coupon);
+    const user = useSelector((state) => state.user.user);
 
-    const storedUser =
+    const storedUser = user || (
         typeof window !== "undefined"
             ? JSON.parse(localStorage.getItem("user")) || {}
-            : {};
+            : {}
+    );
 
     const [showPayment, setShowPayment] = useState(false);
     const [orderDetails, setOrderDetails] = useState(null);
@@ -69,23 +60,25 @@ const CheckoutPage = ({ searchParams }) => {
     useEffect(() => {
         dispatch(resetPayment());
         dispatch(clearOrder());
+
+        // Handle pending buy now product for non-logged in users
+        if (typeof window !== "undefined") {
+            const pendingProduct = localStorage.getItem("pendingBuyNowProduct");
+            if (pendingProduct) {
+                try {
+                    const productData = JSON.parse(pendingProduct);
+                    dispatch(setBuyNowItem(productData));
+                    localStorage.removeItem("pendingBuyNowProduct");
+                } catch (err) {
+                    console.error("Error parsing pending product:", err);
+                }
+            }
+        }
+
         return () => {
             dispatch(clearBuyNowItem());
         };
     }, [dispatch]);
-
-    useEffect(() => {
-        if (passedProduct) {
-            dispatch(clearCoupon());
-            dispatch(
-                setBuyNowItem({
-                    ...passedProduct,
-                    selectedSize: passedSize,
-                    quantity: passedQty,
-                })
-            );
-        }
-    }, [passedProduct, passedSize, passedQty, dispatch]);
 
     useEffect(() => {
         if (typeof window !== "undefined" && window.fbq) {
@@ -100,11 +93,7 @@ const CheckoutPage = ({ searchParams }) => {
         return price.toFixed(2);
     };
 
-    const getImageUrl = (url) => {
-        if (!url) return "";
-        if (url.startsWith("http") || url.startsWith("blob:")) return url;
-        return `${BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
-    };
+
 
     const calculateSubtotal = () => {
         return itemsToDisplay.reduce((total, item) => {
@@ -255,14 +244,20 @@ const CheckoutPage = ({ searchParams }) => {
                         <div className="lg:col-span-2 space-y-4">
                             {itemsToDisplay.length > 0 ? (
                                 itemsToDisplay.map((item, index) => {
-                                    const primaryImage =
-                                        item.images?.find((img) => img.is_primary) ||
+                                    const primaryImageObj =
+                                        item.images?.find((img) => img.is_primary === true) ||
                                         item.images?.[0] ||
                                         { image_url: "" };
+                                    // console.log(primaryImageObj)
+                                    const primaryImage = primaryImageObj.image_url.startsWith("http")
+                                        ? primaryImageObj.image_url
+                                        : `https://backend.gaurastra.com${primaryImageObj.image_url}`;
 
-                                    const discountedPrice = item.discountedPrice;
 
-                                    const originalPrice = item.originalPrice;
+
+                                    const discountedPrice = item.latest_pricing?.price_detail?.discounted_price || item.discountedPrice;
+
+                                    const originalPrice = item.latest_pricing?.price_detail?.original_price || item.originalPrice;
 
                                     const showDiscount =
                                         discountedPrice != null &&
@@ -280,17 +275,15 @@ const CheckoutPage = ({ searchParams }) => {
                                             key={index}
                                             className="bg-white rounded-lg shadow p-6 flex gap-6"
                                         >
-                                            {primaryImage.image_url && (
-                                                <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden bg-gray-100">
-                                                    <Image
-                                                        src={getImageUrl(primaryImage.image_url)}
-                                                        alt={item.name}
-                                                        width={128}
-                                                        height={128}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                </div>
-                                            )}
+                                            <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden bg-gray-100">
+                                                <Image
+                                                    src={primaryImage}
+                                                    alt={item.product_name}
+                                                    width={128}
+                                                    height={128}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
 
                                             <div className="flex-1 space-y-2">
                                                 <h3 className="font-semibold text-lg">
