@@ -1,7 +1,7 @@
 // ProductByUniqueIdSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "../../Helper/axiosinstance";
+import { BASE_URL } from "@/Helper/axiosinstance";
  
 export const fetchProductByUniqueId = createAsyncThunk(
   "product/fetchByUniqueId",

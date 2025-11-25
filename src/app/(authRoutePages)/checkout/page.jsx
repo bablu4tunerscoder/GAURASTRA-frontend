@@ -20,17 +20,13 @@ import PaymentComponent from "./PaymentComponent";
 
 const CheckoutPage = () => {
     const dispatch = useDispatch();
-    
-    const cartItems = useSelector((state) => state.cart.items);
-    const buyNowItem = useSelector((state) => state.cart.buyNowItem);
-    const couponState = useSelector((state) => state.coupon);
-    const user = useSelector((state) => state.user.user);
 
-    const storedUser = user || (
-        typeof window !== "undefined"
-            ? JSON.parse(localStorage.getItem("user")) || {}
-            : {}
-    );
+    const cartItems = useSelector((state) => state?.cart?.items);
+    const buyNowItem = useSelector((state) => state?.cart?.buyNowItem);
+    const couponState = useSelector((state) => state?.coupon);
+    const user = useSelector((state) => state?.user?.user);
+
+    const storedUser = user || {}
 
     const [showPayment, setShowPayment] = useState(false);
     const [orderDetails, setOrderDetails] = useState(null);
@@ -42,8 +38,6 @@ const CheckoutPage = () => {
         register,
         handleSubmit,
         formState: { errors },
-        setValue,
-        getValues,
     } = useForm({
         defaultValues: {
             full_name: storedUser?.name || "",
@@ -57,34 +51,7 @@ const CheckoutPage = () => {
         },
     });
 
-    useEffect(() => {
-        dispatch(resetPayment());
-        dispatch(clearOrder());
 
-        // Handle pending buy now product for non-logged in users
-        if (typeof window !== "undefined") {
-            const pendingProduct = localStorage.getItem("pendingBuyNowProduct");
-            if (pendingProduct) {
-                try {
-                    const productData = JSON.parse(pendingProduct);
-                    dispatch(setBuyNowItem(productData));
-                    localStorage.removeItem("pendingBuyNowProduct");
-                } catch (err) {
-                    console.error("Error parsing pending product:", err);
-                }
-            }
-        }
-
-        return () => {
-            dispatch(clearBuyNowItem());
-        };
-    }, [dispatch]);
-
-    useEffect(() => {
-        if (typeof window !== "undefined" && window.fbq) {
-            window.fbq("track", "InitiateCheckout");
-        }
-    }, []);
 
     const itemsToDisplay = buyNowItem ? [buyNowItem] : cartItems;
 
@@ -181,9 +148,7 @@ const CheckoutPage = () => {
     };
 
     const onProceedToPayment = (data) => {
-        if (typeof window !== "undefined" && window.fbq) {
-            window.fbq("track", "InitiateCheckout");
-        }
+
 
         const adjustedPrices = itemsToDisplay.map((item, index) => {
             const price =
@@ -225,6 +190,32 @@ const CheckoutPage = () => {
     };
 
     const handlePaymentSuccess = () => { };
+
+
+
+    useEffect(() => {
+        dispatch(clearOrder());
+
+        // Handle pending buy now product for non-logged in users
+        const pendingProduct = localStorage.getItem("pendingBuyNowProduct");
+        if (pendingProduct) {
+            try {
+                const productData = JSON.parse(pendingProduct);
+                dispatch(setBuyNowItem(productData));
+                localStorage.removeItem("pendingBuyNowProduct");
+            } catch (err) {
+                console.error("Error parsing pending product:", err);
+            }
+        }
+
+        return () => {
+            dispatch(resetPayment());
+            dispatch(clearBuyNowItem());
+        }
+
+    }, [dispatch]);
+
+
 
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4">

@@ -71,7 +71,6 @@ export const loginUser = createAsyncThunk(
 // ✅ Logout user
 export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
   if (isBrowser) localStorage.clear();
-  toast.success("Logout successful!");
   return null;
 });
 

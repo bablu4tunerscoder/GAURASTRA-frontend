@@ -1,7 +1,6 @@
 import Image from "next/image";
 
 export default function OrderCard({ data, openRating }) {
-    console.log(data)
     const order = data.order;
     const pay = data.payment;
 
@@ -14,7 +13,7 @@ export default function OrderCard({ data, openRating }) {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                     <Info label="Order ID" value={pay?.order_id} />
                     <Info label="Order Date" value={order?.createdAtIST} />
-                    <Info label="Amount" value={`₹${pay?.amount}`} />
+                    <Info label="Amount" value={`${pay?.amount ? pay.amount : "Unpaid"}`} />
                     <Info
                         label="Payment Status"
                         value={pay?.payment_id ? "Paid" : "Unpaid"}
@@ -45,17 +44,18 @@ export default function OrderCard({ data, openRating }) {
                         {/* Info */}
                         <div className="flex-1 flex flex-col justify-between">
                             <div>
-                                <h3 className="font-semibold text-lg text-black">{p.product_name}</h3>
+                                <h3 className="font-semibold text-lg text-black">{p.name}</h3>
                                 <p className="text-gray-700 text-sm mt-1">Quantity: {p.quantity}</p>
-                                {p.selectedSize && (
-                                    <p className="text-gray-700 text-sm">Size: {p.selectedSize}</p>
+                                {p.size && (
+                                    <p className="text-gray-700 text-sm">Size: {p.size}</p>
                                 )}
+                                <p className="text-gray-700 text-sm">Price: ₹{p.price}</p>
                             </div>
-                        </div>
+                            </div>
 
                         {/* Rate Button */}
                         <button
-                            onClick={() => openRating({ orderId: pay.order_id, productIdx: idx })}
+                            onClick={() => openRating({user_id:order.user.user_id,  product_id: p.product_id })}
                             className="h-fit px-5 py-2 border border-black rounded-lg text-black font-medium hover:bg-black hover:text-white transition"
                         >
                             Rate

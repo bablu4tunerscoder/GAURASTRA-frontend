@@ -19,12 +19,13 @@ export default function Page() {
 
   const dispatch = useDispatch();
 
+
   useEffect(() => {
     user?.user_id && dispatch(getUserOrders(user.user_id));
   }, [user?.user_id, dispatch]);
 
   return (
-    <div className="max-w-7xl mx-auto py-4 px-4 text-black">
+    <div className="max-w-7xl mx-auto py-4 px-4 text-black bg-white">
       {/* Tabs */}
       <div className="flex border-b">
         {TABS.map((tab) => (
