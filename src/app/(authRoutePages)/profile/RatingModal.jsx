@@ -1,15 +1,26 @@
 "use client";
 import { useState } from "react";
 import { Star } from "lucide-react";
+import axiosInstance from "@/Helper/axiosinstance";
+import toast from "react-hot-toast";
 
 export default function RatingModal({ data, close }) {
-  const [rating, setRating] = useState({ stars: 0, comment: "" });
+  const [rating, setRating] = useState({ rating: 0, comment: "" });
 
-  const submit = () => {
-    if (!rating.stars) return alert("Select rating");
+  const submit = async () => {
+    if (!rating.rating) return toast.error("Select rating");
     // alert("Rating submitted!");
-    console.log(data)
-    // close();
+    try {
+      const response = await axiosInstance.post("/api/rating", { ...rating, ...data });
+      if(response.success == false) return toast.error(response.message)
+      toast.success("Rating submitted!");
+      close();
+    }
+    catch (error) {
+      console.log(error)
+      toast.error(error?.response?.data?.message || "Rating submission failed");
+    }
+    
   };
 
   return (
@@ -19,13 +30,13 @@ export default function RatingModal({ data, close }) {
         <h3 className="text-xl font-semibold">Rate This Product</h3>
 
         {/* Stars */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 cursor-pointer">
           {[1, 2, 3, 4, 5].map((n) => (
             <Star
               key={n}
               size={32}
-              onClick={() => setRating((r) => ({ ...r, stars: n }))}
-              className={rating.stars >= n ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
+              onClick={() => setRating((r) => ({ ...r, rating: n }))}
+              className={rating.rating >= n ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
             />
           ))}
         </div>
@@ -41,10 +52,20 @@ export default function RatingModal({ data, close }) {
 
         {/* Buttons */}
         <div className="flex gap-3">
-          <button onClick={close} className="flex-1 border py-2 rounded-lg">Cancel</button>
-          <button onClick={submit} className="flex-1 bg-black text-white py-2 rounded-lg">
-            Submit
-          </button>
+          <button
+  onClick={close}
+  className="flex-1 border py-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-100"
+>
+  Cancel
+</button>
+
+<button
+  onClick={submit}
+  className="flex-1 bg-black text-white py-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-800"
+>
+  Submit
+</button>
+
         </div>
       </div>
     </div>

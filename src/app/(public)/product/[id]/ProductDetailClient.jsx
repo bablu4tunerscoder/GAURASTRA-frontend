@@ -33,13 +33,11 @@ const ProductDetailClient = ({ initialProducts }) => {
 
   // Prepare product images from the data
  const productImages = images
-  .sort((a, b) => Number(b.is_primary) - Number(a.is_primary))
   .map(img =>
     img.image_url.startsWith("http")
       ? img.image_url
       : `https://backend.gaurastra.com${img.image_url}`
   );
-
 
 
   // Fallback if no images
