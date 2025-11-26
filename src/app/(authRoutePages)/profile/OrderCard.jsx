@@ -51,11 +51,13 @@ export default function OrderCard({ data, openRating }) {
                                 )}
                                 <p className="text-gray-700 text-sm">Price: ₹{p.price}</p>
                             </div>
-                            </div>
+                        </div>
 
                         {/* Rate Button */}
+                        {console.log(p)}
+                        {console.log(pay)}
                         <button
-                            onClick={() => openRating({user_id:order.user.user_id,  product_id: p.product_id })}
+                            onClick={() => openRating({  product_id: p._id, order_id: pay?._id })}
                             className="h-fit px-5 py-2 border border-black rounded-lg text-black font-medium hover:bg-black hover:text-white transition"
                         >
                             Rate

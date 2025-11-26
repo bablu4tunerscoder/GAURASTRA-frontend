@@ -5,7 +5,6 @@ import RatingModal from "./RatingModal";
 
 export default function OrdersTab({ orders }) {
   const [ratingData, setRatingData] = useState(null); // {orderId, productIdx}
-
   if (!orders?.length)
     return (
       <div className="border p-8 rounded-lg bg-white shadow-sm text-center">

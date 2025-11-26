@@ -3,15 +3,19 @@ import { useState } from "react";
 import { Star } from "lucide-react";
 import axiosInstance from "@/Helper/axiosinstance";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 export default function RatingModal({ data, close }) {
-  const [rating, setRating] = useState({ rating: 0, comment: "" });
+  const [rating, setRating] = useState({ rating_value: 0, comment_text: "" });
+  const {_id}  = useSelector((state) => state?.auth?.user)
+  
 
   const submit = async () => {
-    if (!rating.rating) return toast.error("Select rating");
+    if (!rating.rating_value) return toast.error("Select rating");
     // alert("Rating submitted!");
     try {
-      const response = await axiosInstance.post("/api/rating", { ...rating, ...data });
+      const response = await axiosInstance.post("/api/rating/add", { ...rating, ...data,user_id:_id });
+      console.log(response)
       if (response.success == false) return toast.error(response.message)
       toast.success("Rating submitted!");
       close();
@@ -35,18 +39,18 @@ export default function RatingModal({ data, close }) {
             <Star
               key={n}
               size={32}
-              onClick={() => setRating((r) => ({ ...r, rating: n }))}
-              className={rating.rating >= n ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
+              onClick={() => setRating((r) => ({ ...r, rating_value: n }))}
+              className={rating.rating_value >= n ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
             />
           ))}
         </div>
 
-        {/* Comment */}
+        {/* comment_text */}
         <textarea
           className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-black"
           rows={4}
-          value={rating.comment}
-          onChange={(e) => setRating({ ...rating, comment: e.target.value })}
+          value={rating.comment_text}
+          onChange={(e) => setRating({ ...rating, comment_text: e.target.value })}
           placeholder="Share your experience..."
         />
 
