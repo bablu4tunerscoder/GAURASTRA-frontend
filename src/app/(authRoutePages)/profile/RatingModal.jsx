@@ -12,7 +12,7 @@ export default function RatingModal({ data, close }) {
     // alert("Rating submitted!");
     try {
       const response = await axiosInstance.post("/api/rating", { ...rating, ...data });
-      if(response.success == false) return toast.error(response.message)
+      if (response.success == false) return toast.error(response.message)
       toast.success("Rating submitted!");
       close();
     }
@@ -20,7 +20,7 @@ export default function RatingModal({ data, close }) {
       console.log(error)
       toast.error(error?.response?.data?.message || "Rating submission failed");
     }
-    
+
   };
 
   return (
@@ -53,18 +53,18 @@ export default function RatingModal({ data, close }) {
         {/* Buttons */}
         <div className="flex gap-3">
           <button
-  onClick={close}
-  className="flex-1 border py-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-100"
->
-  Cancel
-</button>
+            onClick={close}
+            className="flex-1 border py-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-100"
+          >
+            Cancel
+          </button>
 
-<button
-  onClick={submit}
-  className="flex-1 bg-black text-white py-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-800"
->
-  Submit
-</button>
+          <button
+            onClick={submit}
+            className="flex-1 bg-black text-white py-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-gray-800"
+          >
+            Submit
+          </button>
 
         </div>
       </div>
