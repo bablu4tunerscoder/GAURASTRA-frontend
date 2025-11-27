@@ -175,7 +175,6 @@ export default function Billing() {
             };
 
 
-              console.log(payload)
 
             const { data } = await axiosInstance.post(
                 `/api/offline/billing/create`,
