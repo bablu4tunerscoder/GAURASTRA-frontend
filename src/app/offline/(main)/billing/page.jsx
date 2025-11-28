@@ -5,6 +5,7 @@ import React, { useState, useRef } from "react";
 import QrScanner from "qr-scanner";
 import axiosInstance from "@/Helper/axiosinstance";
 import { openPrintWindow } from "@/utils/openPrintWindow";
+import useSessionAuth from "../../hook/useSessionAuth";
 
 // Local Button Component
 const Button = ({ children, className = "", ...props }) => {
@@ -26,6 +27,8 @@ export default function Billing() {
     const scannerRef = useRef(null);
     const [billingPreview, setBillingPreview] = useState(null);
     const [paymentMethod, setPaymentMethod] = useState("cod");
+
+    const { token } = useSessionAuth();
 
     const [userInfo, setUserInfo] = useState({
         full_name: "",
@@ -120,7 +123,11 @@ export default function Billing() {
             const variantId = qr.variant_id;
 
             const { data } = await axiosInstance.get(
-                `/api/offline/products/${productId}/variant/${variantId}`
+                `/api/offline/products/${productId}/variant/${variantId}`,{
+                    headers: {
+          Authorization: `Bearer ${token}`,
+        },
+                }
             );
 
             const cartItem = {
@@ -150,7 +157,11 @@ export default function Billing() {
             };
 
             const { data } = await axiosInstance.post(`/api/offline/billing/calculate`,
-                payload
+                payload, {
+                     headers: {
+          Authorization: `Bearer ${token}`,
+        },
+                }
             );
             setBillingPreview(data.preview);
             // console.log('data', data.preview)
@@ -178,7 +189,11 @@ export default function Billing() {
 
             const { data } = await axiosInstance.post(
                 `/api/offline/billing/create`,
-                payload
+                payload,{
+                     headers: {
+          Authorization: `Bearer ${token}`,
+        },
+                }
             );
 
             // console.log("Bill Created:", data);
