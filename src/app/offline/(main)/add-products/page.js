@@ -1,28 +1,31 @@
 'use client'
 
+import { axiosInstanceWithOfflineToken } from '@/Helper/axiosinstance';
 import { Box, Image, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 
 const ProductForm = () => {
-  const { register, control, handleSubmit, watch, setValue, formState: { errors } } = useForm({
-    defaultValues: {
-      title: '',
-      price: 0,
-      details: '',
-      images: ["image url"],
-      active: true,
-      variants: [
-        {
-          color: '#ff0000',
-          size: 'xl',
-          stock: 0,
-          actual_price: 0,
-          offer: 0,
-          offer_type: 'percentage',
-        },
-      ],
-    },
+  const defaultValues = {
+    title: '',
+    price: 0,
+    details: '',
+    images: [" "],
+    active: true,
+    variants: [
+      {
+        color: '#ff0000',
+        size: 'xl',
+        stock: 0,
+        actual_price: 0,
+        offer: 0,
+        offer_type: 'percentage',
+      },
+    ],
+  }
+  const { register, control, reset, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+    defaultValues
   });
 
   const { fields: imageFields, append: appendImage, remove: removeImage } = useFieldArray({
@@ -54,10 +57,25 @@ const ProductForm = () => {
     setManuallyChangedPrices(prev => new Set([...prev, index]));
   };
 
-  const onSubmit = (data) => {
-    console.log('Form Data:', data);
-    alert('Product saved! Check console for data.');
+  const onSubmit = async (formData) => {
+    const { price, ...restData } = formData;
+    try {
+      const { data } = await axiosInstanceWithOfflineToken.post(
+        '/api/offline/products/w/create',
+        restData
+      );
+
+      toast.success(data?.message || 'Product added successfully!');
+
+      // ✅ Reset form to default values
+      reset(defaultValues);
+
+    } catch (error) {
+      toast.error('Failed to add product!');
+      console.log(error);
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -97,7 +115,7 @@ const ProductForm = () => {
 
                 {/* Price */}
                 <div>
-                  <label className="block text-sm text-end font-medium text-gray-700 mb-1">Price (₹)</label>
+                  <label className="block text-sm md:text-end font-medium text-gray-700 mb-1">Price (₹)</label>
                   <input
                     type="number"
                     placeholder="0"
@@ -254,15 +272,17 @@ const ProductForm = () => {
                         control={control}
                         render={({ field }) => (
                           <div className="flex items-center rounded-md justify-between px-1.5 border-gray-300 border gap-2">
-                            <div className='flex items-center py-1 gap-2'>
+                            <div className='flex items-center py-1 md:gap-2 gap-1'>
                               <input
                                 type="color"
                                 {...field}
-                                className="w-5 h-6  border-gray-300 cursor-pointer"
+                                className="w-5 h-6 border-gray-300 cursor-pointer"
                               />
                               <span className="text-xs text-gray-600">{field.value}</span>
                             </div>
-                            <img src="/assets/color-wheel.png" alt="" className="w-6 h-6 " />
+
+                            <img src="/assets/color-wheel.png" alt="" className="md:w-6 md:h-6 w-4 h-4" />
+
                           </div>
                         )}
                       />
@@ -275,7 +295,7 @@ const ProductForm = () => {
                       </label>
                       <select
                         {...register(`variants.${index}.size`)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm cursor-pointer"
                       >
                         <option value="xl">xl</option>
                         <option value="l">l</option>
@@ -291,7 +311,7 @@ const ProductForm = () => {
                       </label>
                       <select
                         {...register(`variants.${index}.stock`)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm cursor-pointer"
                       >
                         {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                           <option key={num} value={num}>{num}</option>
@@ -314,7 +334,7 @@ const ProductForm = () => {
                           register(`variants.${index}.actual_price`).onChange(e);
                           handleVariantPriceChange(index);
                         }}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm cursor-pointer "
                       />
                     </div>
 
@@ -331,11 +351,11 @@ const ProductForm = () => {
                             min: { value: 0, message: 'Offer must be positive' },
                             max: { value: 100, message: 'Max 100' }
                           })}
-                          className="w-16 px-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                          className="w-16 px-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm cursor-pointer "
                         />
                         <select
                           {...register(`variants.${index}.offer_type`)}
-                          className="flex-1 px-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-xs"
+                          className="flex-1 px-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-xs cursor-pointer"
                         >
                           <option value="percentage">%</option>
                           <option value="flat">₹</option>
