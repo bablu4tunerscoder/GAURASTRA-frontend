@@ -124,7 +124,7 @@ export default function Billing() {
             const variantId = qr.variant_id;
 
             const { data } = await axiosInstance.get(
-                `/api/offline/products/${productId}/variantw//${variantId}`, {
+                `/api/offline/products/w/${productId}/variant/${variantId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

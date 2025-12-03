@@ -1,10 +1,9 @@
+import { Providers } from "@/Redux/provider";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import { Providers } from "@/Redux/provider";
 
 import ToasterProvider from "@/components/ToasterProvider";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,6 +20,7 @@ export const metadata = {
   description: "Gaurastra ecommerce website",
 };
 
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -33,11 +33,11 @@ export default function RootLayout({ children }) {
           {/* <DiscountPopup /> */}
 
           {/* Header */}
-          <Header />
+
           <main className="pt-16 max-w-7xl mx-auto min-h-[50vh] md:px-6">
             {children}
           </main>
-          <Footer />
+          {/* <Footer /> */}
         </Providers>
       </body>
     </html>
