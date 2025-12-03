@@ -28,10 +28,13 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
       >
         <Providers>
-          <ToasterProvider /> 
+          <ToasterProvider />
+          {/* Discount Popup */}
+          {/* <DiscountPopup /> */}
+
           {/* Header */}
           <Header />
-          <main className="pt-16 max-w-7xl mx-auto min-h-[50vh] md:px-6 px-2 ">
+          <main className="pt-16 max-w-7xl mx-auto min-h-[50vh] md:px-6">
             {children}
           </main>
           <Footer />

@@ -1,10 +1,10 @@
 "use client";
-import React ,{ useState , useEffect} from "react";
 import axiosInstance from "@/Helper/axiosinstance";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,34 +14,34 @@ export default function LoginPage() {
 
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const payload = { email, password };
+    try {
+      const payload = { email, password };
 
-    const { data } = await axiosInstance.post(
-      `/api/offline/user/login`,
-      payload
-    );
+      const { data } = await axiosInstance.post(
+        `/api/offline/user/login`,
+        payload
+      );
 
-    if (data) {
+      if (data) {
 
-      sessionStorage.setItem("offline_user", JSON.stringify(data.data));
-      sessionStorage.setItem("offline_access_token", data.token); 
-      setTimeout(()=>{
-        window.location.href = "/offline/dashboard";
-      },0)
-      
+        sessionStorage.setItem("offline_user", JSON.stringify(data.data));
+        sessionStorage.setItem("offline_access_token", data.token);
+        setTimeout(() => {
+          window.location.href = "/offline/dashboard";
+        }, 0)
+
+      }
+
+    } catch (err) {
+      console.log("error", err);
+      toast.error(err.response?.data?.message || "Login failed");
     }
 
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Login failed");
-    console.log("error", err);
-  }
-
-  setLoading(false);
-};
+    setLoading(false);
+  };
 
 
   return (

@@ -1,12 +1,11 @@
 "use client";
 
 // Everything in ONE file — all components created locally (NO external components)
+import React, { useState, useRef, useEffect } from "react";
+import QrScanner from "qr-scanner";
 import axiosInstance from "@/Helper/axiosinstance";
 import { openPrintWindow } from "@/utils/openPrintWindow";
-import { CreditCard, FileCheck, IndianRupee, Mail, MapPin, Minus, Phone, Plus, RotateCcw, Scan, ShoppingCart, Trash2, User } from "lucide-react";
-import QrScanner from "qr-scanner";
-import { useEffect, useRef, useState } from "react";
-import useSessionAuth from "../../hook/useSessionAuth";
+import { CreditCard, IndianRupee, MapPin, Phone, Scan, User, ShoppingCart, Plus, Minus, Trash2, Calculator, FileCheck, RotateCcw } from "lucide-react";
 
 // Local Button Component
 const Button = ({ children, className = "", ...props }) => {
@@ -28,8 +27,6 @@ export default function Billing() {
     const scannerRef = useRef(null);
     const [billingPreview, setBillingPreview] = useState(null);
     const [paymentMethod, setPaymentMethod] = useState("cod");
-
-    const { token } = useSessionAuth();
 
     const [userInfo, setUserInfo] = useState({
         full_name: "",
@@ -124,11 +121,7 @@ export default function Billing() {
             const variantId = qr.variant_id;
 
             const { data } = await axiosInstance.get(
-                `/api/offline/products/${productId}/variant/${variantId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+                `/api/offline/products/${productId}/variant/${variantId}`
             );
 
             const cartItem = {
@@ -158,11 +151,7 @@ export default function Billing() {
             };
 
             const { data } = await axiosInstance.post(`/api/offline/billing/calculate`,
-                payload, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+                payload
             );
             setBillingPreview(data.preview);
             // console.log('data', data.preview)
@@ -187,16 +176,14 @@ export default function Billing() {
             };
 
 
+            console.log(payload)
 
             const { data } = await axiosInstance.post(
                 `/api/offline/billing/create`,
-                payload, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
+                payload
             );
 
+            // console.log("Bill Created:", data);
             openPrintWindow(data.data);
 
 
@@ -204,35 +191,13 @@ export default function Billing() {
             console.error(err);
         }
     };
+
     useEffect(() => {
         CalculatePrice();
     }, [cart]);
-    // dummy data for preview
-    const invoiceData = {
-        billTo: {
-            name: "Shweta rani",
-            phone: "+91 9876543210",
-            address: "432999, 1791, Near Dwarkagiri, Indore, 1791, Near Dwarkagiri, Indore, Punjab, Cash on Delivery"
-        },
-        date: {
-            invoice: "June 26, 2025",
-            due: "July 30, 2025"
-        },
-        items: [
-            {
-                id: 1,
-                product: "Baby T-Shirt(green,M)",
-                quantity: 2,
-                price: 400,
-                total: 800
-            }
-        ],
-        subtotal: 1160,
-        tax: 209,
-        total: 1369
-    };
+
     return (
-        <div className="min-h-screen bg-gray-50  p-6">
+        <div className="min-h-screen bg-gray-50 md:p-6 px-2 py-6">
             <div className="flex items-center gap-3 mb-4">
                 {/* Icon */}
                 <div className="bg-blue-600 md:p-3 p-2 shadow-lg rounded-2xl flex items-center justify-center">
@@ -248,10 +213,7 @@ export default function Billing() {
                 </div>
             </div>
 
-
-
             <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-4">
-                {/* left */}
                 <div className="md:space-y-8 space-y-4" >
                     <div className="bg-white shadow rounded-2xl p-6 space-y-4">
                         <div className="flex gap-2">
@@ -286,7 +248,6 @@ export default function Billing() {
                             </div>
                         )}
                     </div>
-                    {/* consumer details */}
                     <div className="bg-white shadow rounded-2xl p-6 space-y-4">
                         <div className="space-y-6">
 
@@ -317,7 +278,7 @@ export default function Billing() {
                                 <div className="relative mt-1">
                                     <Phone className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                                     <input
-                                        type="number"
+                                        type="text"
                                         className="w-full border border-gray-200 rounded-lg pl-9 pr-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                         placeholder="Enter phone number"
                                         value={userInfo.phone}
@@ -337,7 +298,7 @@ export default function Billing() {
                             {/* Pincode + City */}
                             <div className="grid grid-cols-2 gap-3">
                                 <input
-                                    type="number"
+                                    type="text"
                                     className="border border-gray-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                     placeholder="Pincode"
                                     value={address.pincode}
@@ -399,9 +360,9 @@ export default function Billing() {
                     </div>
                 </div>
 
-                {/* right */}
-                <div className="rounded-xl overflow-hidden space-y-4">
-                    <div className="bg-white p-6 rounded-2xl overflow-hidden shadow-md">
+
+                <div className="rounded-2xl overflow-hidden">
+                    <div className="bg-white p-6 rounded-2xl overflow-hidden">
                         {/* Header */}
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 font-medium text-gray-700 text-lg">
@@ -446,6 +407,7 @@ export default function Billing() {
                                         {/* Total */}
                                         <div className="col-span-2 text-right flex items-center justify-end gap-4 text-gray-700">
                                             ₹{item.discounted_price * item.qty}
+                                            <Trash2 className="w-4 h-4 text-gray-400 cursor-pointer hover:text-red-500" />
                                         </div>
                                     </div>
                                 )) : <div className="grid grid-cols-12 items-center py-4 border-b">
@@ -485,6 +447,11 @@ export default function Billing() {
 
                         {/* Footer Buttons */}
                         <div className="mt-6 flex justify-between md:flex-row flex-col gap-4">
+                            <button onClick={CalculatePrice} className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-lg flex items-center justify-center gap-2">
+                                <Calculator className="w-4 h-4" />
+                                Calculate
+                            </button>
+
                             <button onClick={GenrateBill} className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg flex items-center justify-center gap-2">
                                 <FileCheck className="w-4 h-4" />
                                 Generate Bill
@@ -497,160 +464,169 @@ export default function Billing() {
                         </div>
                     </div>
 
-                    {/* preview */}
+                    <div className=" grid gap-5 grid-cols-2 text-black p-5 rounded-xl border">
 
-                    <div className="p-6 bg-white rounded-lg shadow-lg overflow-hidden space-y-6">
-                        {/* Header */}
-                        <div className="bg-blue-600 text-white p-6 rounded-xl">
-                            <div className="flex items-start justify-between">
-                                <div className="flex w-full justify-end gap-4 relative">
-                                    <div >
-                                        <h1 className="text-xl font-bold">Gaurastra</h1>
-                                        <div className="flex items-center gap-1 text-sm mt-1">
-                                            <Mail className="w-3 h-3" />
-                                            <span>www.gaurastra.com</span>
-                                        </div>
-                                        <div className="flex items-center gap-1 text-sm">
-                                            <Phone className="w-3 h-3" />
-                                            <span>+91 9522041550</span>
-                                        </div>
-                                    </div>
-                                    <div >
-                                        <span className="text-xs">1701, <br /> New Dwarkapuri,<br /> Pincode: 452009, Indore</span>
-                                    </div>
-                                    <div >
+                        <h2 className="text-xl col-span-2 font-semibold mb-2">Customer Details</h2>
 
-                                        <button className="bg-white text-blue-600 px-4 py-2 rounded-full text-sm font-semibold">
-                                            Contact us
-                                        </button>
-                                    </div>
-                                    {/* logo part */}
-                                    <div className="absolute left-12 -bottom-16 bg-white text-black border-black border -translate-x-1/2 p-2 w-24 h-24 text-center rounded-2xl flex flex-col items-center gap-1">
-                                        <img src="/assets/loginbg.webp" className="w-12 h-12 rounded-xl overflow-hidden" alt="" />
-                                        <h2>Gaurastra</h2>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <input
+                            type="text"
+                            placeholder="Full Name"
+                            className="border p-3 rounded-lg w-full"
+                            value={userInfo.full_name}
+                            onChange={(e) => setUserInfo({ ...userInfo, full_name: e.target.value })}
+                        />
 
-                        {/* Bill To and Date Section */}
-                        <div className="flex flex-col md:flex-row justify-end w-full">
+                        <input
+                            type="text"
+                            placeholder="Phone Number"
+                            className="border p-3 rounded-lg w-full"
+                            value={userInfo.phone}
+                            onChange={(e) => setUserInfo({ ...userInfo, phone: e.target.value })}
+                        />
 
-                            {/* RIGHT SIDE WRAPPER */}
-                            <div className="px-6 py-4 flex flex-col md:flex-row gap-6 w-full md:w-2/3">
+                        <h2 className=" col-span-2 text-xl font-semibold mt-5 mb-2">Address</h2>
 
-                                {/* Bill To */}
-                                <div className="flex-1 border-r border-gray-200 space-y-1">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-gray-600 text-sm flex gap-1"><User size={18} /> Bill To:</span>
-                                    </div>
-                                    <p className="text-sm font-semibold text-gray-800">{userInfo.full_name}</p>
-                                    <p className="text-xs text-gray-600">{userInfo.phone}</p>
-                                    <p className="text-xs text-gray-600 leading-tight">
-                                        {address.pincode}
-                                    </p>
-                                    <p className="text-xs text-gray-600 leading-tight">
-                                        {[
-                                            address.address_line1,
-                                            address.address_line2,
-                                            address.city
-                                        ].filter(Boolean).join(", ")}
-                                    </p>
-                                    <p className="text-xs text-gray-600 leading-tight">
-                                        {address.state}
-                                    </p>
-                                </div>
+                        <input
+                            type="text"
+                            placeholder="Pincode"
+                            className="border p-3 rounded-lg w-full"
+                            value={address.pincode}
+                            onChange={(e) => setAddress({ ...address, pincode: e.target.value })}
+                        />
 
-                                {/* Date */}
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-gray-600 text-sm">📅 Date:</span>
-                                    </div>
-                                    <p className="text-xs text-gray-600">
-                                        <span className="font-semibold">Invoice Date:</span> {new Date().toDateString()}
-                                    </p>
-                                    <p className="text-xs text-gray-600 mt-1">
-                                        <span className="font-semibold">Due date:</span> {invoiceData.date.due}
-                                    </p>
-                                </div>
+                        <input
+                            type="text"
+                            placeholder="Address Line 1"
+                            className="border p-3 rounded-lg w-full"
+                            value={address.address_line1}
+                            onChange={(e) => setAddress({ ...address, address_line1: e.target.value })}
+                        />
 
-                            </div>
+                        <input
+                            type="text"
+                            placeholder="Address Line 2"
+                            className="border p-3 rounded-lg w-full"
+                            value={address.address_line2}
+                            onChange={(e) => setAddress({ ...address, address_line2: e.target.value })}
+                        />
 
-                        </div>
+                        <input
+                            type="text"
+                            placeholder="City"
+                            className="border p-3 rounded-lg w-full"
+                            value={address.city}
+                            onChange={(e) => setAddress({ ...address, city: e.target.value })}
+                        />
 
+                        <input
+                            type="text"
+                            placeholder="State"
+                            className="border p-3 rounded-lg w-full"
+                            value={address.state}
+                            onChange={(e) => setAddress({ ...address, state: e.target.value })}
+                        />
 
-                        {/* Table */}
-                        <div className="mt-4">
-                            <div className="grid grid-cols-12 text-gray-600 text-sm font-semibold border-b pb-2">
-                                <div className="col-span-6">Product</div>
-                                <div className="col-span-2 text-center">Quantity</div>
-                                <div className="col-span-2 text-right">Price</div>
-                                <div className="col-span-2 text-right">Total</div>
-                            </div>
-                            {/* Cart Items */}
-                            {
-                                cart.length > 0 ? cart.map((item, index) => (
-                                    <div className="grid grid-cols-12 items-center py-4 border-b">
-                                        <div className="col-span-6 font-medium text-gray-700">
-                                            {item.title}
-                                        </div>
-
-                                        {/* Qty */}
-                                        <div className="col-span-2 flex items-center justify-center gap-2">
-
-                                            <span className="text-gray-700 font-medium">{item.qty}</span>
-
-                                        </div>
-
-                                        {/* Price */}
-                                        <div className="col-span-2 text-right text-gray-700">₹{item.discounted_price}</div>
-
-                                        {/* Total */}
-                                        <div className="col-span-2 text-right flex items-center justify-end gap-4 text-gray-700">
-                                            ₹{item.discounted_price * item.qty}
-                                        </div>
-                                    </div>
-                                )) : <div className="grid grid-cols-12 items-center py-4 border-b">
-                                    <div className="col-span-6 font-medium text-gray-700">
-                                        Your cart is empty
-                                    </div>
-                                </div>
-                            }
-                        </div>
-
-
-                        {/* Total Section */}
-                        <div className="px-6 pb-6 ">
-                            <div className="bg-blue-500 text-white rounded-2xl p-6">
-                                <div className="flex justify-between items-center mb-3">
-                                    <span className="text-sm">Subtotal</span>
-                                    <span className="text-sm">₹{billingPreview?.subtotal || 0}</span>
-                                </div>
-                                <div className="flex justify-between items-center mb-4 pb-4 border-b border-blue-400">
-                                    <span className="text-sm">TAX</span>
-                                    <span className="text-sm">₹{billingPreview?.tax || 0}</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-lg font-semibold">Invoice Total</span>
-                                    <span className="text-2xl font-bold">₹{billingPreview?.total_amount || 0}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Watermark */}
-                        <div className="relative pb-6">
-                            <div className="absolute right-6 bottom-6 text-gray-300 text-4xl font-bold opacity-20 rotate-[-15deg]">
-                                Gaurastra
-                            </div>
-                            <div className="absolute right-8 bottom-8 flex gap-1">
-                                <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                                <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-                                <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                            </div>
+                        <div className="col-span-2 mt-4">
+                            <label className="font-semibold text-gray-700">Payment Method</label>
+                            <select
+                                className="w-full border border-gray-200 p-3 mt-1 rounded-lg"
+                                value={paymentMethod}
+                                onChange={(e) => setPaymentMethod(e.target.value)}
+                            >
+                                <option value="cod">Cash on Delivery</option>
+                                <option value="card">Card</option>
+                                <option value="online">Online</option>
+                            </select>
                         </div>
                     </div>
 
+                    <div>
+                        {cart.length > 0 && (
+                            <div className="">
+                                <h2 className="text-xl font-semibold mb-3">Products</h2>
+
+                                <div className="rounded-xl overflow-hidden shadow border bg-white">
+                                    <table className="w-full text-sm">
+                                        <thead className="bg-gray-100 border-b">
+                                            <tr>
+                                                <th className="p-3 text-left">Name</th>
+                                                <th className="p-3 text-left">Qty</th>
+                                                <th className="p-3 text-left">Price</th>
+                                                <th className="p-3 text-left">Total</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {cart.map((item) => (
+                                                <tr key={item._id} className="border-b hover:bg-gray-50">
+                                                    <td className="p-3 font-medium">{item.title}</td>
+
+                                                    <td className="p-3 flex items-center gap-3">
+                                                        <Button
+                                                            onClick={() => decreaseQty(item.id)}
+                                                            className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-black"
+                                                        >
+                                                            -
+                                                        </Button>
+
+                                                        <span className="min-w-[20px] text-center font-medium">{item.qty}</span>
+
+                                                        <Button
+                                                            onClick={() => increaseQty(item.id)}
+                                                            className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-black"
+                                                        >
+                                                            +
+                                                        </Button>
+                                                    </td>
+
+                                                    <td className="p-3">₹{item.discounted_price}</td>
+                                                    <td className="p-3 font-semibold">₹{item.discounted_price * item.qty}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {
+                        cart.length != 0 && <div className="flex justify-between gap-6 pt-10">
+                            <Button
+                                onClick={CalculatePrice}
+                                className="w-full mt-4 py-3 rounded-xl bg-yellow-700 hover:bg-yellow-800 text-white"
+                            >
+                                Calculate Price
+                            </Button>
+                            <Button
+                                onClick={GenrateBill}
+                                className="w-full mt-4 py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white"
+                            >
+                                Get Billing
+                            </Button>
+
+                            <Button
+                                onClick={() => window.location.reload()}
+                                className="w-full max-w-[130px] mt-4 py-3 rounded-xl  bg-red-600 hover:bg-red-700 text-white"
+                            >
+                                New Billing
+                            </Button>
+                        </div>
+                    }
+
+                    {billingPreview && (
+                        <div className="mt-6 bg-gray-100 p-4 rounded-xl  shadow-sm border text-right">
+                            <p className="text-lg font-medium">
+                                Subtotal: ₹{billingPreview.subtotal}
+                            </p>
+                            <p className="text-lg font-medium">
+                                Tax: ₹{billingPreview.tax}
+                            </p>
+                            <p className="text-2xl font-bold mt-2">
+                                Total: ₹{billingPreview.total_amount}
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

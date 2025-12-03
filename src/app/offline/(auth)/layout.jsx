@@ -11,7 +11,7 @@ export default function AuthLayout({ children }) {
     }
   }, [loading, isAuthenticated]);
 
-  if (loading) return null; 
+  if (loading) return null;
 
   return <>{children}</>;
 }

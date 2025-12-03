@@ -16,16 +16,15 @@ export default function MainLayout({ children }) {
     }
   }, [loading, isAuthenticated]);
 
-  if (loading) return null; 
+  if (loading) return null;
 
   return (
     <div className="flex min-h-screen bg-gray-100">
 
       {/* SIDEBAR */}
       <div
-        className={`${
-          open ? "w-60" : "w-20"
-        } bg-white shadow-lg p-4 pt-6 transition-all duration-300`}
+        className={`${open ? "w-60" : "w-12"
+          } bg-white shadow-lg p-4 pt-6 transition-all duration-300`}
       >
         <h1 className="text-xl font-bold mb-8 text-blue-600">
           {open ? "Store Panel" : "SP"}
@@ -88,7 +87,7 @@ export default function MainLayout({ children }) {
         </div>
 
         {/* CONTENT */}
-        <div className="p-6">{children}</div>
+        <div>{children}</div>
       </div>
     </div>
   );
