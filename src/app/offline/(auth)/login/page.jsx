@@ -1,112 +1,152 @@
 "use client";
-import axiosInstance from "@/Helper/axiosinstance";
+
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import axiosInstance from "@/Helper/axiosinstance";
 import toast from "react-hot-toast";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (formData) => {
     setLoading(true);
 
     try {
-      const payload = { email, password };
-
       const { data } = await axiosInstance.post(
         `/api/offline/user/login`,
-        payload
+        formData
       );
 
       if (data) {
-
         sessionStorage.setItem("offline_user", JSON.stringify(data.data));
         sessionStorage.setItem("offline_access_token", data.token);
-        setTimeout(() => {
-          window.location.href = "/offline/dashboard";
-        }, 0)
 
+        window.location.href = "/offline/dashboard";
       }
-
     } catch (err) {
-      console.log("error", err);
       toast.error(err.response?.data?.message || "Login failed");
     }
 
     setLoading(false);
   };
 
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
-      <form
-        onSubmit={handleLogin}
-        className="p-6 rounded-2xl bg-white shadow-2xl w-full max-w-sm border"
-      >
-        <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">
-          Login
-        </h2>
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#E8EEF7] to-[#DDE9F8]">
+      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-10 items-center p-6">
 
-        {/* EMAIL */}
-        <div className="mb-4">
-          <label className="block text-black text-sm mb-1 font-medium">Email</label>
-          <div className="flex items-center border rounded-md px-3 gap-2 bg-gray-100">
-            <HiOutlineMail className="text-xl text-gray-500" />
-            <input
-              type="email"
-              className="w-full p-2 bg-transparent text-black outline-none"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+        {/* LEFT SIDE */}
+        <div className="flex flex-col items-center relative">
+
+          {/* RADIAL BLUR GLOW */}
+          <div
+            className="
+      absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+      w-[420px] h-[420px] 
+      rounded-full
+      bg-[radial-gradient(circle,rgba(0,0,255,0.60)_0%,rgba(0,0,255,0.40)_40%,rgba(0,0,255,0)_75%)]
+      blur-[100px]
+      z-10
+    "
+          />
+
+          {/* IMAGE */}
+          <img
+            src="/assets/login-illustration.png"
+            alt="Fashion Tech"
+            className="w-[380px] md:w-[480px] absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          />
         </div>
 
-        {/* PASSWORD */}
-        <div className="mb-6">
-          <label className="block text-black text-sm mb-1 font-medium">Password</label>
-          <div className="flex items-center border rounded-md px-3 gap-2 bg-gray-100">
-            <RiLockPasswordLine className="text-xl text-gray-500" />
 
-            <input
-              type={showPassword ? "text" : "password"}
-              className="w-full p-2 text-black bg-transparent outline-none"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
 
-            {/* Toggle Icon */}
+        {/* RIGHT SIDE */}
+        <div className="w-full flex justify-center">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="w-full max-w-md p-8 space-y-4"
+          >
+            <h2 className="text-xl md:text-2xl font-bold text-center text-blue-600">
+              LOGIN
+            </h2>
+            <p className="text-gray-500 text-sm ">
+              Access your dashboard and manage your fashion store with ease
+            </p>
+
+            {/* EMAIL */}
+            <div className="">
+              <label className="text-sm font-medium text-gray-600">Email</label>
+              <div className="flex items-center mt-1 bg-white  rounded-lg px-3 gap-2">
+                <HiOutlineMail className="text-xl text-gray-500" />
+                <input
+                  {...register("email", { required: "Email is required" })}
+                  type="email"
+                  className="w-full p-3 bg-transparent outline-none text-black"
+                  placeholder="Enter your email"
+                />
+              </div>
+              {errors.email && (
+                <p className="text-red-500 text-xs ">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            {/* PASSWORD */}
+            <div className="">
+              <label className="text-sm font-medium text-gray-600">Password</label>
+              <div className="flex items-center mt-1 bg-white  rounded-lg px-3 gap-2">
+                <RiLockPasswordLine className="text-xl text-gray-500" />
+
+                <input
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
+                  type={showPassword ? "text" : "password"}
+                  className="w-full p-3 bg-transparent outline-none text-black"
+                  placeholder="Enter your password"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="text-gray-600 text-xl"
+                >
+                  {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                </button>
+              </div>
+
+              {errors.password && (
+                <p className="text-red-500 text-xs ">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            {/* LOGIN BUTTON */}
             <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-xl text-gray-600"
+              type="submit"
+              disabled={loading}
+              className={`w-full py-3 rounded-lg text-white font-semibold shadow-md transition-all
+                ${loading ? "bg-blue-400" : "bg-gradient-to-r from-blue-500 to-blue-700 hover:opacity-90"}
+              `}
             >
-              {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+              {loading ? "Logging in..." : "Login Now"}
             </button>
-          </div>
-        </div>
 
-        {/* SUBMIT BUTTON */}
-        <button
-          type="submit"
-          disabled={loading}
-          className={`w-full py-2 rounded-md text-white font-medium transition 
-            ${loading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"}
-          `}
-        >
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
