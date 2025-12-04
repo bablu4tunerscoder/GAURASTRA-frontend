@@ -3,7 +3,7 @@
 // Everything in ONE file — all components created locally (NO external components)
 import axiosInstance, { axiosInstanceWithOfflineToken } from "@/Helper/axiosinstance";
 import { openPrintWindow } from "@/utils/openPrintWindow";
-import { CreditCard, FileCheck, IndianRupee, Mail, MapPin, Minus, Phone, Plus, RotateCcw, Scan, ShoppingCart, Trash2, User } from "lucide-react";
+import { ChevronDown, CreditCard, Eye, FileCheck, IndianRupee, Mail, MapPin, Minus, Phone, Plus, RotateCcw, Scan, ShoppingCart, Trash2, User } from "lucide-react";
 import QrScanner from "qr-scanner";
 import { useEffect, useRef, useState } from "react";
 import useSessionAuth from "../../hook/useSessionAuth";
@@ -201,7 +201,6 @@ export default function Billing() {
 
         } catch (err) {
             toast.error(err?.response?.data?.message || "No items available for sale");
-            console.error("errorwala", err);
         }
     };
     useEffect(() => {
@@ -249,7 +248,6 @@ export default function Billing() {
             </div>
 
 
-
             <div className="grid grid-cols-1 md:grid-cols-[30%_70%] gap-4">
                 {/* left */}
                 <div className="md:space-y-8 space-y-4" >
@@ -270,6 +268,7 @@ export default function Billing() {
                             }
 
                         </Button>
+
 
                         {isScannerOpen && (
                             <div className="mt-6">
@@ -497,19 +496,21 @@ export default function Billing() {
                         </div>
                     </div>
 
-
+                    <h2 className="text-lg flex gap-2 font-bold mb-4 bg-white shadow-lg rounded px-4 py-2">
+                        <Eye className="text-blue-500" />
+                        Invoice Preview ⬇️
+                    </h2>
                     {/* preview */}
-                    <div className="w-full min-h-screen bg-[url('/assets/invoicebg.png')] bg-cover bg-no-repeat bg-center text-white relative overflow-hidden">
+                    <div className="max-w-3xl min-h-screen bg-[url('/assets/invoicebg.png')] bg-cover bg-no-repeat bg-center text-white relative overflow-hidden rounded-2xl">
 
 
                         {/* Main Wrapper */}
-                        <div className="relative z-10 p-6 max-w-3xl mx-auto space-y-2">
+                        <div className="relative z-10 p-6 pb-20 max-w-3xl mx-auto space-y-2">
 
                             {/* Header */}
                             <div className="text-right space-y-1 flex justify-between">
                                 <div className="w-24 overflow-hidden rounded-full h-24">
-
-                                    <img src="/assets/loginbg.webp" className="rounded-full w-32 -rotate-[25deg]" alt="" />
+                                    <img src="/assets/logo.png" className="rounded-full w-32" alt="" />
                                 </div>
 
                                 <div className="space-y-1">
@@ -526,10 +527,10 @@ export default function Billing() {
                             </div>
 
                             {/* Bill To + Payable To */}
-                            <div className="grid grid-cols-2 gap-4 mb-10">
+                            <div className="grid grid-cols-2 gap-4 mb-6">
 
                                 {/* Bill To */}
-                                <div className="bg-[#2a2a2a] rounded-lg p-4 space-y-1">
+                                <div className="bg-[#505050] rounded p-4 space-y-1">
                                     <h3 className="text-lg font-semibold text-yellow-400">Bill to:</h3>
 
                                     <p className="font-semibold">{userInfo.full_name}</p>
@@ -540,7 +541,7 @@ export default function Billing() {
                                 </div>
 
                                 {/* Payable To */}
-                                <div className="bg-[#2a2a2a] rounded-lg p-4 space-y-1">
+                                <div className="bg-[#505050] rounded p-4 space-y-1">
                                     <h3 className="text-lg font-semibold text-yellow-400">Payable to:</h3>
 
                                     <p className="font-semibold">Gaurastra</p>
@@ -552,47 +553,54 @@ export default function Billing() {
 
 
                             {/* Product Table */}
-                            <table className="w-full text-sm mb-6">
+                            <table className="w-full text-sm">
                                 <thead>
                                     <tr className="bg-yellow-500 text-black">
-                                        <th className="py-2 px-3 text-left w-10">No</th>
-                                        <th className="py-2 px-3 text-left">Items</th>
-                                        <th className="py-2 px-3 text-center w-20">QTY</th>
-                                        <th className="py-2 px-3 text-right w-24">Price</th>
+                                        <th className="p-3 text-left w-10">No</th>
+                                        <th className="p-3 text-left">Items</th>
+                                        <th className="p-3 text-center w-20">QTY</th>
+                                        <th className="p-3 text-right w-24">Price</th>
                                     </tr>
                                 </thead>
 
-                                <tbody>
+                                <tbody
+                                    className="[&>tr:nth-child(2n)]:bg-transparent [&>tr:nth-child(2n+1)]:bg-[#505050]
+  "
+                                >
                                     {cart.map((item, idx) => (
-                                        <tr key={idx} className="border-b border-gray-700">
-                                            <td className="py-2 px-3">{idx + 1}</td>
-                                            <td className="py-2 px-3">{item.title}</td>
-                                            <td className="py-2 px-3 text-center">{item.qty}</td>
-                                            <td className="py-2 px-3 text-right">₹{item.qty * item.discounted_price}</td>
+                                        <tr key={idx} className="py-10">
+                                            <td className="p-3">{idx + 1}</td>
+                                            <td className="p-3">{item.title}</td>
+                                            <td className="p-3 text-center">{item.qty}</td>
+                                            <td className="p-3 text-right">₹{item.qty * item.discounted_price}</td>
                                         </tr>
                                     ))}
                                 </tbody>
+
+
                             </table>
 
                             {/* Total Box */}
                             <div className="flex justify-end mb-8">
-                                <div className="bg-yellow-500 text-black px-6 py-3 rounded-lg font-semibold text-lg">
-                                    Total : ₹{billingPreview?.total_amount}
+                                <div className="space-y-3">
+                                    <div className="bg-yellow-500 text-black px-6 py-2 rounded-sm font-semibold text-lg">
+                                        Total : ₹{billingPreview?.total_amount}
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg mb-2 font-semibold-400">Terms Conditions</h3>
+                                        <p className="text-sm  leading-relaxed">
+                                            No Return, <br />
+                                            No Exchange, <br />
+                                            No Guarantee.
+                                        </p>
+                                    </div>
                                 </div>
+
                             </div>
 
-                            {/* Terms Conditions */}
-                            <div className="mb-10">
-                                <h3 className="text-lg font-semibold text-yellow-400">Terms Conditions</h3>
-                                <p className="text-sm mt-2 leading-relaxed">
-                                    No Return, <br />
-                                    No Exchange, <br />
-                                    No Guarantee.
-                                </p>
-                            </div>
 
                             {/* Footer */}
-                            <div className="text-center space-y-2">
+                            <div className="text-center space-y-2 pb-10">
                                 <div className="flex justify-center gap-3 text-sm text-gray-300">
                                     <span>📞 +91-9522474600</span>
                                     <span>🌐 www.Gaurastra.com</span>
@@ -600,14 +608,12 @@ export default function Billing() {
 
                                 <p className="text-sm text-gray-400">📍 1701, New Dwarkapuri Indore</p>
 
-                                <h2 className="text-3xl mt-2 italic text-yellow-400 font-semibold">
-                                    Thank You!
-                                </h2>
+                                <img src="/assets/thank-you.png" className="absolute -z-10 bottom-10 h-32 right-8 mx-auto" alt="" />
                             </div>
+                            {/* thanks logo */}
                         </div>
+
                     </div>
-
-
                 </div>
             </div>
         </div>

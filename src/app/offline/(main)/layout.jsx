@@ -8,7 +8,7 @@ import { FiHome, FiLogOut, FiShoppingBag } from "react-icons/fi";
 import useSessionAuth from "../hook/useSessionAuth";
 
 export default function MainLayout({ children }) {
-  const [open, setOpen] = useState();
+  const [open, setOpen] = useState(true);
   const { isAuthenticated, loading, logout, user } = useSessionAuth();
 
   useEffect(() => {

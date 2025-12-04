@@ -20,9 +20,19 @@ export function Providers({ children }) {
       {!isOfflineRoute && <Header />}
 
       {!isOfflineRoute && <DiscountPopup />}
-      <div className='-mt-16'>
-        {children}
-      </div>
+      {
+        isOfflineRoute ?
+
+          <main>
+            {children}
+          </main> :
+
+          <main className="pt-16 max-w-7xl mx-auto min-h-[50vh]">
+            {children}
+          </main>
+      }
+
+
       {!isOfflineRoute && <Footer />}
       {/* <Footer /> */}
 
