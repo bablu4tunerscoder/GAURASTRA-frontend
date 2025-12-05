@@ -1,5 +1,6 @@
 'use client'
 
+import UploadImageGetUrl from '@/components/UploadImageGetUrl';
 import { axiosInstanceWithOfflineToken } from '@/Helper/axiosinstance';
 import { Box, Image, Plus, Trash2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -7,10 +8,12 @@ import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
+const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
+
 export default function ProductForm() {
 
     const params = useParams();
-    const editId = params?.id;   // ⭐ Comes from URL
+    const editId = params?.id;
 
     const defaultValues = {
         title: '',
@@ -138,6 +141,7 @@ export default function ProductForm() {
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
+            <UploadImageGetUrl />
             <div className="space-y-6">
 
                 {/* Header */}
@@ -358,10 +362,9 @@ export default function ProductForm() {
                                             defaultValue={watch(`variants.${index}.size`).toLocaleLowerCase()}
                                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm cursor-pointer"
                                         >
-                                            <option value="xl">XL</option>
-                                            <option value="l">L</option>
-                                            <option value="m">M</option>
-                                            <option value="s">S</option>
+                                            {sizeOptions.map((s) => (
+                                                <option key={s} value={s.toLowerCase()}>{s}</option>
+                                            ))}
                                         </select>
                                     </div>
 
@@ -370,16 +373,17 @@ export default function ProductForm() {
                                         <label className="block text-xs font-medium text-gray-700 mb-1">
                                             Stock
                                         </label>
-                                        <select
-                                            {...register(`variants.${index}.stock`)}
-                                            defaultValue={watch(`variants.${index}.stock`)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm cursor-pointer"
-                                        >
-                                            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
-                                                <option key={n} value={n}>{n}</option>
-                                            ))}
-                                        </select>
+
+                                        <input
+                                            type="number"
+                                            min={0}
+                                            {...register(`variants.${index}.stock`, { valueAsNumber: true })}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg 
+                   focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
+                   outline-none text-sm"
+                                        />
                                     </div>
+
 
                                     {/* Price */}
                                     <div>

@@ -23,8 +23,8 @@ export default function MainLayout({ children }) {
   const menuItems = [
     { icon: Home, label: "Dashboard", href: "/offline/dashboard" },
     { icon: Receipt, label: "Billing", href: "/offline/billing" },
-    { icon: Boxes, label: "Products", href: "/offline/add-products" },
-    { icon: ShoppingBag, label: "Products View", href: "/offline/view-products" },
+    { icon: Boxes, label: "Add Products", href: "/offline/add-products" },
+    { icon: ShoppingBag, label: "View Products", href: "/offline/view-products" },
   ];
 
   return (

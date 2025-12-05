@@ -1,10 +1,13 @@
 'use client'
 
+import UploadImageGetUrl from '@/components/UploadImageGetUrl';
 import { axiosInstanceWithOfflineToken } from '@/Helper/axiosinstance';
 import { Box, Image, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+
+const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
 
 const ProductForm = () => {
   const defaultValues = {
@@ -79,7 +82,7 @@ const ProductForm = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-
+      <UploadImageGetUrl />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
@@ -297,10 +300,9 @@ const ProductForm = () => {
                       {...register(`variants.${index}.size`)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm cursor-pointer"
                     >
-                      <option value="xl">xl</option>
-                      <option value="l">l</option>
-                      <option value="m">m</option>
-                      <option value="s">s</option>
+                      {sizeOptions.map(size => (
+                        <option key={size} value={size.toLowerCase()}>{size}</option>
+                      ))}
                     </select>
                   </div>
 
@@ -309,15 +311,17 @@ const ProductForm = () => {
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Stock
                     </label>
-                    <select
-                      {...register(`variants.${index}.stock`)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm cursor-pointer"
-                    >
-                      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
-                        <option key={num} value={num}>{num}</option>
-                      ))}
-                    </select>
+
+                    <input
+                      type="number"
+                      min={0}
+                      {...register(`variants.${index}.stock`, { valueAsNumber: true })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg 
+               focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
+               outline-none text-sm"
+                    />
                   </div>
+
 
                   {/* Price */}
                   <div>
