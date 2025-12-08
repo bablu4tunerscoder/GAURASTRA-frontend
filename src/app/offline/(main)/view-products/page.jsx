@@ -5,7 +5,7 @@ import React from "react";
 
 export default function ProductsPage() {
     return (
-        <div className="p-6">
+        <>
             {/* Icon */}
             <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-indigo-100 rounded-xl shadow-md flex items-center justify-center">
@@ -15,6 +15,6 @@ export default function ProductsPage() {
             </div>
 
             <ProductsTable />
-        </div>
+        </>
     );
 }

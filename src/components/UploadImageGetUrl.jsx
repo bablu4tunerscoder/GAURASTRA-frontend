@@ -2,10 +2,10 @@
 import { axiosInstanceWithOfflineToken } from "@/Helper/axiosinstance";
 import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { ImageUp, Copy } from "lucide-react";
+import { ImageUp, Copy, X } from "lucide-react";
 import toast from "react-hot-toast";
 
-const UploadImageGetUrl = ({ onImageUploaded }) => {
+const UploadImageGetUrl = ({ onImageUploaded = () => { }, handleRemoveUrl = () => { } }) => {
   const {
     register,
     watch,
@@ -15,6 +15,17 @@ const UploadImageGetUrl = ({ onImageUploaded }) => {
   const [imageUrl, setImageUrl] = useState("");
   const fileRef = useRef(null);
   const selectedFile = watch("image");
+
+  const handleCancel = () => {
+    handleRemoveUrl(imageUrl);
+    setImageUrl("");
+    resetField("image");
+
+    if (fileRef.current) {
+      fileRef.current.value = "";
+    }
+
+  };
 
   // Upload only when file changes
   useEffect(() => {
@@ -44,8 +55,7 @@ const UploadImageGetUrl = ({ onImageUploaded }) => {
           fileRef.current.value = "";
         }
       } catch (err) {
-        console.log(err);
-        // Also clear on error so user can retry with same file
+        toast.error(err.response?.data?.message || "Image upload failed");
         resetField("image");
         if (fileRef.current) {
           fileRef.current.value = "";
@@ -64,9 +74,14 @@ const UploadImageGetUrl = ({ onImageUploaded }) => {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className={
+      imageUrl
+        ? "grid md:grid-cols-[1fr_250px_1fr] grid-cols-1 gap-2 mb-2"
+        : "grid md:grid-cols-2 grid-cols-1 gap-2 mb-2"
+    }>
       {/* Upload Box */}
-      <div className="border-dashed border-2 flex items-center justify-center flex-col gap-2 p-3 rounded-md cursor-pointer">
+      <div className="border-dashed border-2 flex justify-center items-center flex-col bg-white gri gap-2 p-3 rounded-md cursor-pointer">
+
         <input
           type="file"
           accept="image/*"
@@ -81,13 +96,23 @@ const UploadImageGetUrl = ({ onImageUploaded }) => {
         <label htmlFor="image-upload" className="cursor-pointer">
           <ImageUp />
         </label>
+
         <label htmlFor="image-upload" className="cursor-pointer text-sm">
           Upload Image
         </label>
       </div>
+      {/* img preview */}
+      {
+        imageUrl && (
+          <div className="relative">
+            <img src={imageUrl} className="object-cover border-dashed border-2 rounded-md overflow-hidden" alt="" />
+            <X onClick={handleCancel} className="absolute hover:bg-red-700 bg-red-500 text-white top-2 right-2 cursor-pointer" />
+          </div>
+        )
+      }
 
       {/* URL Box */}
-      <div className="border-dashed border-2 flex items-center justify-between gap-2 p-3 rounded-md">
+      <div className="border-dashed bg-white border-2 flex items-center justify-between gap-2 p-3 rounded-md">
         <div className="flex flex-col gap-2">
           <p className="text-sm">Image URL</p>
           <p className="text-xs text-gray-500 truncate max-w-[200px]">

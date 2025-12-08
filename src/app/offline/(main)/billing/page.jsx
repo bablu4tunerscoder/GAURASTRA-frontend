@@ -1,13 +1,12 @@
 "use client";
 
 // Everything in ONE file — all components created locally (NO external components)
-import axiosInstance, { axiosInstanceWithOfflineToken } from "@/Helper/axiosinstance";
+import { axiosInstanceWithOfflineToken } from "@/Helper/axiosinstance";
 import { openPrintWindow } from "@/utils/openPrintWindow";
-import { ChevronDown, CreditCard, Eye, FileCheck, IndianRupee, Mail, MapPin, Minus, Phone, Plus, RotateCcw, Scan, ScanQrCode, ShoppingCart, Trash2, User, X } from "lucide-react";
+import { CreditCard, Eye, FileCheck, IndianRupee, MapPin, Minus, Phone, Plus, RotateCcw, Scan, ScanQrCode, ShoppingCart, User, X } from "lucide-react";
 import QrScanner from "qr-scanner";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import useSessionAuth from "../../hook/useSessionAuth";
 import toast from "react-hot-toast";
 
 // Local Button Component
@@ -119,8 +118,7 @@ export default function Billing() {
     const handleScan = async (result) => {
 
         if (!result || !result.data) {
-            console.log("No QR detected");
-            return;
+            return toast.error("No QR detected");
         }
 
         stopScanner();
@@ -194,7 +192,6 @@ export default function Billing() {
                 }
             };
 
-            console.log(payload)
             const { data } = await axiosInstanceWithOfflineToken.post(
                 `/api/offline/billing/create`,
                 payload
@@ -223,11 +220,11 @@ export default function Billing() {
     };
 
     useEffect(() => {
-        CalculatePrice();
+        if (cart.length > 0) CalculatePrice();
     }, [cart]);
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
+        < >
             <div className="flex items-center gap-3 mb-4">
                 {/* Icon */}
                 <div className="bg-blue-600 md:p-3 p-2 shadow-lg rounded-2xl flex items-center justify-center">
@@ -524,6 +521,7 @@ export default function Billing() {
                                         <input
                                             type="text"
                                             value="0"
+                                            readOnly
                                             className="border p-1 rounded-md w-12 text-center"
                                         />
                                         %
@@ -563,7 +561,7 @@ export default function Billing() {
                             Invoice Preview ⬇️
                         </h2>
                         {/* preview */}
-                        <div className="max-w-3xl min-h-screen bg-[url('/assets/invoicebg.png')] bg-cover bg-no-repeat bg-center text-white relative rounded-2xl overflow-hidden flex flex-col">
+                        <div className="max-w-3xl  min-h-screen bg-[url('/assets/invoicebg.png')] bg-cover bg-no-repeat bg-center text-white relative rounded-2xl overflow-hidden flex flex-col">
 
                             {/* MAIN CONTENT (fills full height) */}
                             <div className="flex flex-col justify-between flex-1 relative z-10 p-6">
@@ -660,6 +658,6 @@ export default function Billing() {
                     </div>
                 </div>
             </form>
-        </div>
+        </>
     );
 }

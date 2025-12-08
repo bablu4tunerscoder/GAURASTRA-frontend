@@ -8,7 +8,7 @@ const Dashboard = () => {
   const { user } = useSessionAuth();
 
   return (
-    <div className="min-h-screen">
+    <div >
 
       {/* TOP BAR */}
       <div className="bg-white px-6 py-4 border-t border-gray-200 flex justify-between items-center">
@@ -23,13 +23,13 @@ const Dashboard = () => {
 
         {/* ACTION BUTTONS */}
         <div className="flex gap-3">
-          <button className="px-5 py-2 shadow bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow">
+          <button className="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow">
             Add product
           </button>
-          <button className="px-5 py-2 shadow bg-green-500 text-white rounded-lg hover:bg-green-600 transition shadow">
+          <button className="px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition shadow">
             View Orders
           </button>
-          <button className="px-5 py-2 shadow bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition shadow">
+          <button className="px-5 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition shadow">
             Manage Users
           </button>
         </div>

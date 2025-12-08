@@ -43,10 +43,10 @@ export default function MainLayout({ children }) {
       <div
         className={`
           fixed top-0 left-0 h-screen bg-[#111] text-white transition-all duration-300
-          ${open ? "w-64" : "w-20"}
+          ${open ? "w-64" : "w-16"}
         `}
       >
-        <div className="p-6">
+        <div className="md:p-6 p-2">
           <div className="flex items-center gap-3 mb-10">
             <img src="/assets/loginbg.webp" className="w-10" alt="" />
             {open && <h2 className="text-lg font-semibold tracking-wide">Gaurastra</h2>}
@@ -62,7 +62,7 @@ export default function MainLayout({ children }) {
               <Link
                 key={index}
                 href={href}
-                className={`flex items-center gap-4 py-2.5 px-6 transition-all
+                className={`flex items-center gap-4 md:py-2.5 py-2 md:px-6 px-3 transition-all
                   ${isActive
                     ? "text-blue-500 border-l-4 border-blue-500"
                     : "text-gray-300 hover:text-blue-400 hover:bg-[#1a1a1a]"
@@ -90,7 +90,7 @@ export default function MainLayout({ children }) {
       <div
         className={`
           transition-all duration-300
-          ${open ? "ml-64" : "ml-20"}
+          ${open ? "ml-64" : "ml-16"}
         `}
       >
         {/* TOP NAVBAR */}
@@ -99,7 +99,7 @@ export default function MainLayout({ children }) {
             <button onClick={() => setOpen(!open)}>
               <Menu size={22} className="text-gray-700" />
             </button>
-            <h1 className="text-lg font-semibold text-gray-800">Offline Billing System</h1>
+            <h1 className="text-lg font-semibold md:block hidden  text-gray-800">Offline Billing System</h1>
           </div>
 
           <div className="flex items-center gap-3">
@@ -113,7 +113,7 @@ export default function MainLayout({ children }) {
         </header>
 
         {/* MAIN CONTENT AREA */}
-        <div className="p-6">{children}</div>
+        <div className="md:p-6 px-2 py-4 ">{children}</div>
       </div>
     </div>
   );

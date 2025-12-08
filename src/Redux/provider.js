@@ -22,11 +22,11 @@ export function Providers({ children }) {
       {!isOfflineRoute && <DiscountPopup />}
       {
         isOfflineRoute ?
-
+          // offline
           <main>
             {children}
           </main> :
-
+          // online
           <main className="pt-16 max-w-7xl mx-auto min-h-[50vh]">
             {children}
           </main>

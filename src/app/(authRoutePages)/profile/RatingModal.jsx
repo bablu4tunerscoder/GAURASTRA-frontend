@@ -7,21 +7,19 @@ import { useSelector } from "react-redux";
 
 export default function RatingModal({ data, close }) {
   const [rating, setRating] = useState({ rating_value: 0, comment_text: "" });
-  const {_id}  = useSelector((state) => state?.auth?.user)
-  
+  const { _id } = useSelector((state) => state?.auth?.user)
+
 
   const submit = async () => {
     if (!rating.rating_value) return toast.error("Select rating");
     // alert("Rating submitted!");
     try {
-      const response = await axiosInstance.post("/api/rating/add", { ...rating, ...data,user_id:_id });
-      console.log(response)
+      const response = await axiosInstance.post("/api/rating/add", { ...rating, ...data, user_id: _id });
       if (response.success == false) return toast.error(response.message)
       toast.success("Rating submitted!");
       close();
     }
     catch (error) {
-      console.log(error)
       toast.error(error?.response?.data?.message || "Rating submission failed");
     }
 

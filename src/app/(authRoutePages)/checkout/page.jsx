@@ -142,7 +142,6 @@ const CheckoutPage = () => {
 
             setTimeout(() => setAddressSaved(false), 2500);
         } catch (err) {
-            console.log(err);
             toast.error("Unable to save address.");
         }
     };
