@@ -10,11 +10,12 @@ import toast from 'react-hot-toast';
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
 
 const ProductForm = () => {
+
   const defaultValues = {
     title: '',
     price: 0,
     details: '',
-    images: [" "],
+    images: [],
     active: true,
     variants: [
       {
@@ -82,7 +83,7 @@ const ProductForm = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <UploadImageGetUrl />
+      <UploadImageGetUrl onImageUploaded={appendImage} />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">

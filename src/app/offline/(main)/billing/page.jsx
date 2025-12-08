@@ -563,97 +563,100 @@ export default function Billing() {
                             Invoice Preview ⬇️
                         </h2>
                         {/* preview */}
-                        <div className="max-w-3xl min-h-screen bg-[url('/assets/invoicebg.png')] bg-cover bg-no-repeat bg-center text-white relative overflow-hidden rounded-2xl">
-                            {/* Main Wrapper */}
-                            <div className="relative z-10 p-6 pb-20 max-w-3xl mx-auto space-y-2">
-                                {/* Header */}
-                                <div className="text-right space-y-1 flex justify-between">
-                                    <div className="w-24 overflow-hidden rounded-full h-24">
-                                        <img src="/assets/logo.png" className="rounded-full w-32" alt="" />
+                        <div className="max-w-3xl min-h-screen bg-[url('/assets/invoicebg.png')] bg-cover bg-no-repeat bg-center text-white relative rounded-2xl overflow-hidden flex flex-col">
+
+                            {/* MAIN CONTENT (fills full height) */}
+                            <div className="flex flex-col justify-between flex-1 relative z-10 p-6">
+
+                                {/* ===================== TOP SECTION ===================== */}
+                                <div>
+                                    <div className="text-right space-y-1 flex justify-between mb-6">
+                                        <div className="w-24 h-24 overflow-hidden rounded-full">
+                                            <img src="/assets/logo.png" className="w-32 rounded-full" />
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <h1 className="text-3xl font-bold text-yellow-400">INVOICE</h1>
+                                            <p className="text-sm"><span className="text-gray-300">Date :</span> {new Date().toLocaleDateString()}</p>
+                                            <p className="text-sm"><span className="text-gray-300">Invoice no :</span> xyz...</p>
+                                        </div>
                                     </div>
 
-                                    <div className="space-y-1">
-                                        <h1 className="text-3xl font-bold text-yellow-400">INVOICE</h1>
-                                        <p className="text-sm">
-                                            <span className="text-gray-300">Date :</span> {new Date().toLocaleDateString()}
-                                        </p>
-                                        <p className="text-sm">
-                                            <span className="text-gray-300">Invoice no :</span> xyz...
-                                        </p>
-                                    </div>
-                                </div>
+                                    {/* Bill To + Payable To */}
+                                    <div className="grid grid-cols-2 gap-4 mb-6">
+                                        <div className="bg-[#505050] p-4 rounded space-y-1">
+                                            <h3 className="text-lg font-semibold text-yellow-400">Bill to:</h3>
+                                            <p className="font-semibold">{formValues.full_name}</p>
+                                            <p className="text-sm">{formValues.phone}</p>
+                                            <p className="text-sm">{formValues.address_line1}</p>
+                                            <p className="text-sm">{formValues.city}</p>
+                                            <p className="text-sm">{formValues.state}</p>
+                                        </div>
 
-                                {/* Bill To + Payable To */}
-                                <div className="grid grid-cols-2 gap-4 mb-6">
-                                    {/* Bill To */}
-                                    <div className="bg-[#505050] rounded p-4 space-y-1">
-                                        <h3 className="text-lg font-semibold text-yellow-400">Bill to:</h3>
-                                        <p className="font-semibold">{formValues.full_name || "Customer Name"}</p>
-                                        <p className="text-sm">{formValues.phone || "Phone Number"}</p>
-                                        <p className="text-sm">{formValues.address_line1}</p>
-                                        <p className="text-sm">{formValues.city}</p>
-                                        <p className="text-sm">{formValues.state}</p>
+                                        <div className="bg-[#505050] p-4 rounded space-y-1">
+                                            <h3 className="text-lg font-semibold text-yellow-400">Payable to:</h3>
+                                            <p className="font-semibold">Gaurastra</p>
+                                            <p className="text-sm">+91 9522474600</p>
+                                            <p className="text-sm">Indore, MP</p>
+                                        </div>
                                     </div>
 
-                                    {/* Payable To */}
-                                    <div className="bg-[#505050] rounded p-4 space-y-1">
-                                        <h3 className="text-lg font-semibold text-yellow-400">Payable to:</h3>
-                                        <p className="font-semibold">Gaurastra</p>
-                                        <p className="text-sm">+91 9522474600</p>
-                                        <p className="text-sm">Indore, MP</p>
-                                    </div>
-                                </div>
-
-                                {/* Product Table */}
-                                <table className="w-full text-sm">
-                                    <thead>
-                                        <tr className="bg-yellow-500 text-black">
-                                            <th className="p-3 text-left w-10">No</th>
-                                            <th className="p-3 text-left">Items</th>
-                                            <th className="p-3 text-center w-20">QTY</th>
-                                            <th className="p-3 text-right w-24">Price</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="[&>tr:nth-child(2n)]:bg-transparent [&>tr:nth-child(2n+1)]:bg-[#505050]">
-                                        {cart.map((item, idx) => (
-                                            <tr key={idx} className="py-10">
-                                                <td className="p-3">{idx + 1}</td>
-                                                <td className="p-3">{item.title}</td>
-                                                <td className="p-3 text-center">{item.qty}</td>
-                                                <td className="p-3 text-right">₹{item.qty * item.discounted_price}</td>
+                                    {/* Product Table */}
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="bg-yellow-500 text-black">
+                                                <th className="p-3 text-left w-10">No</th>
+                                                <th className="p-3 text-left">Items</th>
+                                                <th className="p-3 text-center w-20">QTY</th>
+                                                <th className="p-3 text-right w-24">Price</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
 
-                                {/* Total Box */}
-                                <div className="flex justify-end mb-8">
-                                    <div className="space-y-3">
-                                        <div className="bg-yellow-500 text-black px-6 py-2 rounded-sm font-semibold text-lg">
-                                            Total : ₹{billingPreview?.total_amount}
-                                        </div>
-                                        <div>
-                                            <h3 className="text-lg mb-2 font-semibold-400">Terms Conditions</h3>
-                                            <p className="text-sm leading-relaxed">
-                                                No Return, <br />
-                                                No Exchange, <br />
-                                                No Guarantee.
-                                            </p>
+                                        <tbody className="[&>tr:nth-child(2n)]:bg-transparent [&>tr:nth-child(2n+1)]:bg-[#505050]">
+                                            {cart.map((item, idx) => (
+                                                <tr key={idx}>
+                                                    <td className="p-3">{idx + 1}</td>
+                                                    <td className="p-3">{item.title}</td>
+                                                    <td className="p-3 text-center">{item.qty}</td>
+                                                    <td className="p-3 text-right">₹{item.qty * item.discounted_price}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+
+                                    {/* Total */}
+                                    <div className="flex justify-end mt-6">
+                                        <div className="space-y-3">
+                                            <div className="bg-yellow-500 text-black px-6 py-2 rounded-sm text-lg font-semibold">
+                                                Total : ₹{billingPreview?.total_amount}
+                                            </div>
+
+                                            <div>
+                                                <h3 className="text-lg mb-2">Terms Conditions</h3>
+                                                <p className="text-sm leading-relaxed">
+                                                    No Return, <br /> No Exchange, <br /> No Guarantee.
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Footer */}
-                                <div className="text-center space-y-2 pb-10">
+                                {/* ===================== FOOTER (always bottom) ===================== */}
+                                <div className="text-center pb-20 relative">
                                     <div className="flex justify-center gap-3 text-sm text-gray-300">
                                         <span>📞 +91-9522474600</span>
                                         <span>🌐 www.Gaurastra.com</span>
                                     </div>
+
                                     <p className="text-sm text-gray-400">📍 1701, New Dwarkapuri Indore</p>
-                                    <img src="/assets/thank-you.png" className="absolute -z-10 bottom-10 h-32 right-8 mx-auto" alt="" />
+
+                                    <img src="/assets/thank-you.png" className="absolute bottom-0 right-8 h-32 opacity-80 -z-10" />
                                 </div>
+
                             </div>
                         </div>
+
+
                     </div>
                 </div>
             </form>

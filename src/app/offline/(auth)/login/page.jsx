@@ -31,7 +31,7 @@ export default function LoginPage() {
         sessionStorage.setItem("offline_user", JSON.stringify(data.data));
         sessionStorage.setItem("offline_access_token", data.token);
 
-        window.location.href = "/offline/dashboard";
+        window.location.href = "/offline/billing";
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
@@ -63,7 +63,7 @@ export default function LoginPage() {
           <img
             src="/assets/login-illustration.png"
             alt="Fashion Tech"
-            className="w-[380px] md:w-[480px] absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            className="w-[380px] md:block hidden md:w-[480px] absolute z-20 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           />
         </div>
 
