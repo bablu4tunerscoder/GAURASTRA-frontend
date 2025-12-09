@@ -1,8 +1,7 @@
 "use client";
 import { axiosInstanceWithOfflineToken } from "@/Helper/axiosinstance";
 import { printVariantQR } from "@/utils/printVariantQR";
-import { ChevronRight, Pencil, Printer, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { ChevronRight, Pencil, QrCode, Trash2 } from "lucide-react";
 // import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -66,29 +65,22 @@ const VariantRow = ({ v, productId, GetData }) => {
 
 
     return (
-        <tr className="bg-white border-b hover:bg-gray-50">
+        <tr className="bg-white border-b border-gray-200">
             {/* COLOR */}
-            <td className="px-3 py-3">
-                <div className="flex items-center gap-2">
-                    <input
-                        type="color"
-                        {...register("color")}
-                        className="w-10 h-10 border rounded cursor-pointer"
-                    />
-                    <input
-                        type="text"
-                        value={colorValue}
-                        onChange={(e) => setValue("color", e.target.value)}
-                        className="w-24 px-2 py-1 text-sm border rounded"
-                    />
-                </div>
+            <td className="px-3">
+                <input
+                    type="color"
+                    {...register("color")}
+                    className="w-9 h-10 cursor-pointer border-none"
+                />
             </td>
 
+
             {/* SIZE */}
-            <td className="px-3 py-3">
+            <td className="px-3 py-3 ">
                 <select
                     {...register("size")}
-                    className="w-full px-2 py-1 text-sm border rounded"
+                    className="w-full p-2 bg-gray-100 min-w-14 text-sm rounded"
                 >
                     {sizeOptions.map((s) => (
                         <option key={s} value={s.toLowerCase()}>{s}</option>
@@ -104,7 +96,7 @@ const VariantRow = ({ v, productId, GetData }) => {
                         valueAsNumber: true,
                         min: 0
                     })}
-                    className="w-20 px-2 py-1 text-sm border rounded"
+                    className="w-20 p-2 bg-gray-100  text-sm rounded"
                 />
             </td>
 
@@ -117,12 +109,12 @@ const VariantRow = ({ v, productId, GetData }) => {
                         valueAsNumber: true,
                         min: 0
                     })}
-                    className="w-24 px-2 py-1 text-sm border rounded"
+                    className="flex-1 min-w-20 w-full p-2 bg-gray-100 text-sm rounded"
                 />
             </td>
 
             {/* OFFER */}
-            <td className="px-3 py-3">
+            <td className="px-3  py-3">
                 <div className="flex gap-1">
                     <input
                         type="number"
@@ -131,11 +123,11 @@ const VariantRow = ({ v, productId, GetData }) => {
                             valueAsNumber: true,
                             min: 0
                         })}
-                        className="w-16 px-2 py-1 text-sm border rounded"
+                        className="w-2/3 p-2 min-w-20 bg-gray-100 text-sm rounded"
                     />
                     <select
                         {...register("offer_type")}
-                        className="px-2 py-1 text-sm border rounded"
+                        className="p-2 w-1/3 min-w-16  text-sm rounded bg-gray-100"
                     >
                         <option value="percentage">%</option>
                         <option value="flat">₹</option>
@@ -151,7 +143,7 @@ const VariantRow = ({ v, productId, GetData }) => {
                     {...register("discounted_price", {
                         valueAsNumber: true
                     })}
-                    className="w-24 px-2 py-1 text-sm bg-gray-100 border rounded"
+                    className="flex-1 w-full min-w-20 p-2  text-sm bg-gray-100 rounded"
                 />
             </td>
 
@@ -160,10 +152,11 @@ const VariantRow = ({ v, productId, GetData }) => {
                 <button
                     type="button"
                     onClick={() => printVariantQR(v)}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                    className="p-2 border text-gray-500 hover:bg-gray-100 rounded"
                     title="Print QR"
                 >
-                    <Printer className="w-4 h-4" />
+
+                    <QrCode className="w-4 h-4" />
                 </button>
             </td>
 
@@ -175,7 +168,7 @@ const VariantRow = ({ v, productId, GetData }) => {
                     disabled={isSubmitting}
                     className={`px-3 py-1 text-sm rounded ${isSubmitting
                         ? "bg-gray-400 text-white cursor-not-allowed"
-                        : "bg-green-600 text-white hover:bg-green-700 cursor-pointer"
+                        : "bg-green-600 text-white hover:bg cursor-pointer"
                         }`}
                 >
                     {isSubmitting ? "Updating..." : "Update"}
@@ -259,24 +252,25 @@ const SingleTableData = ({
             {/* VARIANTS SUBTABLE */}
             {expandedRows.has(p._id) && (
                 <tr>
-                    <td colSpan={5} className="p-0">
-                        <div className="bg-blue-50 border-t border-b border-blue-200 p-4">
-                            <p className="text-sm font-semibold text-blue-900 mb-3">
+                    <td colSpan={5} className="px-6 pb-4">
+                        <div className="bg-blue-50 border-gray-200 border border-b-0 rounded-lg overflow-hidden ">
+
+                            <p className="flex items-center p-3 font-semibold text-blue-900">
                                 Product Variants
                             </p>
 
-                            <div className="bg-white rounded-lg border overflow-hidden">
+                            <div className="bg-white">
                                 <table className="w-full">
                                     <thead className="bg-blue-100">
-                                        <tr className="text-xs text-blue-900 font-medium">
-                                            <th className="px-3 py-2 text-left">Color</th>
-                                            <th className="px-3 py-2 text-left">Size</th>
-                                            <th className="px-3 py-2 text-left">Stock</th>
-                                            <th className="px-3 py-2 text-left">Actual Price (₹)</th>
-                                            <th className="px-3 py-2 text-left">Offer</th>
-                                            <th className="px-3 py-2 text-left">Discounted (₹)</th>
-                                            <th className="px-3 py-2 text-center">QR</th>
-                                            <th className="px-3 py-2 text-center">Action</th>
+                                        <tr className="text-xs text-gray-600 bg-gray-100 border-y border-gray-200 font-medium">
+                                            <th className="p-3 text-left">Color</th>
+                                            <th className="p-3 text-left">Size</th>
+                                            <th className="p-3 text-left w-20">Stock</th>
+                                            <th className="p-3 text-left">Actual Price (₹)</th>
+                                            <th className="p-3 text-left">Offer</th>
+                                            <th className="p-3 text-left">Discounted (₹)</th>
+                                            <th className="p-3 text-center">QR</th>
+                                            <th className="p-3 text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>

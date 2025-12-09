@@ -80,7 +80,7 @@ const UploadImageGetUrl = ({ onImageUploaded = () => { }, handleRemoveUrl = () =
         : "grid md:grid-cols-2 grid-cols-1 gap-2 mb-2"
     }>
       {/* Upload Box */}
-      <div className="border-dashed border-2 flex justify-center items-center flex-col bg-white gri gap-2 p-3 rounded-md cursor-pointer">
+      <label id="image-upload" className="border-dashed border-2 flex justify-center items-center flex-col bg-white gri gap-2 p-3 rounded-md cursor-pointer">
 
         <input
           type="file"
@@ -93,14 +93,12 @@ const UploadImageGetUrl = ({ onImageUploaded = () => { }, handleRemoveUrl = () =
           className="hidden"
           id="image-upload"
         />
-        <label htmlFor="image-upload" className="cursor-pointer">
-          <ImageUp />
-        </label>
+        <ImageUp />
 
-        <label htmlFor="image-upload" className="cursor-pointer text-sm">
+        <span className="cursor-pointer text-sm">
           Upload Image
-        </label>
-      </div>
+        </span>
+      </label>
       {/* img preview */}
       {
         imageUrl && (

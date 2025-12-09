@@ -42,7 +42,7 @@ export default function Billing() {
             full_name: "",
             phone: "",
             pincode: "",
-            payment_method: "cod",
+            payment_method: "online",
             address_line1: "",
             address_line2: "",
             city: "",
@@ -99,9 +99,16 @@ export default function Billing() {
 
     const increaseQty = (id) => {
         setCart((prev) =>
-            prev.map((p) =>
-                p.id === id ? { ...p, qty: p.qty + 1 } : p
-            )
+            prev.map((p) => {
+                if (p.id === id) {
+                    if (p.qty >= p.stock) {
+                        toast.error("Stock limit reached!");
+                        return p;
+                    }
+                    return { ...p, qty: p.qty + 1 };
+                }
+                return p;
+            })
         );
     };
 
@@ -134,19 +141,25 @@ export default function Billing() {
                 `/api/offline/products/w/${productId}/variant/${variantId}`,
             );
 
+            if (!data?.variant?.stock) {
+                return toast.error("Out of stock");
+            }
+
             const cartItem = {
                 id: data.variant.variant_unique_id,
                 variant_id: data.variant.variant_unique_id,
                 product_uniq_id: data.product_uniq_id,
                 title: `${data.product_title} (${data.variant.color}, ${data.variant.size})`,
                 discounted_price: data.variant.discounted_price,
-                qty: 1
+                qty: 1,
+                stock: data?.variant?.stock
             };
 
             addToCart(cartItem);
 
         } catch (err) {
-            console.error("QR ERROR:", err);
+            toast.error(err?.response?.data?.message || "Something went wrong");
+            // console.error("QR ERROR:", err);
         }
     };
 
@@ -163,10 +176,12 @@ export default function Billing() {
             const { data } = await axiosInstanceWithOfflineToken.post(`/api/offline/billing/calculate`,
                 payload,
             );
+
+
             setBillingPreview(data.preview);
 
         } catch (err) {
-            console.error(err);
+            toast.error(err?.response?.data?.message || "Something went wrong");
         }
     };
 
@@ -196,9 +211,11 @@ export default function Billing() {
                 `/api/offline/billing/create`,
                 payload
             );
+
             openPrintWindow(data.data);
 
         } catch (err) {
+            console.log(err)
             if (err?.response?.data?.warnings) {
                 for (const warning of err?.response?.data?.warnings) {
                     toast.error(warning.product + " " + warning.variant + " " + warning.message,
@@ -254,7 +271,7 @@ export default function Billing() {
                             <Button
                                 type="button"
                                 onClick={startScanner}
-                                className="w-full flex items-center justify-center gap-2 py-2 text-lg rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow"
+                                className="w-full flex items-center justify-center gap-2 py-2.5 text-lg rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow"
                             >
                                 <Scan size={20} />
                                 {cart.length == 0 ? ' Scan Product' : "Add More Product"}
@@ -379,13 +396,14 @@ export default function Billing() {
 
                                     <select
                                         className="w-full border mt-1 border-gray-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                                        {...register("paymentMethod", {
+                                        {...register("payment_method", {
                                             required: "Payment method is required",
                                         })}
                                     // defaultValue="cash"
                                     >
                                         <option value="cash">Cash</option>
                                         <option value="online">Online</option>
+                                        <option value="card">Card</option>
                                     </select>
                                 </div>
 
@@ -456,56 +474,65 @@ export default function Billing() {
                             </div>
 
                             {/* Table */}
-                            <div className="mt-4">
-                                <div className="grid grid-cols-12 text-gray-600 text-sm font-semibold border-b pb-2">
-                                    <div className="col-span-6">Product</div>
-                                    <div className="col-span-2 text-center">Quantity</div>
-                                    <div className="col-span-2 text-right">Price</div>
-                                    <div className="col-span-2 text-right">Total</div>
-                                </div>
-                                {/* Cart Items */}
-                                {cart.length > 0 ? (
-                                    cart.map((item, index) => (
-                                        <div key={index} className="grid grid-cols-12 items-center py-4 border-b">
-                                            <div className="col-span-6 font-medium text-gray-700">
-                                                {item.title}
-                                            </div>
-
-                                            {/* Qty */}
-                                            <div className="col-span-2 flex items-center justify-center gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => decreaseQty(item.id)}
-                                                    className="w-7 h-7 flex items-center justify-center bg-gray-200 rounded-md"
-                                                >
-                                                    <Minus className="w-4 h-4" />
-                                                </button>
-                                                <span className="text-gray-700 font-medium">{item.qty}</span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => increaseQty(item.id)}
-                                                    className="w-7 h-7 flex items-center justify-center bg-blue-100 text-blue-600 rounded-md"
-                                                >
-                                                    <Plus className="w-4 h-4" />
-                                                </button>
-                                            </div>
-
-                                            {/* Price */}
-                                            <div className="col-span-2 text-right text-gray-700">₹{item.discounted_price}</div>
-
-                                            {/* Total */}
-                                            <div className="col-span-2 text-right flex items-center justify-end gap-4 text-gray-700">
-                                                ₹{item.discounted_price * item.qty}
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="grid grid-cols-12 items-center py-4 border-b">
-                                        <div className="col-span-12 font-medium text-gray-500 text-center">
-                                            Your cart is empty
-                                        </div>
+                            <div className="mt-4 overflow-x-auto">
+                                <div className="min-w-[500px]">
+                                    {/* Table Header */}
+                                    <div className="flex text-gray-600 text-sm font-semibold border-b pb-2">
+                                        <div className="flex-1 min-w-[120px] text-left">Product</div>
+                                        <div className="min-w-[120px] text-center ">Quantity</div>
+                                        <div className="min-w-[80px] text-center">Price</div>
+                                        <div className="min-w-[80px] text-right">Total</div>
                                     </div>
-                                )}
+
+                                    {/* Cart Items */}
+                                    {cart.length > 0 ? (
+                                        cart.map((item, index) => (
+                                            <div key={index} className="border-b">
+                                                <div className="flex items-center gap-2 py-4">
+                                                    {/* Title */}
+                                                    <div className="flex-1 min-w-[150px] px-2 md:font-medium text-xs md:text-sm text-gray-700">
+                                                        {item.title}
+                                                    </div>
+
+                                                    {/* Qty */}
+                                                    <div className="flex items-center justify-center ">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => decreaseQty(item.id)}
+                                                            className="w-7 h-7 flex items-center justify-center bg-gray-200 rounded-md hover:bg-gray-300 transition"
+                                                        >
+                                                            <Minus className="w-4 h-4" />
+                                                        </button>
+                                                        <span className="text-gray-700 font-medium min-w-5 text-center">{item.qty}</span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => increaseQty(item.id)}
+                                                            className="w-7 h-7 flex items-center justify-center bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition"
+                                                        >
+                                                            <Plus className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+
+                                                    {/* Price */}
+                                                    <div className="text-right text-gray-700 min-w-[80px] font-medium">
+                                                        ₹{item.discounted_price}
+                                                    </div>
+
+                                                    {/* Total */}
+                                                    <div className="text-right text-gray-700 min-w-[80px] pr-2 font-semibold">
+                                                        ₹{item.discounted_price * item.qty}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="py-8">
+                                            <div className="font-medium text-gray-500 text-center">
+                                                Your cart is empty
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Totals */}
@@ -536,35 +563,48 @@ export default function Billing() {
                             </div>
 
                             {/* Footer Buttons */}
-                            <div className="mt-6 flex justify-between md:flex-row flex-col gap-4">
-                                <button
-                                    type="submit"
-                                    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg flex items-center justify-center gap-2"
-                                >
-                                    <FileCheck className="w-4 h-4" />
-                                    Generate Bill
-                                </button>
+                            <div className="flex justify-end mt-5">
 
-                                <button
-                                    type="button"
-                                    onClick={handleNewBill}
-                                    className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg flex items-center justify-center gap-2"
-                                >
-                                    <RotateCcw className="w-4 h-4" />
-                                    New Bill
-                                </button>
+                                <div className="flex justify-between  md:w-1/2 w-full md:flex-row-reverse flex-col gap-4">
+
+                                    <button
+                                        type="submit"
+                                        title={!cart.length ? "Cart is empty" : ""}
+                                        desabled={!cart.length}
+                                        className={`flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg flex items-center justify-center gap-2 ${!cart.length ? "opacity-50 cursor-not-allowed" : ""}`}
+                                    >
+                                        <FileCheck className="w-4 h-4" />
+                                        Print Bill
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={handleNewBill}
+                                        className="flex-1 bg-red-500 cursor-pointer hover:bg-red-700 text-white py-2 rounded-lg flex items-center justify-center gap-2"
+                                    >
+                                        <RotateCcw className="w-4 h-4" />
+                                        New Bill
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <h2 className="text-lg flex gap-2 font-bold mb-4 bg-white shadow-lg rounded px-4 py-2">
-                            <Eye className="text-blue-500" />
-                            Invoice Preview ⬇️
-                        </h2>
                         {/* preview */}
-                        <div className="max-w-3xl  min-h-screen bg-[url('/assets/invoicebg.png')] bg-cover bg-no-repeat bg-center text-white relative rounded-2xl overflow-hidden flex flex-col">
+                        <div className="md:max-w-3xl mx-auto overflow-x-auto min-h-screen text-white relative rounded-2xl overflow-hidden flex flex-col"
+                            style={{
+                                backgroundImage: "url(/assets/invoicebg.png)",
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
+                                backgroundRepeat: "no-repeat",
+                            }}
+                        >
+                            <h2 className="text-lg justify-center flex gap-2 font-bold mb-4 text-black bg-white px-4 py-2.5">
+                                <Eye className="text-blue-500" />
+                                Invoice Preview
+                            </h2>
 
                             {/* MAIN CONTENT (fills full height) */}
-                            <div className="flex flex-col justify-between flex-1 relative z-10 p-6">
+                            <div className="w-[180vw] md:w-auto flex flex-col justify-between flex-1 relative z-10 p-6">
 
                                 {/* ===================== TOP SECTION ===================== */}
                                 <div>
@@ -574,25 +614,29 @@ export default function Billing() {
                                         </div>
 
                                         <div className="space-y-1">
-                                            <h1 className="text-3xl font-bold text-yellow-400">INVOICE</h1>
+                                            <h1 className="text-3xl font-bold text-[#E3C646]">INVOICE</h1>
                                             <p className="text-sm"><span className="text-gray-300">Date :</span> {new Date().toLocaleDateString()}</p>
-                                            <p className="text-sm"><span className="text-gray-300">Invoice no :</span> xyz...</p>
+                                            <p className="text-sm"><span className="text-gray-300">Invoice no :</span> </p>
                                         </div>
                                     </div>
 
                                     {/* Bill To + Payable To */}
                                     <div className="grid grid-cols-2 gap-4 mb-6">
                                         <div className="bg-[#505050] p-4 rounded space-y-1">
-                                            <h3 className="text-lg font-semibold text-yellow-400">Bill to:</h3>
+                                            <h3 className="text-lg font-semibold text-[#E3C646]">Bill to:</h3>
                                             <p className="font-semibold">{formValues.full_name}</p>
                                             <p className="text-sm">{formValues.phone}</p>
-                                            <p className="text-sm">{formValues.address_line1}</p>
-                                            <p className="text-sm">{formValues.city}</p>
-                                            <p className="text-sm">{formValues.state}</p>
+
+                                            <p className="text-sm">
+                                                {[formValues.city, formValues.address_line1, formValues.state]
+                                                    .filter(Boolean)
+                                                    .join(", ")}
+                                            </p>
+                                            <p className="text-sm capitalize font-semibold">Payment: <span className="text-[#E3C646]">{formValues.payment_method}</span></p>
                                         </div>
 
                                         <div className="bg-[#505050] p-4 rounded space-y-1">
-                                            <h3 className="text-lg font-semibold text-yellow-400">Payable to:</h3>
+                                            <h3 className="text-lg font-semibold text-[#E3C646]">Payable to:</h3>
                                             <p className="font-semibold">Gaurastra</p>
                                             <p className="text-sm">+91 9522474600</p>
                                             <p className="text-sm">Indore, MP</p>

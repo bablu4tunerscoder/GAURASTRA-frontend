@@ -34,7 +34,8 @@ export default function LoginPage() {
         window.location.href = "/offline/billing";
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
+      console.log(err)
+      toast.error(err.response?.data?.msg || "Login failed");
     }
 
     setLoading(false);

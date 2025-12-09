@@ -3,7 +3,6 @@
 import UploadImageGetUrl from '@/components/UploadImageGetUrl';
 import { axiosInstanceWithOfflineToken } from '@/Helper/axiosinstance';
 import { Box, Image, Plus, Trash2, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -11,7 +10,6 @@ import toast from 'react-hot-toast';
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
 
 const ProductForm = () => {
-  const router = useRouter();
 
 
   const defaultValues = {
@@ -31,7 +29,7 @@ const ProductForm = () => {
       },
     ],
   }
-  const { register, control, reset, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+  const { register, control, reset, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm({
     defaultValues
   });
 
@@ -72,7 +70,6 @@ const ProductForm = () => {
     }
   };
 
-  // Sync main price to variant prices (only for those not manually changed)
   useEffect(() => {
     variants.forEach((variant, index) => {
       if (!manuallyChangedPrices.has(index)) {
@@ -299,19 +296,18 @@ const ProductForm = () => {
                     name={`variants.${index}.color`}
                     control={control}
                     render={({ field }) => (
-                      <div className="flex items-center rounded-md justify-between px-1.5 border-gray-300 border gap-2">
+                      <label htmlFor={`variants.${index}.color`} className="flex cursor-pointer items-center rounded-md justify-between px-1.5 border-gray-300 border gap-2">
                         <div className='flex items-center py-1 md:gap-2 gap-1'>
                           <input
                             type="color"
+                            id={`variants.${index}.color`}
                             {...field}
                             className="w-5 h-6 border-gray-300 cursor-pointer"
                           />
                           <span className="text-xs text-gray-600">{field.value}</span>
                         </div>
-
                         <img src="/assets/color-wheel.png" alt="" className="md:w-6 md:h-6 w-4 h-4" />
-
-                      </div>
+                      </label>
                     )}
                   />
                 </div>
@@ -402,6 +398,7 @@ const ProductForm = () => {
         <button
           type="button"
           onClick={handleSubmit(onSubmit)}
+          disabled={isSubmitting}
           className=" py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
         >
           Save Product
@@ -411,7 +408,7 @@ const ProductForm = () => {
           onClick={() => {
             if (window.confirm("Are you sure you want to reset the form?")) reset(defaultValues);;
           }}
-          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+          className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg  hover:bg-gray-50 transition-colors font-medium"
         >
           Reset
         </button>

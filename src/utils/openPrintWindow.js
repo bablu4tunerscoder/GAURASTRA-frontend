@@ -223,9 +223,18 @@ export const openPrintWindow = (bill) => {
             <h3 class="info-title">Bill to:</h3>
             <p class="font-semibold">${bill.user_info.full_name}</p>
             <p class="text-sm">${bill.user_info.phone}</p>
-            <p class="text-sm">${bill.address.address_line1}</p>
-            <p class="text-sm">${bill.address.city}</p>
-            <p class="text-sm">${bill.address.state}</p>
+            <p class="text-sm">
+              ${[
+      bill.address.address_line1,
+      bill.address.city,
+      bill.address.state
+    ]
+      .filter(Boolean)
+      .join(", ")
+    }
+            </p>
+            <p class="text-sm"><span class="text-gray-300">Payment :</span> ${bill.payment_method}</p>
+
           </div>
 
           <div class="info-box">
