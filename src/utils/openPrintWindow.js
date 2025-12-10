@@ -15,7 +15,7 @@ export const openPrintWindow = (bill) => {
       }
 
       body {
-        background: url('${baseUrl}/assets/invoicebg.png') center/cover no-repeat;
+        background: url('https://res.cloudinary.com/dtug6rmfb/image/upload/v1765351280/offline/o0lmgvxbytxz55xcmnrx.webp') center/cover no-repeat;
         font-family: Arial, sans-serif;
         color: white;
         -webkit-print-color-adjust: exact !important;

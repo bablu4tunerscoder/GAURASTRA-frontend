@@ -592,7 +592,7 @@ export default function Billing() {
                         {/* preview */}
                         <div className="md:max-w-3xl mx-auto overflow-x-auto min-h-screen text-white relative rounded-2xl overflow-hidden flex flex-col"
                             style={{
-                                backgroundImage: "url(/assets/invoicebg.png)",
+                                backgroundImage: "url(https://res.cloudinary.com/dtug6rmfb/image/upload/v1765351280/offline/o0lmgvxbytxz55xcmnrx.webp)",
                                 backgroundSize: "cover",
                                 backgroundPosition: "center",
                                 backgroundRepeat: "no-repeat",
