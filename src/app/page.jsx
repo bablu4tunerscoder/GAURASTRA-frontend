@@ -1,10 +1,12 @@
+
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
+
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center px-6 md:px-16 lg:px-32 py-12 bg-gray-900 text-white overflow-hidden">
-      {/* 🔹 Background Image */}
+  
       <Image
         src="/assets/fastionb.jpeg"
         alt="Luxury Designer Shirt Background"

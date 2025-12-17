@@ -34,7 +34,6 @@ export function Providers({ children }) {
 
 
       {!isOfflineRoute && <Footer />}
-      {/* <Footer /> */}
 
     </Provider>
   )

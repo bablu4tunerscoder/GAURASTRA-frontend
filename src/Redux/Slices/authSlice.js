@@ -1,99 +1,75 @@
 "use client";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { BASE_URL } from "@/Helper/axiosinstance";
 import toast from "react-hot-toast";
 
-
-// ✅ Check if code runs in browser
 const isBrowser = typeof window !== "undefined";
 
-// ✅ Define initial state safely
+// Initial State from Cookies
 const initialState = {
-  user: isBrowser ? JSON.parse(localStorage.getItem("user")) : null,
-  token: isBrowser ? localStorage.getItem("token") : null,
-  isAuthenticated: isBrowser ? !!localStorage.getItem("token") : false,
+  user: isBrowser && Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
+  token: isBrowser ? Cookies.get("token") : null,
+  isAuthenticated: isBrowser ? !!Cookies.get("token") : false,
   status: "idle",
   error: null,
 };
 
-// ✅ Register user
+// Register User
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/api/auth/allRegister`,
-        userData
-      );
+      const response = await axios.post(`${BASE_URL}/api/auth/allRegister`, userData);
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "Registration failed"
-      );
+      return rejectWithValue(error.response?.data?.message || "Registration failed");
     }
   }
 );
 
-// ✅ Login user
+// Login User
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/api/auth/allLogins`,
-        credentials
-      );
+      const response = await axios.post(`${BASE_URL}/api/auth/allLogins`, credentials);
 
-      const user = response.data.data;
-      if(user){
-        toast.success("Login successful!");
-      }
+      const { user, token } = response.data.data;
 
-      if (isBrowser) {
-        localStorage.setItem("token", user.token);
-        localStorage.setItem("user", JSON.stringify(user));
-      }
+      // 👉 Store in Cookies
+      Cookies.set("token", token, { expires: 7 });
+      Cookies.set("user", JSON.stringify(user), { expires: 7 });
 
-      return {
-        user_id: user.user_id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        token: user.token,
-      };
+      return { ...user, token };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "Login failed");
     }
   }
 );
 
-// ✅ Logout user
+// Logout User
 export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
-  if (isBrowser) localStorage.clear();
+  Cookies.remove("token");
+  Cookies.remove("user");
   return null;
 });
 
-// ✅ Unified Google Authentication (Login + Signup)
+// Google Auth
 export const googleAuthUser = createAsyncThunk(
   "auth/googleAuthUser",
   async (token, { rejectWithValue }) => {
     try {
-      // Attempt Google login
-      const loginResponse = await axios.post(
-        `${BASE_URL}/api/auth/google-login`,
-        { token }
-      );
+      const loginResponse = await axios.post(`${BASE_URL}/api/auth/google-login`, { token });
 
       const { user, token: authToken } = loginResponse.data.data;
-      if (isBrowser) {
-        localStorage.setItem("token", authToken);
-        localStorage.setItem("user", JSON.stringify(user));
-      }
+
+      Cookies.set("token", authToken, { expires: 7 });
+      Cookies.set("user", JSON.stringify(user), { expires: 7 });
 
       return { ...user, token: authToken };
     } catch (loginError) {
-      // If login fails, try Google signup
       if (
         loginError.response?.data?.message?.includes("not found") ||
         loginError.response?.data?.message?.includes("not registered")
@@ -105,16 +81,13 @@ export const googleAuthUser = createAsyncThunk(
           );
 
           const { user, token: authToken } = signupResponse.data.data;
-          if (isBrowser) {
-            localStorage.setItem("token", authToken);
-            localStorage.setItem("user", JSON.stringify(user));
-          }
+
+          Cookies.set("token", authToken, { expires: 7 });
+          Cookies.set("user", JSON.stringify(user), { expires: 7 });
 
           return { ...user, token: authToken };
         } catch (signupError) {
-          return rejectWithValue(
-            signupError.response?.data?.message || "Google Signup failed"
-          );
+          return rejectWithValue(signupError.response?.data?.message || "Google Signup failed");
         }
       }
 
@@ -125,7 +98,7 @@ export const googleAuthUser = createAsyncThunk(
   }
 );
 
-// ✅ Auth Slice
+// Auth Slice
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -137,15 +110,14 @@ const authSlice = createSlice({
       state.status = "idle";
       state.error = null;
 
-      if (isBrowser) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-      }
+      Cookies.remove("token");
+      Cookies.remove("user");
     },
     clearAuthError: (state) => {
       state.error = null;
     },
   },
+
   extraReducers: (builder) => {
     builder
       // Register
@@ -154,7 +126,6 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.user = action.payload.user;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.status = "failed";
@@ -176,7 +147,7 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Unified Google Auth
+      // Google Auth
       .addCase(googleAuthUser.pending, (state) => {
         state.status = "loading";
       })

@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: /api/
+
+
+# Allow legal pages for SEO
+Allow: /privacy_policy
+Allow: /terms_conditions
+
+# Allow everything else
+Allow: /
+
+Sitemap: https://domain-name/sitemap.xml

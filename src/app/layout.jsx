@@ -4,6 +4,9 @@ import "./globals.css";
 
 import ToasterProvider from "@/components/ToasterProvider";
 
+import GOOGLE_ANALYTICS from "@/Helper/GOOGLE_ANALYTICS";
+import CookieConsent from "@/components/CookieConsent";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,17 +30,15 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
       >
+
+       <GOOGLE_ANALYTICS />
+
         <Providers>
           <ToasterProvider />
-          {/* Discount Popup */}
-          {/* <DiscountPopup /> */}
-
-          {/* Header */}
-
-          {/* <main className="pt-16 max-w-7xl mx-auto min-h-[50vh]"> */}
+    
           {children}
-          {/* </main> */}
-          {/* <Footer /> */}
+          <CookieConsent />
+        
         </Providers>
       </body>
     </html>

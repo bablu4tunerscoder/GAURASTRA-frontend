@@ -39,6 +39,7 @@ export default function LoginPage() {
     }
   }, [user]);
 
+
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleAuthProvider);
