@@ -1,8 +1,7 @@
-
+import { Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import NewArrivalsSection from './(home page components)/NewArrivalsSection';
-import { CreditCard, RotateCcw, ShieldCheck, Sparkles, Truck, TruckElectric } from 'lucide-react';
-import Image from 'next/image';
 
 const HomePage = () => {
   const womenEthnicWearCard = [
@@ -655,7 +654,8 @@ const HomePage = () => {
                           max-md:top-1/2 max-md:left-0
                           max-md:-translate-x-0 max-md:-translate-y-1/2
                           max-md:w-full max-md:h-0.5 max-md:border-l-0 max-md:border-t"
-              ></div>
+              >
+              </div>
 
 
               {/* Right Card - Try Deal */}
