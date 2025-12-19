@@ -1,13 +1,14 @@
+"use client";
 import React, { useEffect } from "react";
 import { Lock, LogIn, Phone } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { loginUser } from "../Redux/Slices/userSlice";
+// import { useNavigate } from "react-router-dom";
+// import { loginUser } from "../Redux/Slices/userSlice";
 
 export default function Login() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
 
@@ -18,8 +19,9 @@ export default function Login() {
   } = useForm();
 
   const onSubmit = async (data) => {
+
     try {
-      dispatch(loginUser(data));
+      // dispatch(loginUser(data));
     } catch (error) {
       toast.error(error?.response?.data?.message || "Login failed");
     }
@@ -27,7 +29,7 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate("/OnlineAdmin");
+      // navigate("/OnlineAdmin");
     }
   }, [user, navigate]);
 
