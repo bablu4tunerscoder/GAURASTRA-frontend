@@ -1,128 +1,163 @@
 import React from "react";
 import Link from "next/link";
-import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { Facebook, Instagram, Linkedin, SendHorizontal, Youtube } from "lucide-react";
+import Image from "next/image";
 
 const Footer = () => {
+  const footerSections = [
+    {
+      title: "EXPLORE",
+      links: [
+        { label: "Man", href: "/category/men" },
+        { label: "Women", href: "/category/women" },
+        { label: "Ethnic Wear", href: "/category/ethnic-wear" },
+      ],
+    },
+    {
+      title: "INFORMATION",
+      links: [
+        { label: "About Us", href: "/about" },
+        { label: "Contact Us", href: "/contact" },
+        { label: "Store", href: "/store" },
+        { label: "Blog", href: "/blogs" },
+      ],
+    },
+    {
+      title: "POLICIES",
+      links: [
+        { label: "Cancellation Policy", href: "/policy/cancellation-policy" },
+        { label: "Privacy Policy", href: "/policy/privacy-policy" },
+        { label: "Terms & Conditions", href: "/policy/terms-conditions" },
+      ],
+    },
+  ];
+
+  const socialLinks = [
+    { icon: Facebook, href: "#" },
+    { icon: Youtube, href: "#" },
+    { icon: Linkedin, href: "#" },
+    { icon: Instagram, href: "#" },
+  ];
+
   return (
-    <footer className="bg-white border-t border-gray-200 text-gray-700">
-      <div className="max-w-7xl mx-auto md:px-6 px-2  py-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8">
-        {/* CATEGORIES */}
-        <div>
-          <h3 className="font-semibold text-gray-900 mb-4">CATEGORIES</h3>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <Link href="/category/men" className="hover:text-blue-600 transition">
-                Men
-              </Link>
-            </li>
-            <li>
-              <Link href="/category/women" className="hover:text-blue-600 transition">
-                Women
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* INFORMATION */}
-        <div>
-          <h3 className="font-semibold text-gray-900 mb-4">INFORMATION</h3>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <Link href="/about" className="hover:text-blue-600 transition">
-                About Us
-              </Link>
-            </li>
-            <li>
-              <Link href="/blogs" className="hover:text-blue-600 transition">
-                Blog
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* LEGAL */}
-        <div>
-          <h3 className="font-semibold text-gray-900 mb-4">LEGAL</h3>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <Link href="/policy/terms-conditions" className="hover:text-blue-600 transition">
-                Terms & Conditions
-              </Link>
-            </li>
-            <li>
-              <Link href="/policy/privacy-policy" className="hover:text-blue-600 transition">
-                Privacy Policy
-              </Link>
-            </li>
-            <li>
-              <Link href="/policy/return-policy" className="hover:text-blue-600 transition">
-                Return Policy
-              </Link>
-            </li>
-            <li>
-              <Link href="/policy/shipping-policy" className="hover:text-blue-600 transition">
-                Shipping Policy
-              </Link>
-            </li>
-            <li>
-              <Link href="/policy/cancellation-policy" className="hover:text-blue-600 transition">
-                Cancellation Policy
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* SUPPORT */}
-        <div>
-          <h3 className="font-semibold text-gray-900 mb-4">SUPPORT</h3>
-          <ul className="space-y-2 text-sm">
-            <li>
-              <Link href="/faq" className="hover:text-blue-600 transition">
-                FAQ
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="hover:text-blue-600 transition">
-                Contact
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* SOCIAL MEDIA */}
-        <div>
-          <h3 className="font-semibold text-gray-900 mb-4">SOCIAL MEDIA</h3>
-          <div className="flex gap-4">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-              <Facebook className="w-5 h-5 hover:text-blue-600 transition" />
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-              <Instagram className="w-5 h-5 hover:text-pink-600 transition" />
-            </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-              <Twitter className="w-5 h-5 hover:text-sky-500 transition" />
-            </a>
-            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">
-              <Youtube className="w-5 h-5 hover:text-red-600 transition" />
-            </a>
+    <footer className="bg-[url('/assets/footerbg.png')] bg-cover text-white">
+      {/* newsletter section */}
+      <div className="md:px-16 py-10 px-4">
+        <div className="relative overflow-hidden rounded-2xl bg-[#A89B91] px-6 md:px-12 py-8 md:py-10"> <span className="absolute -left-14 top-2 w-32 h-32 rounded-full bg-orange-300 opacity-70">
+        </span>
+          <span className="absolute right-1/4 -bottom-16 w-48 h-48 rounded-full bg-orange-300 opacity-60">
+          </span>
+          <span className="absolute -right-6 -top-5 w-20 h-20 rounded-full bg-orange-300 opacity-60"></span>
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-center md:text-left">
+              <h2 className="text-2xl md:text-4xl font-serif font-semibold text-white"> Get More Discount up to 40% </h2>
+              <p className="text-sm md:text-base text-white/90 mt-2"> Save more buy more </p>
+            </div>
+            <div className="flex w-full md:w-auto items-center gap-3">
+              <input type="email" placeholder="Your email address" className="flex-1 md:w-96 bg-gray-50 rounded-lg px-5 py-3 text-sm md:text-base outline-none text-gray-700 placeholder:text-gray-400" />
+              <button className="shrink-0 rounded-lg bg-[#0B1B36] px-5 py-3 text-white hover:bg-[#152a4d] transition">
+                <SendHorizontal />
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-200 py-6 text-center text-sm text-gray-600">
-        <p>Gaurastra © 2025 All Rights Reserved.</p>
-        <p className="mt-1">
-          Designed & Developed by{" "}
-          <a
-            href="https://4tunerstech.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
-          >
-            4Tuners Technologies
-          </a>
-        </p>
+
+      {/* Main Footer */}
+      <div className="px-4 md:px-16 py-14">
+        <div className="flex gap-10 md:items-center  md:flex-row flex-col">
+          {/* Logo */}
+          <div className="flex justify-center  gap-6">
+            <Image
+              src="/assets/updated-logo-white.png"
+              alt="Gaurastra"
+              width={180}
+              height={50}
+              className="md:w-auto md:h-16 w-60"
+            />
+          </div>
+          <div className="flex-1 w-full grid lg:grid-cols-5 grid-cols-2">
+
+            {footerSections.map((section, index) => (
+              <div key={index}>
+                <h3 className="mb-4 font-semibold tracking-wide">
+                  {section.title}
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-300">
+                  {section.links.map((link, i) => (
+                    <li key={i}>
+                      <Link
+                        href={link.href}
+                        className="hover:text-white transition"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+
+            <div className="md:block hidden">
+              <p className="text-sm mb-3">Connect with Us</p>
+              <div className="flex gap-1">
+                {socialLinks.map((social, index) => {
+                  const Icon = social.icon;
+                  return (
+                    <Link
+                      key={index}
+                      href={social.href}
+                      className="w-9 h-9 rounded-full border border-gray-400 flex items-center justify-center hover:bg-white hover:text-black transition"
+                    >
+                      <Icon size={14} />
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+            {/* qr code */}
+            <div className="">
+              <div className="p-2 rounded-lg">
+                <Image
+                  src={"/assets/qr.png" || "/assets/box.png"}
+                  alt="QR Code"
+                  width={100}
+                  height={100}
+                  className="bg-white p-1"
+                />
+              </div>
+              <p className="text-sm text-gray-300">Scan and follow us</p>
+            </div>
+            <div>
+            </div>
+          </div>
+          {/* social media */}
+          <div className="md:hidden flex  items-center gap-2">
+            <p className="text-sm mb-3">Connect with Us</p>
+            <div className="flex gap-1 items-center">
+              {socialLinks.map((social, index) => {
+                const Icon = social.icon;
+                return (
+                  <Link
+                    key={index}
+                    href={social.href}
+                    className="w-9 h-9 rounded-full border border-gray-400 flex items-center justify-center hover:bg-white hover:text-black transition"
+                  >
+                    <Icon size={14} />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Bottom */}
+      <div className="border-t border-gray-600 py-6 text-center text-sm text-gray-400">
+        © 2025 GAURASTRA All Rights Reserved
       </div>
     </footer>
   );

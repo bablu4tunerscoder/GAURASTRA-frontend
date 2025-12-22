@@ -1,7 +1,6 @@
 import { Providers } from "@/Redux/provider";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
 import ToasterProvider from "@/components/ToasterProvider";
 
 import GOOGLE_ANALYTICS from "@/Helper/GOOGLE_ANALYTICS";

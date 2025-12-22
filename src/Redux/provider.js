@@ -27,7 +27,7 @@ export function Providers({ children }) {
             {children}
           </main> :
           // online
-          <main className="pt-16 max-w-7xl mx-auto min-h-[50vh]">
+          <main>
             {children}
           </main>
       }
