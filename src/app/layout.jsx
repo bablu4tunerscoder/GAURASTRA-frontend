@@ -1,17 +1,21 @@
-import { Providers } from "@/Redux/provider";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/Redux/provider";
 import ToasterProvider from "@/components/ToasterProvider";
+import {
+  Montserrat,
+  Playfair_Display,
+} from "next/font/google";
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const montserrat = Montserrat({
   subsets: ["latin"],
+  variable: "--font-montserrat",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const playfair = Playfair_Display({
   subsets: ["latin"],
+  variable: "--font-playfair",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata = {
@@ -19,27 +23,21 @@ export const metadata = {
   description: "Gaurastra ecommerce website",
 };
 
-
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
+        className={`
+          ${montserrat.variable}
+          ${playfair.variable}
+          antialiased bg-gray-50 text-gray-900
+        `}
       >
         <Providers>
           <ToasterProvider />
-          {/* Discount Popup */}
-          {/* <DiscountPopup /> */}
-
-          {/* Header */}
-
-          {/* <main className="pt-16 max-w-7xl mx-auto min-h-[50vh]"> */}
           {children}
-          {/* </main> */}
-          {/* <Footer /> */}
         </Providers>
       </body>
     </html>
-
   );
 }

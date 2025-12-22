@@ -63,20 +63,24 @@ const Footer = () => {
         </div>
       </div>
 
-
       {/* Main Footer */}
-      <div className="px-4 md:px-16 py-14">
-        <div className="flex gap-10 md:items-center  md:flex-row flex-col">
+      <div className="px-4 md:px-16 py-14  overflow-hidden">
+        <div className="flex  gap-10 md:items-center  md:flex-row flex-col">
           {/* Logo */}
-          <div className="flex justify-center  gap-6">
+          <div className="flex justify-center gap-6 relative">
+            {/* Gradient Circle */}
+            <div className="absolute z-0 -left-full -top-10 h-96 w-96 rounded-full 
+    bg-gradient-to-br from-[#000A1D] to-[#031433]" />
+
             <Image
               src="/assets/updated-logo-white.png"
               alt="Gaurastra"
               width={180}
               height={50}
-              className="md:w-auto md:h-16 w-60"
+              className="md:h-16 h-14 w-auto relative z-10"
             />
           </div>
+
           <div className="flex-1 w-full grid lg:grid-cols-5 grid-cols-2">
 
             {footerSections.map((section, index) => (
@@ -98,7 +102,6 @@ const Footer = () => {
                 </ul>
               </div>
             ))}
-
 
             <div className="md:block hidden">
               <p className="text-sm mb-3">Connect with Us</p>
@@ -125,6 +128,7 @@ const Footer = () => {
                   alt="QR Code"
                   width={100}
                   height={100}
+                  className="bg-white p-2"
                 />
               </div>
               <p className="text-sm text-gray-300">Scan and follow us</p>
@@ -151,7 +155,6 @@ const Footer = () => {
             </div>
           </div>
         </div>
-
       </div>
 
       {/* Bottom */}
