@@ -10,7 +10,7 @@ export default function Header() {
   const mainNavLinks = [
     { label: 'Man', href: '/category/man' },
     { label: 'Women', href: '/category/women' },
-    { label: 'Ethnic Wear', href: '/category/ethnic-wear' },
+    { label: 'Ethnic Wear', href: '/ethnic-wear' },
     { label: 'About Us', href: '/about' },
     { label: 'Contact Us', href: '/contact' }
   ];
@@ -56,7 +56,7 @@ export default function Header() {
           </Link>
 
           {/* Search Bar - Hidden on small mobile */}
-          <div className="hidden sm:flex flex-1 bg-gray-50 shadow-md rounded-full max-w-3xl">
+          <div className="hidden sm:flex flex-1 bg-gray-50 shadow-md rounded-full max-w-xl">
             <div className="relative w-full">
               <input
                 type="text"

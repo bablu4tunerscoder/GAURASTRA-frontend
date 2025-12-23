@@ -102,45 +102,45 @@ const HomePage = () => {
       type: "text",
       title: "SHERWANI",
       offer: "UPTO 20% OFF",
-      height: "h-[340px]",
+      height: "md:h-[340px] h-[240px]",
       gradient: "from-[#8b5a2b] to-[#c98a3e]",
     },
     {
       type: "image",
       img: "/assets/sherawani01.png",
-      height: "h-[300px]",
+      height: "md:h-[300px] h-[200px]",
     },
     {
       type: "image",
       img: "/assets/sherawani02.png",
-      height: "h-[320px]",
+      height: "md:h-[320px] h-[220px]",
     },
     {
       type: "image",
       img: "/assets/sherawani03.png",
-      height: "h-[320px]",
+      height: "md:h-[320px] h-[220px]",
     },
     {
       type: "text",
       title: "INDOWESTERN",
       offer: "UPTO 40% OFF",
-      height: "h-[340px]",
+      height: "md:h-[340px] h-[240px]",
       gradient: "from-[#7a4a1f] to-[#b87632]",
     },
     {
       type: "image",
       img: "/assets/indewestern01.jpeg",
-      height: "h-[300px]",
+      height: "md:h-[300px] h-[200px]",
     },
     {
       type: "image",
       img: "/assets/indewestern02.jpeg",
-      height: "h-[320px]",
+      height: "md:h-[320px] h-[220px]",
     },
     {
       type: "image",
       img: "/assets/indewestern03.jpeg",
-      height: "h-[320px]",
+      height: "md:h-[320px] h-[220px]",
     },
   ];
   const mensWearSection = [
@@ -210,22 +210,27 @@ const HomePage = () => {
       <HeroSection />
 
       {/* women weas section */}
+      {/* done responsive */}
       <WomenEthnicWearSection data={womenEthnicWearSection} />
 
       {/* ethnic banner section */}
-
+      {/* done responsive */}
       <EthnicBannerSection data={ethnicBannerSection} />
 
       {/* marriage glow */}
+      {/* done responsive */}
       <MarriageGlowSection data={marriageGlowSection} />
 
       {/* limited stock */}
+      {/* done responsive */}
       <LimitedStockSection data={limitedStockSection} />
 
       {/* men weas section */}
+      {/* done responsive */}
       <MenEthnicWearSection data={menEthnicWearSection} />
 
       {/* bg gradient with new arrival cards */}
+      {/* done responsive */}
       <div className="relative">
         {/* Background layer ONLY */}
         <div
@@ -238,49 +243,56 @@ const HomePage = () => {
         {/* Content layer */}
         <div className="relative">
           {/* sherwani and indo western */}
-          <section className="md:px-16 my-10 px-4">
-            <div className="columns-1 sm:columns-2 lg:columns-4 gap-1 space-y-1">
+          <section className="section-spacing">
+            <div className="grid grid-flow-col auto-cols-[50%] md:auto-cols-[50%] lg:auto-cols-[25%] gap-1 overflow-x-auto lg:overflow-x-visible scrollbar-hide pb-4">
 
-              {ethnicCards.map((card, index) => {
-                if (card.type === "text") {
-                  return (
-                    <div
-                      key={index}
-                      className={`relative flex flex-col items-center justify-center bg-gradient-to-b ${card.gradient} ${card.height} break-inside-avoid`}
-                    >
-                      <h3 className="font-serif text-white text-4xl font-semibold text-center leading-tight">
-                        {card.title}
-                      </h3>
-                      <span className="font-serif text-white text-3xl font-semibold text-center leading-tight">
-                        {card.offer}
-                      </span>
-                    </div>
-                  );
-                }
+              {/* Group cards in pairs for vertical stacking */}
+              {Array.from({ length: Math.ceil(ethnicCards.length / 2) }).map((_, groupIndex) => (
+                <div key={groupIndex} className="flex flex-col gap-1">
+                  {ethnicCards.slice(groupIndex * 2, groupIndex * 2 + 2).map((card, index) => {
+                    const actualIndex = groupIndex * 2 + index;
 
-                return (
-                  <div
-                    key={index}
-                    className={`relative ${card.height} overflow-hidden break-inside-avoid`}
-                  >
-                    <img
-                      src={card.img}
-                      alt="Ethnic Collection"
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <button className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white font-serif uppercase">
-                      SHOP NOW
-                    </button>
-                  </div>
-                );
-              })}
+                    if (card.type === "text") {
+                      return (
+                        <div
+                          key={actualIndex}
+                          className={`relative flex flex-col items-center justify-center bg-gradient-to-b ${card.gradient} ${card.height}`}
+                        >
+                          <h3 className="font-serif text-white md:text-4xl text-xl font-semibold text-center leading-tight">
+                            {card.title}
+                          </h3>
+                          <span className="font-serif text-white md:text-3xl text-2xl font-semibold text-center leading-tight">
+                            {card.offer}
+                          </span>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div
+                        key={actualIndex}
+                        className={`relative ${card.height} overflow-hidden`}
+                      >
+                        <img
+                          src={card.img}
+                          alt="Ethnic Collection"
+                          className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                        <button className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white font-serif uppercase md:text-md text-sm">
+                          SHOP NOW
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
 
             </div>
           </section>
 
           {/* new arrival */}
-          <section className='px-4 md:px-16 my-14'>
+          <section className='section-spacing'>
             <CarouselCard title="New Arrivals" products={newArrivals} />
           </section>
 
@@ -288,10 +300,12 @@ const HomePage = () => {
       </div>
 
       {/* mens wear */}
+      {/* done responsive */}
       <MensWearSection data={mensWearSection} />
 
       {/* banner */}
-      <section className="px-4 md:px-16 my-12">
+      {/* done responsive */}
+      <section className="section-spacing">
         <div className="relative">
           <img
             src="/assets/home-banner.png"
@@ -299,14 +313,14 @@ const HomePage = () => {
             className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-          <div className="absolute left-16 top-1/2 -translate-y-1/2 
+          <div className="absolute md:left-16 left-4 top-1/2 -translate-y-1/2 
                 text-white font-serif uppercase 
-                flex flex-col items-center gap-4">
-            <h1 className="text-4xl text-center">
+                flex flex-col items-center md:gap-4">
+            <h1 className="md:text-4xl text-sm text-center">
               CLASS THAT SPEAKS
             </h1>
 
-            <button className="px-6 py-2 bg-gradient-to-b rounded from-[#432B08] to-[#A96C14]">
+            <button className="md:px-6 px-2 md:py-2 py-1 bg-gradient-to-b md:text-md text-xs rounded from-[#432B08] to-[#A96C14]">
               SHOP NOW
             </button>
           </div>
@@ -315,9 +329,11 @@ const HomePage = () => {
       </section>
 
       {/* women wear */}
+      {/* done responsive */}
       <WomensWear data={womensWear} />
 
       {/*bg gradient with trending now */}
+      {/* done responsive */}
       <div className="relative">
         {/* Background layer ONLY */}
         <div
@@ -329,13 +345,13 @@ const HomePage = () => {
 
         {/* Content layer */}
         <div className="relative">
-          {/* sherwani and indo western */}
-          <section className="md:px-16 my-10 px-4">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+          {/* discover section */}
+          <section className="section-spacing">
+            <div className="flex flex-col lg:flex-row items-center justify-between lg:gap-10">
 
               {/* LEFT IMAGE */}
-              <div className="w-full md:w-1/3 flex justify-center">
-                <div className="relative w-full">
+              <div className="w-full lg:w-1/3 flex justify-center">
+                <div className="relative w-full lg:p-0 p-8">
                   <img
                     src="/assets/discover01.png"
                     alt="Style Left"
@@ -345,23 +361,23 @@ const HomePage = () => {
               </div>
 
               {/* CENTER CONTENT */}
-              <div className="text-center w-full md:w-1/3 space-y-4">
-                <h2 className="text-[#9C0131] font-serif text-4xl font-semibold">
-                  DISCOVERY YOUR STYLE
+              <div className="text-center w-full lg:w-1/3 md:space-y-4">
+                <h2 className="text-[#9C0131] font-serif text-2xl md:text-6xl font-semibold">
+                  DISCOVER YOUR STYLE
                 </h2>
 
-                <p className="text-3xl font-semibold tracking-widest font-montserrat">
+                <p className="md:text-4xl  text-lg font-semibold lg:tracking-widest md:tracking-wider font-montserrat">
                   TRENDY • ELEGANT • EVERYDAY
                 </p>
 
-                <button className=" px-6 py-2 text-sm font-serif rounded-md bg-black text-white transition">
+                <button className="px-6 py-2 mt-4 md:text-3xl text-sm font-serif rounded-md bg-black text-white transition">
                   SHOP NOW
                 </button>
               </div>
 
               {/* RIGHT IMAGE */}
-              <div className="w-full md:w-1/3 flex justify-center">
-                <div className="relative w-full">
+              <div className="w-full lg:w-1/3 flex justify-center">
+                <div className="relative w-full lg:p-0 p-8">
                   <img
                     src="/assets/discover02.png"
                     alt="Style Right"
@@ -375,7 +391,7 @@ const HomePage = () => {
           </section>
 
           {/* trending wear */}
-          <section className='px-4 md:px-16 my-14'>
+          <section className='section-spacing'>
             <CarouselCard title="Trending Now" products={trendingWear} />
           </section>
 
@@ -383,6 +399,7 @@ const HomePage = () => {
       </div>
 
       {/* signature collectoion */}
+      {/* done responsive */}
       <SignatureCollectionsSection data={signatureCollection} />
 
       {/* why choose us */}

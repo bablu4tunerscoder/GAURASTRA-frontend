@@ -27,11 +27,11 @@ export default function Login() {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      // navigate("/OnlineAdmin");
-    }
-  }, [user, navigate]);
+  // useEffect(() => {
+  //   if (user) {
+  //     // navigate("/OnlineAdmin");
+  //   }
+  // }, [user, navigate]);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gray-900 text-white overflow-hidden">

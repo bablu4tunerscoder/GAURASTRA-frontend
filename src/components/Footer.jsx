@@ -43,15 +43,15 @@ const Footer = () => {
     <footer className="bg-[url('/assets/footerbg.png')] bg-cover text-white">
       {/* newsletter section */}
       <div className="md:px-16 py-10 px-4">
-        <div className="relative overflow-hidden rounded-2xl bg-[#A89B91] px-6 md:px-12 py-8 md:py-10"> <span className="absolute -left-14 top-2 w-32 h-32 rounded-full bg-orange-300 opacity-70">
+        <div className="relative overflow-hidden rounded-2xl bg-[#A89B91] px-4 md:px-12 py-8 md:py-10"> <span className="absolute -left-14 top-2 w-32 h-32 rounded-full bg-orange-300 opacity-70">
         </span>
           <span className="absolute right-1/4 -bottom-16 w-48 h-48 rounded-full bg-orange-300 opacity-60">
           </span>
           <span className="absolute -right-6 -top-5 w-20 h-20 rounded-full bg-orange-300 opacity-60"></span>
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between md:gap-6">
             <div className="text-center md:text-left">
-              <h2 className="text-2xl md:text-4xl font-serif font-semibold text-white"> Get More Discount up to 40% </h2>
-              <p className="text-sm md:text-base text-white/90 mt-2"> Save more buy more </p>
+              <h2 className="text-xl md:text-4xl font-serif font-semibold text-white"> Get More Discount up to 40% </h2>
+              <p className="text-sm md:text-base text-white/90 my-2"> Save more buy more </p>
             </div>
             <div className="flex w-full md:w-auto items-center gap-3">
               <input type="email" placeholder="Your email address" className="flex-1 md:w-96 bg-gray-50 rounded-lg px-5 py-3 text-sm md:text-base outline-none text-gray-700 placeholder:text-gray-400" />
@@ -69,8 +69,8 @@ const Footer = () => {
           {/* Logo */}
           <div className="flex justify-center gap-6 relative">
             {/* Gradient Circle */}
-            <div className="absolute z-0 -left-full -top-10 h-96 w-96 rounded-full 
-    bg-gradient-to-br from-[#000A1D] to-[#031433]" />
+            <div className="absolute z-10 -left-full -top-10 h-96 w-96 rounded-full 
+    bg-gradient-to-br from-[#000A1D] to-[#031433] md:block hidden" />
 
             <Image
               src="/assets/updated-logo-white.png"
