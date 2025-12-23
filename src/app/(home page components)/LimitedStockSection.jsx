@@ -2,12 +2,12 @@ import React from 'react'
 
 const LimitedStockSection = ({ data }) => {
     return (
-        <section className="md:px-16 my-10 px-4">
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 md:gap-8 lg:gap-10">
+        <section className="section-spacing">
+            <div className="grid lg:grid-cols-3 grid-cols-2 gap-2 md:gap-8 lg:gap-10">
                 {data.map((offer, index) => (
                     <div
                         key={index}
-                        className="group relative h-[450px] md:h-[500px] lg:h-[550px] overflow-hidden"
+                        className="group relative h-[250px] md:h-[500px] lg:h-[550px] overflow-hidden"
                     >
                         {/* Image */}
                         <img
@@ -27,17 +27,17 @@ const LimitedStockSection = ({ data }) => {
                                 {/* UPTO Label and Text Container */}
                                 <div className="relative flex items-center justify-center gap-0">
                                     {/* Vertical UPTO Label */}
-                                    <div className="absolute -left-20 rounded-md top-6 bg-white text-black px-3  py-2 text-lg font-semibold font-mono tracking-[0.3em] -rotate-90 whitespace-nowrap text-center">
+                                    <div className="absolute md:-left-20 -left-9 md:rounded-md rounded md:top-6 top-2 bg-white text-black md:px-3 px-1 md:py-2 py-0.5 md:text-lg text-xs font-semibold font-mono md:tracking-[0.3em] -rotate-90 whitespace-nowrap text-center">
                                         UPTO
                                     </div>
 
                                     {/* Text Content */}
-                                    <div className="text-left -ml-2">
-                                        <p className="font-serif text-xs md:text-4xl  uppercase leading-6">
+                                    <div className="text-left md:-ml-2">
+                                        <p className="font-serif text-xs md:text-4xl  uppercase md:leading-6 leading-2">
                                             {offer.label}
                                         </p>
 
-                                        <h2 className="font-serif  text-4xl md:text-5xl lg:text-6xl ">
+                                        <h2 className="font-serif  text-xl md:text-5xl lg:text-6xl ">
                                             {offer.discount}
                                         </h2>
                                     </div>

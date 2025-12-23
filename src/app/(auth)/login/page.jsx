@@ -27,33 +27,11 @@ export default function Login() {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      // navigate("/OnlineAdmin");
-    }
-  }, [user]);
-
-
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleAuthProvider);
-      const token = await result.user.getIdToken();
-
-      dispatch(googleAuthUser(token))
-        .unwrap()
-        .then(() => {
-          toast.success("Google login successful!");
-          router.back();
-        })
-        .catch((err) => {
-          console.error("Google Auth Error:", err);
-          toast.error("Error during Google login.");
-        });
-    } catch (error) {
-      console.error("Error during Google Sign-In:", error);
-      toast.error("Google sign-in failed.");
-    }
-  };
+  // useEffect(() => {
+  //   if (user) {
+  //     // navigate("/OnlineAdmin");
+  //   }
+  // }, [user, navigate]);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gray-900 text-white overflow-hidden">

@@ -1,27 +1,46 @@
-import React from 'react'
-import Heading from './Heading'
+import React from "react"
+import Heading from "./Heading"
 
 const WomensWear = ({ data }) => {
     return (
-        <section className="px-4 md:px-16 my-14">
+        <section className="section-spacing">
             {/* Section Title */}
             <Heading title="Women's Wear" />
 
-            {/* Categories Row */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+            {/* Scrollable Row */}
+            <div
+                className="
+          flex
+          gap-6
+          justify-between
+          overflow-x-auto
+          scrollbar-hide
+          pb-2
+        "
+            >
                 {data.map((item, index) => (
-                    <div key={index} className="text-center cursor-pointer group">
+                    <div
+                        key={index}
+                        className="
+              flex-shrink-0
+              text-center
+              cursor-pointer
+              group
+              w-[32%]
+              md:w-auto
+            "
+                    >
                         {/* Image Box */}
-                        <div className="relative h-[260px] overflow-hidden">
+                        <div className="relative overflow-hidden rounded-xl">
                             <img
                                 src={item.img}
                                 alt={item.title}
-                                className="w-full object-cover"
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                             />
                         </div>
 
                         {/* Label */}
-                        <p className="mt-2 text-2xl font-serif text-primary">
+                        <p className="md:mt-3 mt-1 text-secondary font-medium text-xs md:text-lg">
                             {item.title}
                         </p>
                     </div>

@@ -1,17 +1,38 @@
-import React from 'react'
-import Heading from './Heading'
+import React from "react"
+import Heading from "./Heading"
 
 const SignatureCollectionsSection = ({ data }) => {
     return (
-        <section className='px-4 md:px-16 my-14'>
-            <Heading title="Gaustra Signature Collections of  winter" />
+        <section className="section-spacing">
+            <Heading title="Gaustra Signature Collections of Winter" />
 
-            {/* Signature Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            {/* Scrollable Row */}
+            <div
+                className="
+                    grid
+                    grid-flow-col
+                    auto-cols-[calc(50%-0.75rem)]
+                    md:auto-cols-[calc(50%-0.75rem)]
+                    lg:grid-cols-5
+                    lg:auto-cols-auto
+                    gap-6
+                    overflow-x-auto
+                    lg:overflow-x-visible
+                    scrollbar-hide
+                    pb-2
+                "
+            >
                 {data.map((item, index) => (
                     <div
                         key={index}
-                        className="bg-no-repeat bg-cover pt-8 pb-4 px-3 overflow-hidden space-y-4 rounded-2xl"
+                        className="
+                            rounded-2xl
+                            bg-no-repeat
+                            bg-cover
+                            overflow-hidden
+                            space-y-4
+                            pt-8 pb-4 px-3
+                        "
                         style={{
                             backgroundImage: `url(${item.bgimg})`,
                         }}
@@ -24,14 +45,12 @@ const SignatureCollectionsSection = ({ data }) => {
                         />
 
                         {/* Title */}
-                        <h3 className="w-full text-3xl font-serif font-bold text-black">
+                        <h3 className="text-2xl md:text-3xl font-serif font-bold text-black">
                             {item.title}
                         </h3>
                     </div>
                 ))}
-
             </div>
-
         </section>
     )
 }
