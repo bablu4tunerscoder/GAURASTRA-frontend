@@ -5,7 +5,6 @@ import Link from "next/link";
 const DEFAULT_IMAGE = "/assets/default-product.png";
 
 const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
-  console.log(product)
   if (!product) return null;
 
   // 👉 DEFAULT VARIANT
@@ -76,16 +75,16 @@ const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
               onAddToCart?.(product);
             }}
             className="
-              absolute bottom-4 left-1/2 -translate-x-1/2
-              bg-white text-primary text-xs md:text-sm
-              px-4 py-1.5 md:py-2
+              absolute bottom-6 left-1/2 -translate-x-1/2
+              bg-white text-primary
+              px-8 py-1.5 md:py-2
               opacity-0 group-hover:opacity-100
               transition-opacity duration-200
               flex items-center gap-2
-              whitespace-nowrap
+              whitespace-nowrap font-semibold text-lg
             "
           >
-            <Handbag className="w-4 h-4" />
+            <Handbag className="w-6 h-6" />
             Add to Cart
           </button>
         </div>

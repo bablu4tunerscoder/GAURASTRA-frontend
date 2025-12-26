@@ -15,6 +15,7 @@ import {
   selectFilters,
   selectAllProducts,
 } from "@/store/slices/productSlice";
+import Pagination from "@/components/Pagination";
 
 // Debounce hook
 const useDebounce = (value, delay) => {
@@ -38,6 +39,7 @@ export default function CategoryPageClient({
   initialProducts = [],
   initialSlug = ["all-products"],
 }) {
+  console.log("initialProducts", initialProducts);
   const dispatch = useDispatch();
   const [slug, setSlug] = useState(initialSlug);
 
@@ -98,6 +100,7 @@ export default function CategoryPageClient({
     isError,
     error,
   } = useGetProductsQuery(queryPayload);
+
 
   // Handle filter changes
   const handleFilterChange = (key, value) => {
@@ -186,14 +189,8 @@ export default function CategoryPageClient({
                     <ProductCard key={p._id} product={p} />
                   ))}
                 </div>
-                <div className="bg-red-400">
-                  {/* Pagination */}
-                  {/* <Pagination
-                    currentPage={page}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                  /> */}
-                </div>
+                {/* Pagination */}
+                <Pagination totalPages={4} />
               </div>
             ) : (
               <div className="text-center py-12">
