@@ -9,10 +9,10 @@ import {
     clearBuyNowItem,
     setBuyNowItem,
     updateQuantity,
-} from "@/Redux/Slices/cartSlice";
-import { clearOrder } from "@/Redux/Slices/orderSlice";
-import { resetPayment } from "@/Redux/Slices/paymentSlice";
-import { updateUser } from "@/Redux/Slices/userSlice";
+} from "@/store/slices/cartSlice";
+import { clearOrder } from "@/store/slices/orderSlice";
+import { resetPayment } from "@/store/slices/paymentSlice";
+import { updateUser } from "@/store/slices/userSlice";
 
 import toast from "react-hot-toast";
 import CouponComponent from "./CouponComponent";

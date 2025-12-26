@@ -1,7 +1,7 @@
 "use client";
 
-import { auth, googleAuthProvider } from "@/Helper/fireBaseConfig";
-import { googleAuthUser, registerUser } from "@/Redux/Slices/authSlice";
+import { auth, googleAuthProvider } from "@/helper/fireBaseConfig";
+import { googleAuthUser, registerUser } from "@/store/slices/authSlice";
 import { signInWithPopup } from "firebase/auth";
 import { LogIn, Mail, Phone, Lock } from "lucide-react";
 import Image from "next/image";
@@ -39,7 +39,8 @@ export default function SignupPage() {
   useEffect(() => {
     if (user) {
       toast.success("Signup successful!");
-      router.back();}
+      router.back();
+    }
   }, [user]);
 
   // Google Signup

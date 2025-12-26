@@ -1,7 +1,7 @@
 "use client";
 
 // Everything in ONE file — all components created locally (NO external components)
-import { axiosInstanceWithOfflineToken } from "@/Helper/axiosinstance";
+import { axiosInstanceWithOfflineToken } from "@/helper/axiosinstance";
 import { openPrintWindow } from "@/utils/openPrintWindow";
 import { CreditCard, Eye, FileCheck, IndianRupee, MapPin, Minus, Phone, Plus, RotateCcw, Scan, ScanQrCode, ShoppingCart, User, X } from "lucide-react";
 import QrScanner from "qr-scanner";

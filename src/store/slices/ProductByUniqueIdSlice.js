@@ -1,8 +1,8 @@
 // ProductByUniqueIdSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "@/Helper/axiosinstance";
- 
+import { BASE_URL } from "@/helper/axiosinstance";
+
 export const fetchProductByUniqueId = createAsyncThunk(
   "product/fetchByUniqueId",
   async (productUniqueId, { rejectWithValue }) => {
@@ -16,7 +16,7 @@ export const fetchProductByUniqueId = createAsyncThunk(
     }
   }
 );
- 
+
 const productSlice = createSlice({
   name: "productByUniqueId",
   initialState: {
@@ -42,7 +42,6 @@ const productSlice = createSlice({
       });
   },
 });
- 
+
 export default productSlice.reducer;
- 
- 
+

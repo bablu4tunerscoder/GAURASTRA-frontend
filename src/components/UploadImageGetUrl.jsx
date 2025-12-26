@@ -1,5 +1,5 @@
 "use client";
-import { axiosInstanceWithOfflineToken } from "@/Helper/axiosinstance";
+import { axiosInstanceWithOfflineToken } from "@/helper/axiosinstance";
 import React, { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { ImageUp, Copy, X } from "lucide-react";

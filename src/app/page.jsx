@@ -207,6 +207,7 @@ const HomePage = () => {
   return (
     <main>
       {/* hero section */}
+      {/* not responsive yet coz content not finalized */}
       <HeroSection />
 
       {/* women weas section */}
@@ -403,6 +404,7 @@ const HomePage = () => {
       <SignatureCollectionsSection data={signatureCollection} />
 
       {/* why choose us */}
+      {/* done responsive */}
       <WhyChooseUsSection data={whyChooseUsSection} />
 
     </main>

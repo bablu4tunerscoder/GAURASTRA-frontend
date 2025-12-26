@@ -1,5 +1,5 @@
 "use client"
-import { addToCart, setBuyNowItem } from '@/Redux/Slices/cartSlice';
+import { addToCart, setBuyNowItem } from '@/store/slices/cartSlice';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -25,19 +25,19 @@ const ProductDetailClient = ({ initialProducts }) => {
   const discountPercent = pricing?.discount_percent || 0;
   const stockDetails = product?.stock_details || [];
   const images = product?.images || [];
-  
+
   // Get available sizes from stock details
   const availableSizes = stockDetails
     .filter(stock => stock.is_available && stock.stock_quantity > 0)
     .map(stock => stock.size);
 
   // Prepare product images from the data
- const productImages = images
-  .map(img =>
-    img.image_url.startsWith("http")
-      ? img.image_url
-      : `https://backend.gaurastra.com${img.image_url}`
-  );
+  const productImages = images
+    .map(img =>
+      img.image_url.startsWith("http")
+        ? img.image_url
+        : `https://backend.gaurastra.com${img.image_url}`
+    );
 
 
   // Fallback if no images
@@ -129,13 +129,13 @@ const ProductDetailClient = ({ initialProducts }) => {
   };
 
   const handleBuyNow = () => {
-  if (!selectedSize) {
-    return toast.error("Please select a size before proceeding.");
-  }
-  if (!initialProducts) return;
+    if (!selectedSize) {
+      return toast.error("Please select a size before proceeding.");
+    }
+    if (!initialProducts) return;
 
-  // If user NOT logged in → Save temporarily + redirect to login
-  if (!user) {
+    // If user NOT logged in → Save temporarily + redirect to login
+    if (!user) {
       localStorage.setItem(
         "pendingBuyNowProduct",
         JSON.stringify({
@@ -145,27 +145,27 @@ const ProductDetailClient = ({ initialProducts }) => {
           returnUrl: window.location.pathname,
         })
       );
-    
 
-    router.push(
-      `/login?from=buyNow`
+
+      router.push(
+        `/login?from=buyNow`
+      );
+
+      return;
+    }
+
+    // User logged in → set Buy Now item
+    dispatch(
+      setBuyNowItem({
+        ...initialProducts,
+        selectedSize,
+        quantity,
+      })
     );
 
-    return;
-  }
-
-  // User logged in → set Buy Now item
-  dispatch(
-    setBuyNowItem({
-      ...initialProducts,
-      selectedSize,
-      quantity,
-    })
-  );
-
-  // Redirect to checkout
-  router.push("/checkout");
-};
+    // Redirect to checkout
+    router.push("/checkout");
+  };
 
 
   return (

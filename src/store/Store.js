@@ -2,21 +2,24 @@ import { configureStore } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import { combineReducers } from "redux";
-import cartReducer from "./Slices/cartSlice";
-import filtersReducer from "./Slices/filterSlice";
-import productReducer from "./Slices/productSlice";
-import categoryReducer from "./Slices/categorySlice";
-import authReducer from "./Slices/authSlice";
-import userReducer from "./Slices/userSlice";
-import landingReducer from "./Slices/landingSlice";
-import BlogSliceReducer from "./Slices/blogSlice";
-import orderReducer from "./Slices/orderSlice";
-import paymentReducer from "./Slices/paymentSlice";
-import eventReducer from "./Slices/eventSlice";
-import couponReducer from "./Slices/couponSlice"; // Add this line
-import recommendedProductsReducer from "./Slices/RecommendedProductsSlice";
-import offerBannerReducer from './Slices/offerBannerSlice';
-import productByUniqueIdReducer from "./Slices/ProductByUniqueIdSlice";
+import cartReducer from "./slices/cartSlice";
+import filtersReducer from "./slices/filterSlice";
+import productReducer from "./slices/productSlice";
+import categoryReducer from "./slices/categorySlice";
+import authReducer from "./slices/authSlice";
+import userReducer from "./slices/userSlice";
+import landingReducer from "./slices/landingSlice";
+import BlogSliceReducer from "./slices/blogSlice";
+import orderReducer from "./slices/orderSlice";
+import paymentReducer from "./slices/paymentSlice";
+import eventReducer from "./slices/eventSlice";
+import couponReducer from "./slices/couponSlice"; // Add this line
+import recommendedProductsReducer from "./slices/RecommendedProductsSlice";
+import offerBannerReducer from './slices/offerBannerSlice';
+import productByUniqueIdReducer from "./slices/ProductByUniqueIdSlice";
+import { productsApi } from "./api/productsApi";
+import { productSidebarApi } from "./api/productSidebarApi";
+
 const persistConfig = {
   key: "root",
   storage,
@@ -44,7 +47,9 @@ const rootReducer = combineReducers({
   coupon: couponReducer, // Add this line
   recommendedProducts: recommendedProductsReducer,
   offerBanner: offerBannerReducer,
-    productByUniqueId: productByUniqueIdReducer,
+  productByUniqueId: productByUniqueIdReducer,
+  [productsApi.reducerPath]: productsApi.reducer,
+  [productSidebarApi.reducerPath]: productSidebarApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -55,7 +60,7 @@ export const store = configureStore({
     getDefaultMiddleware({
       immutableCheck: false, // ✅ Disable to fix performance warning
       serializableCheck: false, // ✅ Redux Persist की वॉर्निंग हटाने के लिए
-    }),
+    }).concat(productsApi.middleware).concat(productSidebarApi.middleware),
 });
 
 export const persistor = persistStore(store);

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import axiosInstance from "@/Helper/axiosinstance";
+import axiosInstance from "@/helper/axiosinstance";
 import toast from "react-hot-toast";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";

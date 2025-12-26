@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "@/Helper/axiosinstance";
+import { BASE_URL } from "@/helper/axiosinstance";
 
 // 🔹 Async Thunk for Fetching a User by ID
 export const fetchUserById = createAsyncThunk(

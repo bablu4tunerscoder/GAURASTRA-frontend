@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "@/Helper/axiosinstance";
- 
+import { BASE_URL } from "@/helper/axiosinstance";
+
 // ✅ API to fetch categories
 export const fetchCategories = createAsyncThunk(
   "categories/fetchCategories",
@@ -14,7 +14,7 @@ export const fetchCategories = createAsyncThunk(
     }
   }
 );
- 
+
 const categorySlice = createSlice({
   name: "categories",
   initialState: {
@@ -37,7 +37,6 @@ const categorySlice = createSlice({
       });
   },
 });
- 
+
 export default categorySlice.reducer;
- 
- 
+

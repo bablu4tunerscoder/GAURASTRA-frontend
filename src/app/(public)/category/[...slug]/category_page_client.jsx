@@ -1,110 +1,114 @@
 "use client";
 
+import Breadcrumbs from "@/components/Breadcrumbs";
 import ProductCard from "@/components/ProductCard";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
-import axiosInstance from "@/Helper/axiosinstance";
-import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
+import { useEffect, useState, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Sidebar from "./Sidebar";
+import { useGetProductsQuery } from "@/store/api/productsApi";
+import {
+  setFilter,
+  clearFilters,
+  setCategoryAndSubcategory,
+  selectFilters,
+  selectAllProducts,
+} from "@/store/slices/productSlice";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
-const API_URL = BASE_URL + "/api/Productes/filter-Products";
+// Debounce hook
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
 
-export default function CategoryPageClient({ initialProducts = [], initialSlug = ["all-products"] }) {
-  
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
 
-  const [products, setProducts] = useState(initialProducts);
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
+
+export default function CategoryPageClient({
+  initialProducts = [],
+  initialSlug = ["all-products"],
+}) {
+  const dispatch = useDispatch();
   const [slug, setSlug] = useState(initialSlug);
-  const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState({
-    search: "",
-    min_price: "",
-    max_price: "",
-    sort: "",
-    on_sale: false,
-  });
 
+  // Get filters from Redux
+  const filters = useSelector(selectFilters);
+  const productsFromRedux = useSelector(selectAllProducts);
 
-  // Debounce hook
-  const useDebounce = (value, delay) => {
-    const [debouncedValue, setDebouncedValue] = useState(value);
-
-    useEffect(() => {
-      const handler = setTimeout(() => {
-        setDebouncedValue(value);
-      }, delay);
-
-      return () => {
-        clearTimeout(handler);
-      };
-    }, [value, delay]);
-
-    return debouncedValue;
-  };
-
-  // Debounced filter values
+  // Debounced filters for API calls
   const debouncedFilters = useDebounce(filters, 500);
 
+  // Parse category and subcategory from slug
+  const [categorySlug, subcategorySlug] = slug;
+  const category = categorySlug?.split("-")?.join(" ");
+  const subcategory = subcategorySlug?.split("-")?.join(" ") || "";
+
+  // Update Redux with current category/subcategory
+  useEffect(() => {
+    dispatch(
+      setCategoryAndSubcategory({
+        category: category,
+        subcategory: subcategory,
+      })
+    );
+  }, [category, subcategory, dispatch]);
+
+  // Build query payload
+  const queryPayload = useMemo(() => {
+    const payload = {
+      category_name: category || "",
+      subcategory_name: subcategory || "",
+    };
+
+    // Add filters if they have values
+    if (debouncedFilters.search) {
+      payload.search = debouncedFilters.search;
+    }
+    if (debouncedFilters.min_price) {
+      payload.min_price = parseFloat(debouncedFilters.min_price);
+    }
+    if (debouncedFilters.max_price) {
+      payload.max_price = parseFloat(debouncedFilters.max_price);
+    }
+    if (debouncedFilters.sort) {
+      payload.sort = debouncedFilters.sort;
+    }
+    if (debouncedFilters.on_sale) {
+      payload.on_sale = debouncedFilters.on_sale;
+    }
+
+    return payload;
+  }, [category, subcategory, debouncedFilters]);
+
+  // RTK Query hook - automatically handles caching and loading
+  const {
+    data: products = initialProducts,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+  } = useGetProductsQuery(queryPayload);
+
+  // Handle filter changes
   const handleFilterChange = (key, value) => {
     if (key === "clear") {
-      setFilters({
-        search: "",
-        min_price: "",
-        max_price: "",
-        sort: "",
-        on_sale: false,
-      });
+      dispatch(clearFilters());
     } else {
-      setFilters((prev) => ({ ...prev, [key]: value }));
+      dispatch(setFilter({ key, value }));
     }
   };
 
-  // Fetch products from API with filters
-  const fetchProducts = useCallback(async (slugStr, filterParams = {}) => {
-    let [category, subcategory] = slugStr.split("/");
-    category = category?.split("-")?.join(" ");
-    subcategory = subcategory?.split("-")?.join(" ");
-    setLoading(true);
-    try {
-      const payload = {
-        category_name: category,
-        subcategory_name: subcategory || null,
-      };
-
-      // Add filters to payload if they have values
-      if (filterParams.search) {
-        payload.search = filterParams.search;
-      }
-      if (filterParams.min_price && filterParams.max_price) {
-        payload.min_price = parseFloat(filterParams.min_price);
-      }
-      if (filterParams.max_price) {
-        payload.max_price = parseFloat(filterParams.max_price);
-      }
-      if (filterParams.sort) {
-        payload.sort = filterParams.sort;
-      }
-      if (filterParams.on_sale) {
-        payload.on_sale = filterParams.on_sale;
-      }
-
-      const { data } = await axiosInstance.post(
-      "/api/Productes/filter-Products", payload);
-
-      setProducts(data?.data || []);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // Effect to fetch products when debounced filters change
-  useEffect(() => {
-    fetchProducts(slug.join("/"), debouncedFilters);
-  }, [debouncedFilters, slug, fetchProducts]);
-
-  // On sidebar category click
+  // Handle category/sidebar navigation
   const handleChange = (slugStr) => {
     const parts = slugStr.split("/");
     setSlug(parts);
@@ -115,67 +119,94 @@ export default function CategoryPageClient({ initialProducts = [], initialSlug =
   // Browser back/forward
   useEffect(() => {
     const handler = (e) => {
-      const stateSlug = e.state?.slug || [];
+      const stateSlug = e.state?.slug || initialSlug;
       setSlug(stateSlug);
     };
     window.addEventListener("popstate", handler);
     return () => window.removeEventListener("popstate", handler);
-  }, []);
+  }, [initialSlug]);
+
+  // Show loading state
+  const showLoading = isLoading || (isFetching && products.length === 0);
 
   return (
-    <section className="px-4 py-6">
-      <div className="grid grid-cols-12 gap-6">
-        {/* Sidebar */}
-        <Sidebar
-          slug={slug}
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onChange={handleChange}
-        />
+    <section>
+      <Image
+        src="/assets/productPageBanner.png"
+        alt="Category Banner"
+        width={0}
+        height={0}
+        sizes="100vw"
+        style={{ width: "100%", height: "auto" }}
+      />
+      <div className="md:px-16 px-4 py-6">
+        <Breadcrumbs />
+        <div className="grid grid-cols-12 gap-6">
+          {/* Sidebar */}
+          <Sidebar
+            slug={slug}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onChange={handleChange}
+          />
 
-        {/* Products */}
-        <div className="col-span-12 md:col-span-9">
-          <h2 className="text-2xl font-semibold capitalize mb-2">
-            {slug.length === 1 ? (
-              slug[0] === "men"
-                ? "Men's Wear"
-                : slug[0] === "women"
-                  ? "Women's Wear"
-                  : slug[0].replace(/-/g, " ")
-            ) : (
-              slug.join(" / ").replace(/-/g, " ")
+          {/* Products */}
+          <div className="col-span-12 md:col-span-9">
+
+            {/* Show fetching indicator when updating in background */}
+            {isFetching && !isLoading && (
+              <div className="mb-2 text-sm text-gray-600">
+                Updating products...
+              </div>
             )}
-          </h2>
 
 
 
-          <p className="text-md text-gray-500 mb-4">
-            {products.length} product{products.length !== 1 ? "s" : ""}
-          </p>
+            {/* Error State */}
+            {isError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+                <p className="font-bold">Error loading products</p>
+                <p className="text-sm">
+                  {error?.data?.message || "Something went wrong"}
+                </p>
+              </div>
+            )}
 
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(6)].map((_, i) => (
-                <ProductCardSkeleton key={i} />
-              ))}
-            </div>
-          ) : products.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.map((p) => (
-                <ProductCard key={p.product_id} product={p} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No products found.</p>
-              <button
-                onClick={() => handleFilterChange("clear", null)}
-                className="mt-4 px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
-              >
-                Clear All Filters
-              </button>
-            </div>
-          )}
+            {/* Loading State */}
+            {showLoading ? (
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...Array(8)].map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
+              </div>
+            ) : products.length > 0 ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                  {products.map((p) => (
+                    <ProductCard key={p._id} product={p} />
+                  ))}
+                </div>
+                <div className="bg-red-400">
+                  {/* Pagination */}
+                  {/* <Pagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  /> */}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No products found.</p>
+                <button
+                  onClick={() => handleFilterChange("clear", null)}
+                  className="mt-4 px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
+                >
+                  Clear All Filters
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>

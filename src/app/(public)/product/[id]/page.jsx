@@ -1,5 +1,5 @@
 
-import axiosInstance from "@/Helper/axiosinstance";
+import axiosInstance from "@/helper/axiosinstance";
 import ProductDetailClient from "./ProductDetailClient";
 
 async function GetData(id) {
@@ -19,7 +19,7 @@ async function GetData(id) {
 export default async function ProductDetailPage({ params }) {
   const { id } = await params || null;
   const product = await GetData(id);
- 
+
   return (
     <ProductDetailClient
       initialProducts={product}

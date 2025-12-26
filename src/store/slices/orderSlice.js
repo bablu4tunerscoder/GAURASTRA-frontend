@@ -1,7 +1,7 @@
 // orderSlice.js
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "@/Helper/axiosinstance";
+import { BASE_URL } from "@/helper/axiosinstance";
 
 export const createOrder = createAsyncThunk(
   "order/createOrder",

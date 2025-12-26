@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, Receipt, ShoppingBag, LogOut, Boxes } from "lucide-react";
+import { Menu, Receipt, ShoppingBag, LogOut, Boxes, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -34,6 +34,7 @@ export default function MainLayout({ children }) {
     { icon: Receipt, label: "Billing", href: "/offline/billing" },
     { icon: Boxes, label: "Add Products", href: "/offline/add-products" },
     { icon: ShoppingBag, label: "View Products", href: "/offline/view-products" },
+    { icon: RotateCcw, label: "Return Status", href: "/offline/return-status" },
   ];
 
   return (

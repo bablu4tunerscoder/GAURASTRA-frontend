@@ -1,7 +1,7 @@
 'use client'
 
 import UploadImageGetUrl from '@/components/UploadImageGetUrl';
-import { axiosInstanceWithOfflineToken } from '@/Helper/axiosinstance';
+import { axiosInstanceWithOfflineToken } from '@/helper/axiosinstance';
 import { Box, Image, Loader2, Plus, Trash2, X } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';

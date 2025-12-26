@@ -7,7 +7,7 @@ import {
   removeCoupon,
   clearError,
   clearCoupon,
-} from "@/Redux/Slices/couponSlice";
+} from "@/store/slices/couponSlice";
 
 const CouponComponent = ({ itemsToDisplay, totalAmount, storedUser }) => {
   const dispatch = useDispatch();
@@ -21,7 +21,7 @@ const CouponComponent = ({ itemsToDisplay, totalAmount, storedUser }) => {
     setValue,
     reset,
   } = useForm();
-  
+
   const [isAnimating, setIsAnimating] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);

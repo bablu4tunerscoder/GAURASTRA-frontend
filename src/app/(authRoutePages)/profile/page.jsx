@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserOrders } from "@/Redux/Slices/orderSlice";
+import { getUserOrders } from "@/store/slices/orderSlice";
 
 import ProfileTab from "./ProfileTab";
 import OrdersTab from "./OrdersTab";
@@ -32,11 +32,10 @@ export default function Page() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-sm font-medium ${
-              activeTab === tab.id
-                ? "border-b-2 border-black text-black"
-                : "text-gray-500 hover:text-black"
-            }`}
+            className={`px-4 py-2 text-sm font-medium ${activeTab === tab.id
+              ? "border-b-2 border-black text-black"
+              : "text-gray-500 hover:text-black"
+              }`}
           >
             {tab.label}
           </button>

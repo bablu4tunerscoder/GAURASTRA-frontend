@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Providers } from "@/Redux/provider";
+import { Providers } from "@/store/provider";
 import ToasterProvider from "@/components/ToasterProvider";
 import {
   Montserrat,

@@ -1,5 +1,5 @@
 "use client";
-import { axiosInstanceWithOfflineToken } from "@/Helper/axiosinstance";
+import { axiosInstanceWithOfflineToken } from "@/helper/axiosinstance";
 import { printVariantQR } from "@/utils/printVariantQR";
 import { ChevronRight, Pencil, QrCode, Trash2 } from "lucide-react";
 // import { useRouter } from "next/router";
@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
 const VariantRow = ({ v, productId, GetData }) => {
+    console.log(v)
     const {
         register,
         handleSubmit,

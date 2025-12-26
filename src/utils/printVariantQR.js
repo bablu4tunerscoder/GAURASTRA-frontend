@@ -24,7 +24,7 @@ export const printVariantQR = (variant) => {
                 }
                 img {
                     width: 200px;
-                    height: 200px;
+                    height: auto;
                 }
                 h3 {
                     margin-top: 12px;

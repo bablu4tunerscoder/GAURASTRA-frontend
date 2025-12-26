@@ -8,9 +8,9 @@ import {
   initiatePayment,
   resetPayment,
   verifyPayment,
-} from "@/Redux/Slices/paymentSlice";
+} from "@/store/slices/paymentSlice";
 
-import { createOrder, clearOrder } from "@/Redux/Slices/orderSlice";
+import { createOrder, clearOrder } from "@/store/slices/orderSlice";
 
 const PaymentComponent = ({ orderDetails, onBack }) => {
   const dispatch = useDispatch();

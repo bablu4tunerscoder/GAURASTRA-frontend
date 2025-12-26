@@ -2,7 +2,7 @@
 import Image from "next/image";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { removeFromCart } from "@/Redux/Slices/cartSlice";
+import { removeFromCart } from "@/store/slices/cartSlice";
 import Link from "next/link";
 // import { Link } from "next/link";
 
@@ -26,23 +26,23 @@ const CartPage = () => {
   const totalAmount = subtotal + shippingCharge;
 
   // Get primary image or first image
-const getProductImage = (images) => {
-  if (!images || images.length === 0) return "/assets/default-product.png";
+  const getProductImage = (images) => {
+    if (!images || images.length === 0) return "/assets/default-product.png";
 
-  const primary =
-    images.find((img) => img.is_primary) ||
-    images[0] ||
-    { image_url: "" };
+    const primary =
+      images.find((img) => img.is_primary) ||
+      images[0] ||
+      { image_url: "" };
 
-  let url = primary.image_url || "";
+    let url = primary.image_url || "";
 
-  // 🔥 If URL does NOT start with http or https → add backend prefix
-  if (!url.startsWith("http")) {
-    url = `https://backend.gaurastra.com${url}`;
-  }
+    // 🔥 If URL does NOT start with http or https → add backend prefix
+    if (!url.startsWith("http")) {
+      url = `https://backend.gaurastra.com${url}`;
+    }
 
-  return url;
-};
+    return url;
+  };
 
 
   return (
@@ -172,12 +172,12 @@ const getProductImage = (images) => {
                   <span>₹{totalAmount.toFixed(2)}</span>
                 </div>
                 <div className="flex  mt-6">
-                <Link
-                  href="/checkout"
-                  className="bg-black text-center text-white rounded-lg py-2 px-3.5 flex-1  hover:bg-gray-800 transition"
-                >
-                  Proceed to Checkout
-                </Link>
+                  <Link
+                    href="/checkout"
+                    className="bg-black text-center text-white rounded-lg py-2 px-3.5 flex-1  hover:bg-gray-800 transition"
+                  >
+                    Proceed to Checkout
+                  </Link>
                 </div>
               </div>
             </div>

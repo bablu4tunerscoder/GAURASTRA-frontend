@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from ".././../Helper/axiosinstance";
+import { BASE_URL } from "../../helper/axiosinstance";
 
 // Add this thunk:
 export const fetchProductSuggestions = createAsyncThunk(
@@ -16,7 +16,7 @@ export const fetchProductSuggestions = createAsyncThunk(
     }
   }
 );
- 
+
 const RecommendedProductsSlice = createSlice({
   name: "RecommendedProducts",
   initialState: {
@@ -58,6 +58,6 @@ const RecommendedProductsSlice = createSlice({
       });
   },
 });
- 
+
 export const { clearProducts, setCurrentVendor } = RecommendedProductsSlice.actions;
 export default RecommendedProductsSlice.reducer;

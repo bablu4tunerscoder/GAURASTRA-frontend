@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "@/Helper/axiosinstance";
- 
+import { BASE_URL } from "@/helper/axiosinstance";
+
 const initialState = {
   blogData: [],
   loading: false,
   error: null,
 };
- 
+
 export const getAllBlogs = createAsyncThunk(
   "/blog/get",
   async (_, { rejectWithValue }) => {
@@ -19,7 +19,7 @@ export const getAllBlogs = createAsyncThunk(
     }
   }
 );
- 
+
 const blogSlice = createSlice({
   name: "blog",
   initialState,
@@ -41,7 +41,6 @@ const blogSlice = createSlice({
       })
   },
 });
- 
+
 export default blogSlice.reducer;
- 
- 
+

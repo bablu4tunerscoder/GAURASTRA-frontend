@@ -1,14 +1,19 @@
-"use client";
+import { Handbag, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 const DEFAULT_IMAGE = "/assets/default-product.png";
 
-const ProductCard = ({ product}) => {
+const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
+  console.log(product)
   if (!product) return null;
 
+  // 👉 DEFAULT VARIANT
+  const defaultVariant = product?.variants?.[0];
+
   // IMAGE
-  const rawImg = product?.images?.[0]?.image_url;
+  const rawImg = defaultVariant?.images?.find(img => img.is_primary)?.image_url
+    || defaultVariant?.images?.[0]?.image_url;
 
   const finalImg =
     rawImg?.startsWith("http")
@@ -18,62 +23,103 @@ const ProductCard = ({ product}) => {
         : DEFAULT_IMAGE;
 
   // PRICE
-  const price = product?.latest_pricing?.price_detail?.original_price || 0;
+  const price = defaultVariant?.pricing?.original_price || 0;
   const discountedPrice =
-    (product?.latest_pricing?.price_detail?.discounted_price || price).toFixed(2);
+    defaultVariant?.pricing?.discounted_price || price;
 
   const discountPercent =
-    price > discountedPrice
-      ? Math.round(((price - discountedPrice) / price) * 100)
-      : 0;
-      
+    defaultVariant?.pricing?.discount_percent || 0;
+
   return (
-    <div className="border border-gray-300 rounded-xl overflow-hidden bg-white transition hover:shadow relative">
-      {/* CLICKABLE AREA */}
-      <div className="block">
-        <div className="h-56 w-full relative cursor-pointer overflow-hidden">
-          <Link href={`/product/${product.seo.canonicalURL}`}>
-            <Image
-              src={finalImg}
-              alt={product.product_name}
-              width={400}
-              height={400}
-              className="w-full h-56 object-cover transition-transform duration-300 hover:scale-105 grayscale hover:grayscale-0"
-            />
-          </Link>
+    <div className="w-full relative group">
+      {/* Wishlist */}
+      <button
+        onClick={() => onToggleWishlist?.(product)}
+        className="
+          absolute top-3 right-3 md:top-4 md:right-4 z-10
+          w-8 h-8 md:w-10 md:h-10
+          rounded-full bg-white shadow
+          flex items-center justify-center
+          opacity-0 group-hover:opacity-100 transition
+        "
+      >
+        <Heart className="w-4 h-4 md:w-5 md:h-5 text-gray-600 hover:text-primary" />
+      </button>
 
-        </div>
+      {/* Image Container */}
+      <Link href={`/product/${product?.canonicalURL}`}>
+        <div className="
+          relative w-full aspect-[3/4]
+          overflow-hidden 
+          bg-[url('/assets/bgImageContainer.png')]
+          bg-no-repeat bg-cover bg-center
+          p-2 md:p-4
+        ">
+          <Image
+            src={DEFAULT_IMAGE || finalImg}
+            alt={product.product_name}
+            fill
+            decoding="async"
+            className="object-cover p-3 w-full h-full"
+          />
 
-        <div className="p-4 space-y-1">
-          <span className="text-xs text-gray-500 uppercase">
-            {product.attributes?.gender || "Unisex"}
-          </span>
-
-          <h3 className="text-sm font-medium text-gray-900 hover:text-gray-700">
-            {product.product_name}
-          </h3>
-
-          <div className="flex items-baseline gap-2">
-            <span className="text-sm font-semibold text-gray-900">
-              ₹{discountedPrice}
+          {discountPercent > 0 && (
+            <span className="text-xs absolute top-4 left-4 md:top-6 md:left-6 bg-red-200 px-2 py-0.5 text-primary font-medium">
+              {discountPercent}% OFF
             </span>
+          )}
 
-            {discountPercent > 0 && (
-              <>
-                <span className="text-xs line-through text-gray-400">
-                  ₹{price}
-                </span>
-                <span className="text-xs text-gray-700 font-medium">
-                  {discountPercent}% OFF
-                </span>
-              </>
-            )}
-          </div>
-          
+          {/* Add to Cart */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              onAddToCart?.(product);
+            }}
+            className="
+              absolute bottom-4 left-1/2 -translate-x-1/2
+              bg-white text-primary text-xs md:text-sm
+              px-4 py-1.5 md:py-2
+              opacity-0 group-hover:opacity-100
+              transition-opacity duration-200
+              flex items-center gap-2
+              whitespace-nowrap
+            "
+          >
+            <Handbag className="w-4 h-4" />
+            Add to Cart
+          </button>
+        </div>
+      </Link>
+
+      {/* Product Info */}
+      <div className="pt-2 md:pt-3">
+        <span className="text-secondary text-xs md:text-sm capitalize block mb-1">
+          just In
+        </span>
+
+        <h3
+          title={product.product_name}
+          className="font-bold leading-tight line-clamp-2 text-sm md:text-base lg:text-lg mb-1"
+        >
+          {product.product_name}
+        </h3>
+
+        <span className="text-xs text-gray-600 capitalize block mb-2">
+          {product?.brand}
+        </span>
+
+        <div className="flex items-center gap-2">
+          <p className="font-bold text-sm md:text-base lg:text-lg">
+            ₹{discountedPrice}
+          </p>
+
+          {discountPercent > 0 && (
+            <span className="text-xs md:text-sm line-through text-gray-400">
+              ₹{price}
+            </span>
+          )}
         </div>
       </div>
-
-
     </div>
   );
 };
