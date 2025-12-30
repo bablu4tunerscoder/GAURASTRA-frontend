@@ -81,6 +81,8 @@ export default function Login() {
     if (Object.keys(newErrors).length > 0) return;
  
     console.log(form);
+
+    
  
     setForm({
       email: "",

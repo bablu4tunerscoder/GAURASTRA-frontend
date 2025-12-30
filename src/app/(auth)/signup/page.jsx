@@ -1,6 +1,6 @@
 "use client";
 
-import { auth, googleAuthProvider } from "@/helper/fireBaseConfig";
+import { auth, googleAuthProvider } from "@/helpers/fireBaseConfig";
 import { googleAuthUser, registerUser } from "@/store/slices/authSlice";
 import { signInWithPopup } from "firebase/auth";
 import { LogIn, Mail, Phone, Lock } from "lucide-react";
