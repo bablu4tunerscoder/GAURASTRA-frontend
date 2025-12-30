@@ -1,7 +1,7 @@
 // server component (app/(public)/category/[...slug]/page.jsx)
 
-// import { BASE_URL } from "@/Helper/axiosinstance"; // or use hardcoded
-import axiosInstance from "@/helper/axiosinstance";
+// import { BASE_URL } from "@/helpers/axiosinstance"; // or use hardcoded
+import axiosInstance from "@/helpers/axiosinstance";
 import CategoryPageClient from "./category_page_client";
 
 async function GetData(slugArray) {

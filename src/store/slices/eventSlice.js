@@ -1,7 +1,7 @@
 // src/Redux/Slices/eventSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "@/helper/axiosinstance";
+import { BASE_URL } from "@/helpers/axiosinstance";
 
 // Async thunk to handle the API call using Axios
 export const sendEvent = createAsyncThunk(

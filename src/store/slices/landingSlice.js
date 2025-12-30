@@ -1,7 +1,7 @@
 // Redux/Slices/landingSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "@/helper/axiosinstance";
+import { BASE_URL } from "@/helpers/axiosinstance";
 
 export const fetchLandingData = createAsyncThunk(
   "landing/fetchLandingData",

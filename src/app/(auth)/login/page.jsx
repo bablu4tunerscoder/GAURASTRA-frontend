@@ -1,9 +1,10 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Lock, LogIn, Phone } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
+import Image from "next/image";
 // import { useNavigate } from "react-router-dom";
 // import { loginUser } from "../Redux/Slices/userSlice";
 
@@ -11,20 +12,81 @@ export default function Login() {
   // const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
+ const [form, setForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+ 
+  const [errors, setErrors] = useState({});
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors, isSubmitting },
+  // } = useForm();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm();
+  // const onSubmit = async (data) => {
 
-  const onSubmit = async (data) => {
+  //   try {
+  //     // dispatch(loginUser(data));
+  //   } catch (error) {
+  //     toast.error(error?.response?.data?.message || "Login failed");
+  //   }
+  // };
 
-    try {
-      // dispatch(loginUser(data));
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Login failed");
+ 
+ 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{5,10}$/;
+ 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+ 
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+ 
+    let newErrors = {};
+ 
+    // EMAIL VALIDATION
+    if (!emailRegex.test(form.email)) {
+      newErrors.email = "Please enter a valid email address";
     }
+ 
+    // PASSWORD VALIDATION
+    if (!passwordRegex.test(form.password)) {
+      newErrors.password =
+        "Password must be 5–10 characters and include at least 1 special character";
+    }
+ 
+    // CONFIRM PASSWORD VALIDATION
+    if (!form.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+ 
+    // SET ERRORS
+    setErrors(newErrors);
+ 
+    // STOP if errors exist
+    if (Object.keys(newErrors).length > 0) return;
+ 
+    console.log(form);
+ 
+    setForm({
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
   };
 
   // useEffect(() => {
@@ -34,140 +96,100 @@ export default function Login() {
   // }, [user, navigate]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gray-900 text-white overflow-hidden">
-
-      {/* Background Image */}
-      <img
-        src="/assets/EthnicSection011.webp"
-        alt="Background"
-        className="absolute inset-0 w-full h-full object-cover opacity-50"
-      />
-
-      {/* Black Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-60"></div>
-
-      {/* Main Container (glassy effect) */}
-      <div className="
-                relative z-10 w-full max-w-5xl flex flex-col lg:flex-row 
-                items-center justify-between 
-                bg-white bg-opacity-10 
-                rounded-2xl shadow-2xl overflow-hidden 
-                border border-white border-opacity-20 
-                m-6 
-                backdrop-filter backdrop-blur
-            ">
-
-        {/* Left Section */}
-        <div className="flex flex-col items-center justify-center w-full lg:w-1/2 p-8 lg:p-12 text-center space-y-6">
-          <img
-            src="/assets/loginbg.webp"
-            alt="Logo"
-            width="140"
-            height="140"
-            className="rounded-full"
-          />
-
-          <h2 className="text-3xl font-semibold">Welcome Back 👋</h2>
-
-          <p className="text-gray-300 text-sm max-w-xs">
-            Login to continue your journey with{" "}
-            <span className="text-blue-400 font-semibold">Gaurastra</span>.
-          </p>
+     <div className='bg-[url("/assets/bg.svg")] sm:bg-cover lg:bg-contain w-full bg-no-repeat bg-center min-h-screen relative'>
+      <div className="max-w-lg w-full m-auto h-fit absolute inset-0 bg-white/20 backdrop-blur-lg text-white border border-dashed border-white/30 p-6 rounded-2xl">
+        {/* header */}
+        <div className="text-center">
+          <h1 className="text-2xl sm:text-4xl font-bold">Welcome</h1>
+          <p className="text-md opacity-90">Sign in with Email</p>
         </div>
-
-        {/* Right Section - Form */}
-        <div className="
-                    w-full lg:w-1/2 p-8 lg:p-12 
-                    bg-black bg-opacity-40 
-                    backdrop-filter backdrop-blur
-                ">
-          <h2 className="text-3xl font-semibold text-center mb-2">
-            Login to Your Account
-          </h2>
-
-          <p className="text-center text-gray-300 mb-6">
-            Access your account to explore handcrafted streetwear.
-          </p>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
-            {/* Phone / Email */}
-            <div>
-              <label className="block text-sm mb-1 text-gray-300">
-                Phone Number or Email
-              </label>
-
-              <div className="
-                                flex items-center 
-                                bg-white bg-opacity-10 
-                                border border-gray-500 
-                                rounded-lg px-3 py-2
-                            ">
-                <Phone size={18} className="text-gray-400 mr-2" />
-                <input
-                  type="text"
-                  placeholder="Enter your phone number or email"
-                  className="bg-transparent w-full text-white placeholder-gray-400 outline-none"
-                  {...register("emailOrPhone", {
-                    required: "Phone number or email is required",
-                  })}
-                />
-              </div>
-
-              {errors.emailOrPhone && (
-                <p className="text-red-400 text-sm mt-1">
-                  {errors.emailOrPhone.message}
-                </p>
-              )}
+        {/* form starts */}
+        <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+          {/* EMAIL */}
+          <div>
+            <label className="text-lg block mb-1">E-mail</label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="example@gmail.com"
+              className="w-full rounded-lg bg-transparent border border-white/40 px-4 py-3.5 outline-none placeholder-white text-xl"
+            />
+            {errors.email && (
+              <p className="text-yellow-300 text-sm mt-1">{errors.email}</p>
+            )}
+          </div>
+ 
+          {/* PASSWORD */}
+          <div>
+            <label className="text-lg block mb-1">Password</label>
+            <div className="relative">
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="@#*%"
+                className="w-full rounded-lg bg-transparent border border-white/40 px-4 py-3.5 outline-none placeholder-white text-xl"
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 opacity-80 cursor-pointer">
+                <Image width={20} height={20} src="/assets/eye.png" alt="eye-image" />
+              </span>
             </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-sm mb-1 text-gray-300">Password</label>
-
-              <div className="
-                                flex items-center 
-                                bg-white bg-opacity-10 
-                                border border-gray-500 
-                                rounded-lg px-3 py-2
-                            ">
-                <Lock size={18} className="text-gray-400 mr-2" />
-                <input
-                  type="password"
-                  placeholder="Enter your password"
-                  className="bg-transparent w-full text-white placeholder-gray-400 outline-none"
-                  {...register("password", {
-                    required: "Password is required",
-                  })}
-                />
-              </div>
-
-              {errors.password && (
-                <p className="text-red-400 text-sm mt-1">
-                  {errors.password.message}
-                </p>
-              )}
+            {errors.password && (
+              <p className="text-yellow-300 text-sm mt-1">{errors.password}</p>
+            )}
+          </div>
+ 
+          {/* CONFIRM PASSWORD */}
+          <div>
+            <label className="text-lg block mb-1">Password</label>
+            <div className="relative">
+              <input
+                type="password"
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                placeholder="@#*%"
+                className="w-full rounded-lg bg-transparent border border-white/40 px-4 py-3.5 outline-none placeholder-white text-xl"
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 opacity-80 cursor-pointer">
+                <Image width={20} height={20} src="/assets/eye.png" alt="eye-image" />
+              </span>
             </div>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              className="
-                                w-full mt-4 flex items-center justify-center gap-2 
-                                bg-blue-600 hover:bg-blue-700 
-                                text-white py-3 rounded-lg text-lg font-medium transition
-                            "
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Logging in..." : (
-                <>
-                  <LogIn size={18} /> Login
-                </>
-              )}
-            </button>
-          </form>
+ 
+            {errors.confirmPassword && (
+              <p className="text-yellow-300 text-sm mt-1">
+                {errors.confirmPassword}
+              </p>
+            )}
+          </div>
+ 
+          {/* BUTTON */}
+          <button className="w-full bg-[#9C0131] hover:bg-red-800 rounded-lg py-3 font-medium mt-2">
+            Sign in
+          </button>
+        </form>
+        {/* lower division */}
+        <div className="flex items-center gap-3 my-6 text-sm opacity-80 w-xs mx-auto">
+          <span className="flex-1 h-px bg-white/30"></span>
+          OR
+          <span className="flex-1 h-px bg-white/30"></span>
         </div>
+ 
+        {/* GOOGLE BUTTON */}
+        <button className="w-full bg-white text-black rounded-lg py-3 flex items-center justify-center gap-2">
+          <Image width={20} height={20} src="/assets/google.png" alt="google" className="w-5 h-5" />
+          Continue with Google
+        </button>
+ 
+        {/* FOOTER */}
+        <p className="text-center text-sm mt-4 opacity-90">
+          Don’t have account?{" "}
+          <span className="font-semibold cursor-pointer">Register Now</span>
+        </p>
       </div>
-    </section>
+    </div>
   );
 }

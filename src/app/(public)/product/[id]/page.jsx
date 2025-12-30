@@ -1,5 +1,5 @@
 
-import axiosInstance from "@/helper/axiosinstance";
+import axiosInstance from "@/helpers/axiosinstance";
 import ProductDetailClient from "./ProductDetailClient";
 
 async function GetData(id) {

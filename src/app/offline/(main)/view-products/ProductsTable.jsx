@@ -1,7 +1,7 @@
 "use client"
 
 import DeleteModal from "@/components/DeleteModal"
-import { axiosInstanceWithOfflineToken } from "@/helper/axiosinstance"
+import { axiosInstanceWithOfflineToken } from "@/helpers/axiosinstance"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 

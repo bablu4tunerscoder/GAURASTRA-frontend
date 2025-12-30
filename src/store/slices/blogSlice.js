@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "@/helper/axiosinstance";
+import { BASE_URL } from "@/helpers/axiosinstance";
 
 const initialState = {
   blogData: [],

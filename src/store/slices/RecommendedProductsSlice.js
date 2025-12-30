@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "../../helper/axiosinstance";
+import { BASE_URL } from "../../helpers/axiosinstance";
 
 // Add this thunk:
 export const fetchProductSuggestions = createAsyncThunk(

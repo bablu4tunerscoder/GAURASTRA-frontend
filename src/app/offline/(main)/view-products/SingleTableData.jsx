@@ -1,5 +1,5 @@
 "use client";
-import { axiosInstanceWithOfflineToken } from "@/helper/axiosinstance";
+import { axiosInstanceWithOfflineToken } from "@/helpers/axiosinstance";
 import { printVariantQR } from "@/utils/printVariantQR";
 import { ChevronRight, Pencil, QrCode, Trash2 } from "lucide-react";
 // import { useRouter } from "next/router";

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Star } from "lucide-react";
-import axiosInstance from "@/helper/axiosinstance";
+import axiosInstance from "@/helpers/axiosinstance";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
