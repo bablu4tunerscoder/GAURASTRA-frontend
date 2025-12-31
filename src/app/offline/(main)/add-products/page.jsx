@@ -101,7 +101,6 @@ const ProductForm = () => {
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Header */}
-      {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 bg-indigo-100 rounded-xl shadow-md flex items-center justify-center">
           <Box className="w-5 h-5 text-indigo-600" />

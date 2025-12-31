@@ -1,88 +1,75 @@
-import HeroBanner from "@/components/HeroBanner";
-import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+"use client";
 
-const ContactUs = () => {
+import Image from "next/image";
+
+export default function ContactPage() {
   return (
-    <section className="min-h-screen bg-white text-gray-800">
-      {/* 🔹 Hero Section */}
-      <HeroBanner title="Contact Us" imgUrl="/assets/bg3.webp" />
-
-      {/* 🔹 Contact Info Section */}
-      <div className="max-w-4xl mx-auto px-6 md:px-12 py-16">
-        <div className="text-center mb-12">
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
-            For further assistance or inquiries, feel free to reach out to us through any of the
-            channels below. We’re always happy to help.
-          </p>
+    <section className="min-h-screen bg-white">
+      <Image
+        src="/assets/productPageBanner.png"
+        alt="Category Banner"
+        width={0}
+        height={0}
+        sizes="100vw"
+        style={{ width: "100%", height: "auto" }}
+      />
+      <div className="min-h-screen px-4 md:px-16 py-16">
+        <div>
+          <h1 className="text-4xl font-semibold text-gray-900 mb-2">Contact Us</h1>
+          <p className="text-gray-500 mb-8">Have a question? We’re here to help.</p>
         </div>
-
-        <div className="grid sm:grid-cols-2 gap-8">
-          {/* Phone */}
-          <div className="flex items-start gap-4 p-6 border rounded-2xl shadow-sm hover:shadow-md transition">
-            <Phone className="text-blue-600" size={26} />
-            <div>
-              <h3 className="text-xl font-semibold mb-2">Phone</h3>
-              <p className="text-gray-600">+91 9522474600</p>
-            </div>
+        <div className="flex flex-col md:flex-row py-10 gap-8">
+          {/* Left: Form */}
+          <div className="max-w-md">
+            <form className="space-y-6">
+              <input
+                type="text"
+                placeholder="Name"
+                className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm outline-none focus:ring focus:border-none focus:ring-primary"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm outline-none focus:ring focus:border-none focus:ring-primary"
+              />
+              <input
+                type="text"
+                placeholder="Subject"
+                className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm outline-none focus:ring focus:border-none focus:ring-primary"
+              />
+              <textarea
+                rows={4}
+                placeholder="Message"
+                className="w-full rounded-md border border-gray-200 px-4 py-3 text-sm outline-none focus:ring focus:border-none focus:ring-primary"
+              />
+              <button
+                type="submit"
+                className="mt-4 inline-flex items-center justify-center rounded-full bg-rose-600 px-8 py-3 text-sm font-medium text-white shadow-lg shadow-rose-200 hover:bg-rose-700 transition"
+              >
+                Send Message
+              </button>
+            </form>
           </div>
 
-          {/* WhatsApp */}
-          <div className="flex items-start gap-4 p-6 border rounded-2xl shadow-sm hover:shadow-md transition">
-            <MessageCircle className="text-green-600" size={26} />
-            <div>
-              <h3 className="text-xl font-semibold mb-2">WhatsApp</h3>
-              <a
-                href="https://wa.me/919522474600"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                Chat on WhatsApp
-              </a>
-            </div>
-          </div>
+          {/* Right: Map Illustration */}
+          <div className="relative md:block hidden w-full h-full">
+            <Image
+              src="/assets/world-map.png"
+              alt="World map"
+              fill
+              sizes="100vw"
+              className="object-cover"
+              priority
+            />
 
-          {/* Email */}
-          <div className="flex items-start gap-4 p-6 border rounded-2xl shadow-sm hover:shadow-md transition">
-            <Mail className="text-red-500" size={26} />
-            <div>
-              <h3 className="text-xl font-semibold mb-2">Email</h3>
-              <a
-                href="mailto:yaduayush100@gmail.com"
-                className="text-blue-600 hover:underline"
-              >
-                yaduayush100@gmail.com
-              </a>
-            </div>
-          </div>
-
-          {/* Address */}
-          <div className="flex items-start gap-4 p-6 border rounded-2xl shadow-sm hover:shadow-md transition">
-            <MapPin className="text-purple-600" size={26} />
-            <div>
-              <h3 className="text-xl font-semibold mb-2">Address</h3>
-              <p className="text-gray-600">
-                1701, New Dwarkapuri, Indore – 452009, India
-              </p>
-              <a
-                href="https://maps.google.com/?q=1701+New+Dwarkapuri+Indore+452009"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline text-sm"
-              >
-                View on Google Maps
-              </a>
+            {/* Location Tag */}
+            <div className="absolute right-32 top-44 flex items-center gap-2 rounded-md bg-white px-3 py-2 shadow-md">
+              <span className="text-xl">🇮🇳</span>
+              <span className="text-sm font-medium text-gray-700">India</span>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* 🔹 Footer Quote */}
-      <div className="text-center text-gray-700 italic text-lg pb-16">
-        “We’re just a message away — your fashion journey begins with Gaurastra.”
       </div>
     </section>
   );
-};
-
-export default ContactUs;
+}

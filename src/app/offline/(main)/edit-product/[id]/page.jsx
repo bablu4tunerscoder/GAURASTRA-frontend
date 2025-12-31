@@ -132,7 +132,7 @@ export default function ProductForm() {
                 `/api/offline/products/w/update/${editId}`,
                 {
                     ...restData,
-                    images: imagesArray // Send as array
+                    images: imagesArray
                 }
             );
 
