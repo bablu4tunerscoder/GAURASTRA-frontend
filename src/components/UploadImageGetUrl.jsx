@@ -43,10 +43,11 @@ const UploadImageGetUrl = ({ onImageUploaded = () => { }, handleRemoveUrl = () =
           { headers: { "Content-Type": "multipart/form-data" } }
         );
 
-        setImageUrl(res.data?.data?.url || "");
 
-        if (res.data?.data?.url) {
-          onImageUploaded(res.data?.data?.url);
+        setImageUrl(res.data?.url || "");
+
+        if (res.data?.url) {
+          onImageUploaded(res.data?.url);
         }
 
         // Clear the file input after successful upload
