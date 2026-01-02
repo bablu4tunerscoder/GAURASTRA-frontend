@@ -110,8 +110,11 @@ const ReturnStatus = () => {
             {/* ================= TABLE ================= */}
             {result?.data?.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {result.data.map((bill) => (
-                        <div
+                    {result.data.map((bill) => {
+                        const isReturnable =
+                            bill.return_status !== "FULL" && bill.returnable === true;
+
+                        return <div
                             key={bill._id}
                             className="bg-white rounded-lg shadow p-4 space-y-3"
                         >
@@ -128,7 +131,7 @@ const ReturnStatus = () => {
 
                                 <span
                                     className={`text-xs font-medium px-2 py-1 rounded
-                                        ${bill.return_status !== "FULL"
+                                        ${isReturnable
                                             ? "bg-green-100 text-green-700"
                                             : "bg-red-100 text-red-700"
                                         }`}
@@ -183,7 +186,7 @@ const ReturnStatus = () => {
                             {/* Footer */}
                             <div className="flex justify-between items-center text-xs text-gray-500 border-t pt-2">
                                 <div className="space-x-2 flex gap-2">
-                                    {bill.return_status !== "FULL" &&
+                                    {isReturnable &&
                                         <>
                                             <button onClick={() => {
                                                 setSelectedBill(bill);
@@ -212,7 +215,8 @@ const ReturnStatus = () => {
                                 </div>
                             </div>
                         </div>
-                    ))
+                    }
+                    )
                     }
                 </div >
             )}
