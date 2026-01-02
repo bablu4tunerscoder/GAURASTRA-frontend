@@ -8,6 +8,12 @@ export const openPrintWindow = (bill) => {
     <title>Invoice</title>
 
     <style>
+    @font-face {
+  font-family: "Momo Signature";
+  src: url("/fonts/cursive-font.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
       * {
         margin: 0;
         padding: 0;
@@ -15,9 +21,9 @@ export const openPrintWindow = (bill) => {
       }
 
       body {
-        background: url('https://res.cloudinary.com/dtug6rmfb/image/upload/v1765351280/offline/o0lmgvxbytxz55xcmnrx.webp') center/cover no-repeat;
+        background: white;
         font-family: Arial, sans-serif;
-        color: white;
+        color: #1f2937;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
@@ -62,18 +68,19 @@ export const openPrintWindow = (bill) => {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        filter: grayscale(100%);
       }
 
       .invoice-title {
         font-size: 32px;
-        color: #FACC15;
+        color: #374151;
         font-weight: bold;
       }
 
       .text-sm { font-size: 14px; }
       .text-right { text-align: right; }
-      .text-gray-300 { color: #d1d5db; }
-      .text-gray-400 { color: #9ca3af; }
+      .text-gray-500 { color: #6b7280; }
+      .text-gray-600 { color: #4b5563; }
 
       /* GRID BOXES */
       .grid-2 {
@@ -84,14 +91,15 @@ export const openPrintWindow = (bill) => {
       }
 
       .info-box {
-        background: #505050;
+        background: #f3f4f6;
         padding: 16px;
         border-radius: 8px;
+        border: 1px solid #e5e7eb;
       }
 
       .info-title {
         font-size: 18px;
-        color: #FACC15;
+        color: #1f2937;
         font-weight: bold;
         margin-bottom: 6px;
       }
@@ -103,25 +111,28 @@ export const openPrintWindow = (bill) => {
         width: 100%;
         border-collapse: collapse;
         font-size: 14px;
+        border: 1px solid #e5e7eb;
       }
 
       th {
-        background: #FACC15 !important;
-        color: black !important;
+        background: #e5e7eb !important;
+        color: #1f2937 !important;
         padding: 12px;
         text-align: left;
+        font-weight: bold;
       }
 
       td {
         padding: 12px;
+        border-bottom: 1px solid #f3f4f6;
       }
 
       tbody tr:nth-child(odd) {
-        background: #505050 !important;
+        background: #f9fafb !important;
       }
 
       tbody tr:nth-child(even) {
-        background: transparent !important;
+        background: white !important;
       }
 
       /* TOTAL */
@@ -133,8 +144,8 @@ export const openPrintWindow = (bill) => {
       }
 
       .total-box {
-        background: #FACC15;
-        color: black;
+        background: #1f2937;
+        color: white;
         padding: 10px 24px;
         border-radius: 4px;
         font-size: 18px;
@@ -150,11 +161,13 @@ export const openPrintWindow = (bill) => {
         font-size: 18px;
         margin-bottom: 8px;
         font-weight: bold;
+        color: #1f2937;
       }
 
       .terms p {
         font-size: 14px;
         line-height: 1.5;
+        color: #4b5563;
       }
 
       /* FOOTER */
@@ -162,15 +175,20 @@ export const openPrintWindow = (bill) => {
         text-align: center;
         padding-bottom: 120px;
         position: relative;
+        color: #6b7280;
       }
 
-      .thank-img {
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        height: 130px;
-        z-index: -1;
-      }
+      .thank-text {
+          position: absolute;
+          bottom: 50px;
+          font-size: 4em;
+          right: 20px;
+          z-index: -1;
+          font-family: "Momo Signature", cursive;
+          rotate: -30deg;
+          opacity: 0.6;
+        }
+
 
       /* Force print backgrounds */
       @media print {
@@ -211,8 +229,8 @@ export const openPrintWindow = (bill) => {
 
           <div class="text-right">
             <h1 class="invoice-title">INVOICE</h1>
-            <p class="text-sm"><span class="text-gray-300">Date :</span> ${new Date(bill.createdAt).toLocaleDateString()}</p>
-            <p class="text-sm"><span class="text-gray-300">Invoice no :</span> ${bill.billing_id}</p>
+            <p class="text-sm"><span class="text-gray-600">Date :</span> ${new Date(bill.createdAt).toLocaleDateString()}</p>
+            <p class="text-sm"><span class="text-gray-600">Invoice no :</span> ${bill.billing_id}</p>
           </div>
         </div>
 
@@ -233,7 +251,7 @@ export const openPrintWindow = (bill) => {
       .join(", ")
     }
             </p>
-            <p class="text-sm"><span class="text-gray-300">Payment :</span> ${bill.payment_method}</p>
+            <p class="text-sm"><span class="text-gray-600">Payment :</span> ${bill.payment_method}</p>
 
           </div>
 
@@ -295,14 +313,36 @@ export const openPrintWindow = (bill) => {
         <div class="text-sm">
           📞 +91-9522474600 &nbsp;&nbsp; | &nbsp;&nbsp; 🌐 www.Gaurastra.com
         </div>
-        <p class="text-sm text-gray-400">📍 1701, New Dwarkapuri Indore</p>
-
-        <img src="${baseUrl}/assets/thank-you.png" class="thank-img" />
+        <p class="text-sm text-gray-500">📍 1701, New Dwarkapuri Indore</p>
+        
+        <p class="thank-text">Thank you</p>
       </div>
 
     </div>
 
+    
+
     <script>
+        window.onload = function() {
+          setTimeout(function() {
+            window.print();
+          }, 500);
+        };
+        
+        window.onafterprint = function() {
+          window.close();
+        };
+      </script>
+
+  </body>
+  </html>
+  `;
+
+  printWindow.document.write(html);
+  printWindow.document.close();
+};
+// previous script
+{/* <script>
       window.onload = () => {
         // Wait for images to load before printing
         const images = document.querySelectorAll('img');
@@ -348,12 +388,4 @@ export const openPrintWindow = (bill) => {
           }, 500);
         }
       };
-    </script>
-
-  </body>
-  </html>
-  `;
-
-  printWindow.document.write(html);
-  printWindow.document.close();
-};
+    </script> */}

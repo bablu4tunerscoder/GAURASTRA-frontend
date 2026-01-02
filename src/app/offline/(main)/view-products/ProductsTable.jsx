@@ -1,35 +1,49 @@
-"use client"
+"use client";
 
-import DeleteModal from "@/components/DeleteModal"
-import { axiosInstanceWithOfflineToken } from "@/helpers/axiosinstance"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
+import DeleteModal from "@/components/DeleteModal";
+import { axiosInstanceWithOfflineToken } from "@/helpers/axiosinstance";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import SingleTableData from "./SingleTableData";
+import { Box } from "lucide-react";
 
-import { useRouter } from "next/navigation"
-import SingleTableData from "./SingleTableData"
-
-export default function ProductsTable() {
-    const [products, setProducts] = useState([])
+export default function ProductsTable({ data }) {
+    const [products, setProducts] = useState(data || []);
     const [expandedRows, setExpandedRows] = useState(new Set());
+    const [searchTerm, setSearchTerm] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    // Fetch products with a search query
+    const fetchProducts = async (query = "") => {
+        try {
+            setLoading(true);
+            const { data } = await axiosInstanceWithOfflineToken.get(
+                "/api/offline/products/w",
+                {
+                    params: {
+                        search: query, // query param
+                    },
+                }
+            );
+            setProducts(data.data || []);
+        } catch (error) {
+            console.error("Fetch error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Trigger search manually (on button click or Enter key press)
+    const handleSearch = () => {
+        fetchProducts(searchTerm); // Call the API with the current search term
+    };
 
     // Delete Modal Logic
-    const [deleteId, setDeleteId] = useState(null)
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [deleteId, setDeleteId] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const router = useRouter()
-
-    const GetData = async () => {
-        try {
-            const { data } = await axiosInstanceWithOfflineToken.get("/api/offline/products/w")
-            setProducts(data.data || [])
-        } catch (error) {
-            console.error("Fetch error:", error)
-        }
-    }
-
-    useEffect(() => {
-        GetData()
-    }, [])
+    const router = useRouter();
 
     const toggleRowExpansion = (id) => {
         setExpandedRows((prev) => {
@@ -43,45 +57,98 @@ export default function ProductsTable() {
         });
     };
 
-
     // OPEN DELETE MODAL
     const openDeleteModal = (id) => {
-        setDeleteId(id)
-        setIsModalOpen(true)
-    }
+        setDeleteId(id);
+        setIsModalOpen(true);
+    };
 
     const closeDeleteModal = () => {
-        setDeleteId(null)
-        setIsModalOpen(false)
-    }
+        setDeleteId(null);
+        setIsModalOpen(false);
+    };
 
     // DELETE CONFIRM
     const handleConfirmDelete = async () => {
         try {
-            const token = sessionStorage.getItem("offline_access_token")
+            const token = sessionStorage.getItem("offline_access_token");
 
-            await axiosInstanceWithOfflineToken.delete(`/api/offline/products/w/delete/${deleteId}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
+            await axiosInstanceWithOfflineToken.delete(
+                `/api/offline/products/w/delete/${deleteId}`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
 
-            toast.success("Product deleted successfully!")
-            setProducts((prev) => prev.filter((p) => p._id !== deleteId))
+            toast.success("Product deleted successfully!");
+            setProducts((prev) => prev.filter((p) => p._id !== deleteId));
         } catch (error) {
-            console.error("Delete error:", error)
-            toast.error("Failed to delete product.")
+            console.error("Delete error:", error);
+            toast.error("Failed to delete product.");
         }
 
-        closeDeleteModal()
-    }
+        closeDeleteModal();
+    };
 
     // OPEN EDIT PAGE INSTEAD OF MODAL
     const openEditPage = (product) => {
-        sessionStorage.setItem("edit_product", JSON.stringify(product))
-        router.push(`/offline/edit-product/${product.unique_id}`)
-    }
+        sessionStorage.setItem("edit_product", JSON.stringify(product));
+        router.push(`/offline/edit-product/${product.unique_id}`);
+    };
+
+    useEffect(() => {
+        // If no initial products are passed, fetch the data
+        if (!data) {
+            fetchProducts();
+        }
+    }, [data]);
 
     return (
         <>
+            <div className="flex items-center justify-between mb-6">
+                {/* Left */}
+                {/* <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-indigo-100 rounded-xl shadow-md flex items-center justify-center">
+                        <Box className="w-5 h-5 text-indigo-600" />
+                    </div>
+                    <h1 className="text-lg text-gray-900">View Products</h1>
+                </div> */}
+                <div className="flex items-center gap-3">
+                    {/* Icon */}
+                    <div className="bg-blue-600 md:p-3 p-2 shadow-lg rounded-2xl flex items-center justify-center">
+                        <Box className="text-white w-8 h-8" />
+                    </div>
+
+                    {/* Text */}
+                    <div>
+                        <h1 className="text-2xl font-semibold text-gray-900">View Products</h1>
+                        <p className="text-gray-600 md:text-md text-sm">
+                            View and manage your products with ease.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Right - Search */}
+                <div className="flex items-center gap-2">
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)} // Update search term on input change
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") handleSearch(); // Trigger search on Enter key
+                        }}
+                        placeholder="Search product..."
+                        className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <button
+                        onClick={handleSearch} // Trigger search on button click
+                        className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
+                    >
+                        Search
+                    </button>
+                </div>
+            </div>
+
             {/* === SLEEK PRODUCT TABLE === */}
             <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
@@ -90,7 +157,7 @@ export default function ProductsTable() {
                             <tr>
                                 <th className="w-8 px-6 py-3"></th>
                                 <th className="px-6 py-3 text-left font-semibold">Product</th>
-                                <th className="px-6 py-3 text-left font-semibold">Total Stock</th>
+                                <th className="px-6 py-3 text-left font-semibold">Size Stock Details</th>
                                 <th className="px-6 py-3 text-left font-semibold">Status</th>
                                 <th className="px-6 py-3 text-left font-semibold">Actions</th>
                             </tr>
@@ -106,7 +173,6 @@ export default function ProductsTable() {
                             )}
                             {products.map((p, index) => (
                                 <SingleTableData
-                                    GetData={GetData}
                                     key={p._id}
                                     p={p}
                                     index={index}
@@ -116,14 +182,17 @@ export default function ProductsTable() {
                                     openDeleteModal={openDeleteModal}
                                 />
                             ))}
-
                         </tbody>
                     </table>
                 </div>
             </div>
 
             {/* DELETE MODAL */}
-            <DeleteModal open={isModalOpen} onClose={closeDeleteModal} onConfirm={handleConfirmDelete} />
+            <DeleteModal
+                open={isModalOpen}
+                onClose={closeDeleteModal}
+                onConfirm={handleConfirmDelete}
+            />
         </>
-    )
+    );
 }

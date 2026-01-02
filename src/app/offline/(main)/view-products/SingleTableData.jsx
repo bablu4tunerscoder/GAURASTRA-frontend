@@ -8,8 +8,8 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
-const VariantRow = ({ v, productId, GetData }) => {
-    console.log(v)
+const VariantRow = ({ v, productId, GetData, productName }) => {
+
     const {
         register,
         handleSubmit,
@@ -152,7 +152,7 @@ const VariantRow = ({ v, productId, GetData }) => {
             <td className="px-3 py-3 text-center">
                 <button
                     type="button"
-                    onClick={() => printVariantQR(v)}
+                    onClick={() => printVariantQR(v, productName)}
                     className="p-2 border text-gray-500 hover:bg-gray-100 rounded"
                     title="Print QR"
                 >
@@ -192,6 +192,7 @@ const SingleTableData = ({
     openDeleteModal,
     GetData
 }) => {
+    // console.log(p)
     return (
         <React.Fragment key={p._id}>
             {/* MAIN PRODUCT ROW */}
@@ -216,8 +217,18 @@ const SingleTableData = ({
                 </td>
 
                 <td className="px-6 py-4 text-gray-900">
-                    {p.variants?.reduce((acc, v) => acc + v.stock, 0) ?? "—"}
+                    {p.variants?.map((item, index) => (
+                        <span
+                            className={`uppercase ${item.stock < 5 ? 'text-red-500 font-bold' : ''}`}
+                            key={index}
+                        >
+                            {item.size}({item.stock})
+                            {index < p.variants.length - 1 && ", "}
+                        </span>
+                    ))}
                 </td>
+
+
 
                 <td className="px-6 py-4">
                     {p.active ? (
@@ -280,6 +291,7 @@ const SingleTableData = ({
                                                 GetData={GetData}
                                                 key={v._id}
                                                 v={v}
+                                                productName={p.title}
                                                 productId={p.unique_id}
                                             />
                                         ))}

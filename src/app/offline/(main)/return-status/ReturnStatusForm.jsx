@@ -20,7 +20,7 @@ const ReturnStatusForm = () => {
 
     const onSubmit = async (formData) => {
         const { phone, full_name, date } = formData;
-
+        console.log(phone)
         setLoading(true);
         setError(null);
         setResult(null);

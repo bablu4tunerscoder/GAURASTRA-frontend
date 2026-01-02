@@ -99,15 +99,30 @@ const ProductForm = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      {/* <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 bg-indigo-100 rounded-xl shadow-md flex items-center justify-center">
           <Box className="w-5 h-5 text-indigo-600" />
         </div>
         <h1 className="text-lg text-gray-900">
           Add Product
         </h1>
+      </div> */}
+      <div className="flex items-center gap-3 mb-4">
+        {/* Icon */}
+        <div className="bg-blue-600 md:p-3 p-2 shadow-lg rounded-2xl flex items-center justify-center">
+          <Box className="text-white w-8 h-8" />
+        </div>
+
+        {/* Text */}
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Add Product</h1>
+          <p className="text-gray-600 md:text-md text-sm">
+            Create and organize products with prices, sizes, and stock details.
+
+          </p>
+        </div>
       </div>
 
       <UploadImageGetUrl onImageUploaded={handleImageUploaded} onRemoveUrl={handleRemoveUrl} />

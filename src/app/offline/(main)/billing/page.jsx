@@ -590,114 +590,117 @@ export default function Billing() {
                         </div>
 
                         {/* preview */}
-                        <div className="md:max-w-3xl mx-auto overflow-x-auto min-h-screen text-white relative rounded-2xl overflow-hidden flex flex-col"
-                            style={{
-                                backgroundImage: "url(https://res.cloudinary.com/dtug6rmfb/image/upload/v1765351280/offline/o0lmgvxbytxz55xcmnrx.webp)",
-                                backgroundSize: "cover",
-                                backgroundPosition: "center",
-                                backgroundRepeat: "no-repeat",
-                            }}
-                        >
-                            <h2 className="text-lg justify-center flex gap-2 font-bold mb-4 text-black bg-white px-4 py-2.5">
-                                <Eye className="text-blue-500" />
-                                Invoice Preview
-                            </h2>
+                        {
+                            cart.length > 0 &&
 
-                            {/* MAIN CONTENT (fills full height) */}
-                            <div className="w-[180vw] md:w-auto flex flex-col justify-between flex-1 relative z-10 p-6">
+                            <div className="md:max-w-3xl overflow-x-auto min-h-screen text-white relative rounded-2xl overflow-hidden flex flex-col"
+                                style={{
+                                    backgroundImage: "url(https://res.cloudinary.com/dtug6rmfb/image/upload/v1765351280/offline/o0lmgvxbytxz55xcmnrx.webp)",
+                                    backgroundSize: "cover",
+                                    backgroundPosition: "center",
+                                    backgroundRepeat: "no-repeat",
+                                }}
+                            >
+                                <h2 className="text-lg justify-center flex gap-2 font-bold mb-4 text-black bg-white px-4 py-2.5">
+                                    <Eye className="text-blue-500" />
+                                    Invoice Preview
+                                </h2>
 
-                                {/* ===================== TOP SECTION ===================== */}
-                                <div>
-                                    <div className="text-right space-y-1 flex justify-between mb-6">
-                                        <div className="w-24 h-24 overflow-hidden rounded-full">
-                                            <img src="/assets/logo.png" className="w-32 rounded-full" />
-                                        </div>
+                                {/* MAIN CONTENT (fills full height) */}
+                                <div className="w-[180vw] md:w-auto flex flex-col justify-between flex-1 relative z-10 p-6">
 
-                                        <div className="space-y-1">
-                                            <h1 className="text-3xl font-bold text-[#E3C646]">INVOICE</h1>
-                                            <p className="text-sm"><span className="text-gray-300">Date :</span> {new Date().toLocaleDateString()}</p>
-                                            <p className="text-sm"><span className="text-gray-300">Invoice no :</span> </p>
-                                        </div>
-                                    </div>
-
-                                    {/* Bill To + Payable To */}
-                                    <div className="grid grid-cols-2 gap-4 mb-6">
-                                        <div className="bg-[#505050] p-4 rounded space-y-1">
-                                            <h3 className="text-lg font-semibold text-[#E3C646]">Bill to:</h3>
-                                            <p className="font-semibold">{formValues.full_name}</p>
-                                            <p className="text-sm">{formValues.phone}</p>
-
-                                            <p className="text-sm">
-                                                {[formValues.city, formValues.address_line1, formValues.state]
-                                                    .filter(Boolean)
-                                                    .join(", ")}
-                                            </p>
-                                            <p className="text-sm capitalize font-semibold">Payment: <span className="text-[#E3C646]">{formValues.payment_method}</span></p>
-                                        </div>
-
-                                        <div className="bg-[#505050] p-4 rounded space-y-1">
-                                            <h3 className="text-lg font-semibold text-[#E3C646]">Payable to:</h3>
-                                            <p className="font-semibold">Gaurastra</p>
-                                            <p className="text-sm">+91 9522474600</p>
-                                            <p className="text-sm">Indore, MP</p>
-                                        </div>
-                                    </div>
-
-                                    {/* Product Table */}
-                                    <table className="w-full text-sm">
-                                        <thead>
-                                            <tr className="bg-yellow-500 text-black">
-                                                <th className="p-3 text-left w-10">No</th>
-                                                <th className="p-3 text-left">Items</th>
-                                                <th className="p-3 text-center w-20">QTY</th>
-                                                <th className="p-3 text-right w-24">Price</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody className="[&>tr:nth-child(2n)]:bg-transparent [&>tr:nth-child(2n+1)]:bg-[#505050]">
-                                            {cart.map((item, idx) => (
-                                                <tr key={idx}>
-                                                    <td className="p-3">{idx + 1}</td>
-                                                    <td className="p-3">{item.title}</td>
-                                                    <td className="p-3 text-center">{item.qty}</td>
-                                                    <td className="p-3 text-right">₹{item.qty * item.discounted_price}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-
-                                    {/* Total */}
-                                    <div className="flex justify-end mt-6">
-                                        <div className="space-y-3">
-                                            <div className="bg-yellow-500 text-black px-6 py-2 rounded-sm text-lg font-semibold">
-                                                Total : ₹{billingPreview?.total_amount}
+                                    {/* ===================== TOP SECTION ===================== */}
+                                    <div>
+                                        <div className="text-right space-y-1 flex justify-between mb-6">
+                                            <div className="w-24 h-24 overflow-hidden rounded-full">
+                                                <img src="/assets/logo.png" className="w-32 rounded-full" />
                                             </div>
 
-                                            <div>
-                                                <h3 className="text-lg mb-2">Terms Conditions</h3>
-                                                <p className="text-sm leading-relaxed">
-                                                    No Return, <br /> No Exchange, <br /> No Guarantee.
+                                            <div className="space-y-1">
+                                                <h1 className="text-3xl font-bold text-[#E3C646]">INVOICE</h1>
+                                                <p className="text-sm"><span className="text-gray-300">Date :</span> {new Date().toLocaleDateString()}</p>
+                                                <p className="text-sm"><span className="text-gray-300">Invoice no :</span> </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Bill To + Payable To */}
+                                        <div className="grid grid-cols-2 gap-4 mb-6">
+                                            <div className="bg-[#505050] p-4 rounded space-y-1">
+                                                <h3 className="text-lg font-semibold text-[#E3C646]">Bill to:</h3>
+                                                <p className="font-semibold">{formValues.full_name}</p>
+                                                <p className="text-sm">{formValues.phone}</p>
+
+                                                <p className="text-sm">
+                                                    {[formValues.city, formValues.address_line1, formValues.state]
+                                                        .filter(Boolean)
+                                                        .join(", ")}
                                                 </p>
+                                                <p className="text-sm capitalize font-semibold">Payment: <span className="text-[#E3C646]">{formValues.payment_method}</span></p>
+                                            </div>
+
+                                            <div className="bg-[#505050] p-4 rounded space-y-1">
+                                                <h3 className="text-lg font-semibold text-[#E3C646]">Payable to:</h3>
+                                                <p className="font-semibold">Gaurastra</p>
+                                                <p className="text-sm">+91 9522474600</p>
+                                                <p className="text-sm">Indore, MP</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Product Table */}
+                                        <table className="w-full text-sm">
+                                            <thead>
+                                                <tr className="bg-yellow-500 text-black">
+                                                    <th className="p-3 text-left w-10">No</th>
+                                                    <th className="p-3 text-left">Items</th>
+                                                    <th className="p-3 text-center w-20">QTY</th>
+                                                    <th className="p-3 text-right w-24">Price</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody className="[&>tr:nth-child(2n)]:bg-transparent [&>tr:nth-child(2n+1)]:bg-[#505050]">
+                                                {cart.map((item, idx) => (
+                                                    <tr key={idx}>
+                                                        <td className="p-3">{idx + 1}</td>
+                                                        <td className="p-3">{item.title}</td>
+                                                        <td className="p-3 text-center">{item.qty}</td>
+                                                        <td className="p-3 text-right">₹{item.qty * item.discounted_price}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+
+                                        {/* Total */}
+                                        <div className="flex justify-end mt-6">
+                                            <div className="space-y-3">
+                                                <div className="bg-yellow-500 text-black px-6 py-2 rounded-sm text-lg font-semibold">
+                                                    Total : ₹{billingPreview?.total_amount}
+                                                </div>
+
+                                                <div>
+                                                    <h3 className="text-lg mb-2">Terms Conditions</h3>
+                                                    <p className="text-sm leading-relaxed">
+                                                        No Return, <br /> No Exchange, <br /> No Guarantee.
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* ===================== FOOTER (always bottom) ===================== */}
-                                <div className="text-center pb-20 relative">
-                                    <div className="flex justify-center gap-3 text-sm text-gray-300">
-                                        <span>📞 +91-9522474600</span>
-                                        <span>🌐 www.Gaurastra.com</span>
+                                    {/* ===================== FOOTER (always bottom) ===================== */}
+                                    <div className="text-center pb-20 relative">
+                                        <div className="flex justify-center gap-3 text-sm text-gray-300">
+                                            <span>📞 +91-9522474600</span>
+                                            <span>🌐 www.Gaurastra.com</span>
+                                        </div>
+
+                                        <p className="text-sm text-gray-400">📍 1701, New Dwarkapuri Indore</p>
+
+                                        <img src="/assets/thank-you.png" className="absolute bottom-0 right-8 h-32 opacity-80 -z-10" />
                                     </div>
 
-                                    <p className="text-sm text-gray-400">📍 1701, New Dwarkapuri Indore</p>
-
-                                    <img src="/assets/thank-you.png" className="absolute bottom-0 right-8 h-32 opacity-80 -z-10" />
                                 </div>
-
                             </div>
-                        </div>
-
+                        }
 
                     </div>
                 </div>
