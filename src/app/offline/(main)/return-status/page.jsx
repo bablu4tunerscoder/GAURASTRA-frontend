@@ -1,10 +1,10 @@
 // ========================================================
 // FILE 1: ReturnStatus.jsx (Server Component - Optional)
 // ========================================================
-import { Recycle, RotateCcw } from "lucide-react";
-import ReturnStatusForm from "./ReturnStatusForm";
+import { RotateCcw } from "lucide-react";
+import ReturnStatus from "./ReturnStatus";
 
-const ReturnStatus = () => {
+const ReturnStatusPage = () => {
     return <>
         <div className="flex items-center gap-3 mb-4">
             {/* Icon */}
@@ -20,9 +20,9 @@ const ReturnStatus = () => {
                 </p>
             </div>
         </div>
-        <ReturnStatusForm />;
+        <ReturnStatus />;
     </>
 };
 
-export default ReturnStatus;
+export default ReturnStatusPage;
 

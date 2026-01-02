@@ -1,14 +1,19 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { User, Phone, Calendar } from "lucide-react";
+import { User, Phone, Calendar, CircleArrowOutUpLeft, CircleArrowOutUpRight } from "lucide-react";
 import { useState } from "react";
 import { axiosInstanceWithOfflineToken } from "@/helpers/axiosinstance";
+import ReturnSingleProductModal from "./ReturnSingleProductModal";
+import ReturnAllProductsModal from "./ReturnAllProductsModal";
 
-const ReturnStatusForm = () => {
+const ReturnStatus = () => {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
+    const [selectedBill, setSelectedBill] = useState(null);
+    const [returnType, setReturnType] = useState(null); // "single" | "all"
+
 
     const { register, handleSubmit } = useForm({
         defaultValues: {
@@ -20,7 +25,6 @@ const ReturnStatusForm = () => {
 
     const onSubmit = async (formData) => {
         const { phone, full_name, date } = formData;
-        console.log(phone)
         setLoading(true);
         setError(null);
         setResult(null);
@@ -111,6 +115,7 @@ const ReturnStatusForm = () => {
                             key={bill._id}
                             className="bg-white rounded-lg shadow p-4 space-y-3"
                         >
+                            {/* {console.log(bill)} */}
                             {/* Header */}
                             <div className="flex justify-between items-start">
                                 <div>
@@ -120,15 +125,17 @@ const ReturnStatusForm = () => {
                                     </p>
                                 </div>
 
+
                                 <span
                                     className={`text-xs font-medium px-2 py-1 rounded
-              ${bill.returnable
+                                        ${bill.return_status !== "FULL"
                                             ? "bg-green-100 text-green-700"
                                             : "bg-red-100 text-red-700"
                                         }`}
                                 >
-                                    {bill.returnable ? "Returnable" : "Not Returnable"}
+                                    {bill.return_status == "FULL" ? "Not Returnable" : "Returnable"}
                                 </span>
+
                             </div>
 
                             {/* Customer */}
@@ -174,11 +181,35 @@ const ReturnStatusForm = () => {
                             </div>
 
                             {/* Footer */}
-                            <div className="flex justify-between text-xs text-gray-500 border-t pt-2">
-                                <span>{bill.days_passed} days passed</span>
-                                <span>
-                                    {new Date(bill.createdAt).toLocaleDateString()}
-                                </span>
+                            <div className="flex justify-between items-center text-xs text-gray-500 border-t pt-2">
+                                <div className="space-x-2 flex gap-2">
+                                    {bill.return_status !== "FULL" &&
+                                        <>
+                                            <button onClick={() => {
+                                                setSelectedBill(bill);
+                                                setReturnType("single");
+                                                // reset select
+                                            }} className="bg-red-700 px-2 flex shadow-[0_4px_10px_rgba(239,68,68,0.4)] cursor-pointer hover:bg-primary duration-75 items-center gap-2 rounded text-white py-1">
+                                                <CircleArrowOutUpLeft size={10} />Partially Return
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedBill(bill);
+                                                    setReturnType("all");
+                                                    // reset select
+                                                }} className="bg-blue-600 px-2 flex shadow-[0_4px_10px_rgba(59,130,246,0.4)] cursor-pointer hover:bg-blue-800  duration-75 items-center gap-2 rounded text-gray-50 py-1">
+                                                <CircleArrowOutUpRight size={10} />Fully Return
+                                            </button>
+                                        </>
+                                    }
+                                </div>
+                                <div className="text-right">
+                                    <span className="block text-green-500 font-semibold">{bill.days_passed} days passed</span>
+                                    <span>
+                                        {new Date(bill.createdAt).toLocaleDateString()}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     ))
@@ -186,8 +217,29 @@ const ReturnStatusForm = () => {
                 </div >
             )}
 
+            {returnType === "single" && (
+                <ReturnSingleProductModal
+                    bill={selectedBill}
+                    onClose={() => {
+                        setReturnType(null);
+                        setSelectedBill(null);
+                    }}
+                />
+            )}
+
+            {returnType === "all" && (
+                <ReturnAllProductsModal
+                    bill={selectedBill}
+                    onClose={() => {
+                        setReturnType(null);
+                        setSelectedBill(null);
+                    }}
+                />
+            )}
+
+
         </div >
     );
 };
 
-export default ReturnStatusForm;
+export default ReturnStatus;
