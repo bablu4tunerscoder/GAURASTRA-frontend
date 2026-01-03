@@ -11,8 +11,8 @@ export const printSingleClickVariantQR = (
   let pagesHTML = "";
 
   // 🔹 6 labels per page
-  for (let i = 0; i < variants.length; i += 6) {
-    const pageVariants = variants.slice(i, i + 6);
+for (let i = 0; i < variants.length; i += 12) {
+  const pageVariants = variants.slice(i, i + 12);
 
     const labelsHTML = pageVariants
       .map((variant) => {
@@ -176,8 +176,8 @@ body {
 .page {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, 2in);
-  grid-template-rows: repeat(3, 2.5in);
+  grid-template-columns: repeat(3, 2in);   
+  grid-template-rows: repeat(4, 2.5in);   
   gap: 6mm;
   justify-content: center;
   align-content: center;
