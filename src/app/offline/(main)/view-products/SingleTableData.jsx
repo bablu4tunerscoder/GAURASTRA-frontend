@@ -1,5 +1,6 @@
 "use client";
 import { axiosInstanceWithOfflineToken } from "@/helpers/axiosinstance";
+import { printSingleClickVariantQR } from "@/utils/printSingleClickVariantQR";
 import { printVariantQR } from "@/utils/printVariantQR";
 import { ChevronRight, Pencil, QrCode, Trash2 } from "lucide-react";
 // import { useRouter } from "next/router";
@@ -31,7 +32,7 @@ const VariantRow = ({ v, productId, GetData, productName }) => {
     const actualPrice = watch("actual_price");
     const offer = watch("offer");
     const offerType = watch("offer_type");
-    const colorValue = watch("color");
+    // const colorValue = watch("color");
 
 
     // Auto calculate discounted price
@@ -180,9 +181,7 @@ const VariantRow = ({ v, productId, GetData, productName }) => {
     );
 };
 
-// ========================================================================
-// MAIN PRODUCT ROW + VARIANT TABLE
-// ========================================================================
+
 const SingleTableData = ({
     p,
     index,
@@ -192,7 +191,7 @@ const SingleTableData = ({
     openDeleteModal,
     GetData
 }) => {
-    // console.log(p)
+
     return (
         <React.Fragment key={p._id}>
             {/* MAIN PRODUCT ROW */}
@@ -228,7 +227,21 @@ const SingleTableData = ({
                     ))}
                 </td>
 
+                 <td className="px-6 py-4">
+                   <img src={p.images[0]} className="max-h-[70px]" />
+                </td>
 
+                 <td className="px-3 py-3 text-center">
+                <button
+                    type="button"
+                    onClick={() => printSingleClickVariantQR(p.variants, p.title)}
+                    className="p-2 border text-gray-500 hover:bg-gray-100 rounded"
+                    title="Print QR"
+                >
+
+                    <QrCode className="w-4 h-4" />
+                </button>
+            </td>
 
                 <td className="px-6 py-4">
                     {p.active ? (

@@ -19,6 +19,7 @@ const ProductForm = () => {
       {
         color: '#ff0000',
         size: 'xl',
+        fabric:'',
         stock: 0,
         actual_price: 0,
         offer: 0,
@@ -256,6 +257,7 @@ const ProductForm = () => {
                   color: '#ff0000',
                   size: 'xl',
                   stock: 0,
+                  fabric:'',
                   actual_price: mainPrice,
                   offer: 0,
                   offer_type: 'percentage',
@@ -296,7 +298,7 @@ const ProductForm = () => {
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
                   {/* Color */}
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -346,6 +348,16 @@ const ProductForm = () => {
                       type="number"
                       min={0}
                       {...register(`variants.${index}.stock`, { valueAsNumber: true })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Fabric
+                    </label>
+                    <input
+                      type="text"
+                      {...register(`variants.${index}.fabric`)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
                     />
                   </div>

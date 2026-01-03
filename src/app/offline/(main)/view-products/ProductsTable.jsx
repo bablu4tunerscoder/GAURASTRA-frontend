@@ -7,37 +7,63 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import SingleTableData from "./SingleTableData";
 import { Box } from "lucide-react";
+import Pagination from "../../_components/pagination";
 
-export default function ProductsTable({ data }) {
-    const [products, setProducts] = useState(data || []);
+export default function ProductsTable() {
+    const [products, setProducts] = useState([]);
     const [expandedRows, setExpandedRows] = useState(new Set());
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Fetch products with a search query
-    const fetchProducts = async (query = "") => {
-        try {
-            setLoading(true);
-            const { data } = await axiosInstanceWithOfflineToken.get(
-                "/api/offline/products/w",
-                {
-                    params: {
-                        search: query, // query param
-                    },
-                }
-            );
-            setProducts(data.data || []);
-        } catch (error) {
-            console.error("Fetch error:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+const [pagination, setPagination] = useState({
+  page: 1,
+  limit: 10,
+  totalPages: 1,
+  totalRecords: 0,
+});
 
-    // Trigger search manually (on button click or Enter key press)
-    const handleSearch = () => {
-        fetchProducts(searchTerm); // Call the API with the current search term
-    };
+    // Fetch products with a search query
+   const fetchProducts = async (query = searchTerm) => {
+  try {
+    setLoading(true);
+
+    const { data } = await axiosInstanceWithOfflineToken.get(
+      "/api/offline/products/w",
+      {
+        params: {
+          search: query,
+          page: pagination.page,
+          limit: pagination.limit,
+        },
+      }
+    );
+
+    setProducts(data.data || []);
+
+    const totalPages = Math.ceil(
+      data.pagination.total / data.pagination.limit
+    );
+
+    setPagination((prev) => ({
+      ...prev,
+      page: data.pagination.page,
+      limit: data.pagination.limit,
+      totalRecords: data.pagination.total,
+      totalPages,
+    }));
+  } catch (error) {
+    console.error("Fetch error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
+   const handleSearch = () => {
+  setPagination((prev) => ({ ...prev, page: 1 }));
+  fetchProducts(searchTerm);
+};
 
     // Delete Modal Logic
     const [deleteId, setDeleteId] = useState(null);
@@ -97,11 +123,10 @@ export default function ProductsTable({ data }) {
     };
 
     useEffect(() => {
-        // If no initial products are passed, fetch the data
-        if (!data) {
-            fetchProducts();
-        }
-    }, [data]);
+        fetchProducts();
+    }, [pagination.page, searchTerm]);
+
+    // console.log('products',products)
 
     return (
         <>
@@ -158,6 +183,7 @@ export default function ProductsTable({ data }) {
                                 <th className="w-8 px-6 py-3"></th>
                                 <th className="px-6 py-3 text-left font-semibold">Product</th>
                                 <th className="px-6 py-3 text-left font-semibold">Size Stock Details</th>
+                                <th className="px-6 py-3 text-left font-semibold">Image</th>
                                 <th className="px-6 py-3 text-left font-semibold">Status</th>
                                 <th className="px-6 py-3 text-left font-semibold">Actions</th>
                             </tr>
@@ -193,6 +219,14 @@ export default function ProductsTable({ data }) {
                 onClose={closeDeleteModal}
                 onConfirm={handleConfirmDelete}
             />
+
+     <Pagination
+  currentPage={pagination.page}
+  totalPages={pagination.totalPages}
+  onPageChange={(newPage) =>
+    setPagination((prev) => ({ ...prev, page: newPage }))
+  }
+/>
         </>
     );
 }

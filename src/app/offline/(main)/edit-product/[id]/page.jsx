@@ -26,6 +26,7 @@ export default function ProductForm() {
                 color: '#ff0000',
                 size: 'xl',
                 stock: 0,
+                fabric:"",
                 actual_price: 0,
                 offer: 0,
                 offer_type: 'percentage',
@@ -93,6 +94,7 @@ export default function ProductForm() {
                         color: v.color || '#ff0000',
                         size: v.size || 'xl',
                         stock: v.stock || 0,
+                        fabric: v.fabric || '',
                         actual_price: v.actual_price || 0,
                         offer: v.offer || 0,
                         offer_type: v.offer_type || 'percentage',
@@ -162,8 +164,6 @@ export default function ProductForm() {
 
         setValue('images', updatedImages);
     }
-
-
 
 
     return (
@@ -300,6 +300,7 @@ export default function ProductForm() {
                                     color: '#ff0000',
                                     size: 'xl',
                                     stock: 0,
+                                    fabric:'',
                                     actual_price: mainPrice,
                                     offer: 0,
                                     offer_type: 'percentage',
@@ -341,7 +342,7 @@ export default function ProductForm() {
                                     )}
                                 </div>
 
-                                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                                <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
                                     {/* Color */}
                                     <div>
                                         <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -397,9 +398,20 @@ export default function ProductForm() {
                    outline-none text-sm"
                                         />
                                     </div>
+                                     <div>
+                                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                                            Fabric
+                                        </label>
 
+                                        <input
+                                            type="text"
+                                            {...register(`variants.${index}.fabric`)}
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg 
+                   focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
+                   outline-none text-sm"
+                                        />
+                                    </div>
 
-                                    {/* Price */}
                                     <div>
                                         <label className="block text-xs font-medium text-gray-700 mb-1">
                                             Price (₹)
