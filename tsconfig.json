@@ -36,7 +36,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "src/store/slices/authSlice.js"
-  ],
+, "src/app/offline/_components/pagination.jsx"  ],
   "exclude": [
     "node_modules"
   ]
