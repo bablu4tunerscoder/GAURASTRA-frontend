@@ -1,8 +1,10 @@
 "use client";
 import { axiosInstanceWithOfflineToken } from "@/helpers/axiosinstance";
 import { printSingleClickVariantQR } from "@/utils/printSingleClickVariantQR";
+import { printSingleClickVariantQRAsImage } from "@/utils/printSingleClickVariantQRAsImage";
 import { printVariantQR } from "@/utils/printVariantQR";
 import { ChevronRight, Pencil, QrCode, Trash2 } from "lucide-react";
+import Image from "next/image";
 // import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -199,10 +201,10 @@ const SingleTableData = ({
                 className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"
                     } hover:bg-gray-100 transition-colors`}
             >
-                <td className="text-center">
+                <td className="p-0">
                     <button
                         onClick={() => toggleRowExpansion(p._id)}
-                        className="inline-flex px-6 py-4 items-center justify-center text-gray-600 hover:text-gray-900"
+                        className="w-full h-full py-8 flex items-center justify-center cursor-pointer text-gray-600 hover:text-gray-900"
                     >
                         <ChevronRight
                             className={`w-4 h-4 transition-transform ${expandedRows.has(p._id) ? "rotate-90" : ""
@@ -210,6 +212,7 @@ const SingleTableData = ({
                         />
                     </button>
                 </td>
+
 
                 <td className="px-6 py-4 text-gray-900 font-medium">
                     {p.title}
@@ -227,21 +230,29 @@ const SingleTableData = ({
                     ))}
                 </td>
 
-                 <td className="px-6 py-4">
-                   <img src={p.images[0]} className="max-h-[70px]" />
+
+                <td className="px-6 py-4">
+                    <Image
+                        src={p.images?.[0]}
+                        alt={p.product_name || "Product image"}
+                        width={70}
+                        height={70}
+                        className="max-h-[70px] object-contain"
+                    />
                 </td>
 
-                 <td className="px-3 py-3 text-center">
-                <button
-                    type="button"
-                    onClick={() => printSingleClickVariantQR(p.variants, p.title)}
-                    className="p-2 border text-gray-500 hover:bg-gray-100 rounded"
-                    title="Print QR"
-                >
 
-                    <QrCode className="w-4 h-4" />
-                </button>
-            </td>
+                <td className="px-3 py-3">
+                    <button
+                        type="button"
+                        onClick={() => printSingleClickVariantQRAsImage(p.variants, p.title)}
+                        className="p-1 border border-gray-400 text-gray-500 hover:bg-gray-100 rounded"
+                        title="Print QR"
+                    >
+                        {/* <QrCode className="w-4 h-4" /> */}
+                        <Image src="/assets/product-tag-qr.png" alt="QR Code" width={30} height={30} />
+                    </button>
+                </td>
 
                 <td className="px-6 py-4">
                     {p.active ? (
@@ -277,7 +288,7 @@ const SingleTableData = ({
             {/* VARIANTS SUBTABLE */}
             {expandedRows.has(p._id) && (
                 <tr>
-                    <td colSpan={5} className="px-6 pb-4">
+                    <td colSpan={12} className="px-6 pb-4">
                         <div className="bg-blue-50 border-gray-200 border border-b-0 rounded-lg overflow-hidden ">
 
                             <p className="flex items-center p-3 font-semibold text-blue-900">

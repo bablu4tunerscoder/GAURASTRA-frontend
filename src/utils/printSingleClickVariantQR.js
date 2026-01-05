@@ -11,8 +11,8 @@ export const printSingleClickVariantQR = (
   let pagesHTML = "";
 
   // 🔹 6 labels per page
-for (let i = 0; i < variants.length; i += 12) {
-  const pageVariants = variants.slice(i, i + 12);
+  for (let i = 0; i < variants.length; i += 12) {
+    const pageVariants = variants.slice(i, i + 12);
 
     const labelsHTML = pageVariants
       .map((variant) => {
@@ -29,9 +29,8 @@ for (let i = 0; i < variants.length; i += 12) {
             <div class="content">
 
               <div class="product-name">
-                <span class="label">Product:</span> ${
-                  productName || "Aarav Classic Kurta"
-                }
+                <span class="label">Product:</span> ${productName || "Aarav Classic Kurta"
+          }
               </div>
 
               <div class="info-line">
@@ -43,27 +42,24 @@ for (let i = 0; i < variants.length; i += 12) {
               </div>
 
               <div class="info-line">
-                <span class="label">Fabric:</span> ${
-                  variant.fabric?.trim() || "100% Cotton"
-                }
+                <span class="label">Fabric:</span> ${variant.fabric?.trim() || "100% Cotton"
+          }
               </div>
 
               <div class="info-line">
-                <span class="label">Size:</span> ${
-                  variant.size?.toUpperCase() || "N/A"
-                }
+                <span class="label">Size:</span> ${variant.size?.toUpperCase() || "N/A"
+          }
               </div>
 
               <div class="price-section">
                 <span class="label">MRP:</span>
-                ${
-                  variant.discounted_price &&
-                  variant.discounted_price > 0 &&
-                  variant.actual_price !== variant.discounted_price
-                    ? `<span class="original-price">₹${variant.actual_price}</span>
+                ${variant.discounted_price &&
+            variant.discounted_price > 0 &&
+            variant.actual_price !== variant.discounted_price
+            ? `<span class="original-price">₹${variant.actual_price}</span>
                        ₹${variant.discounted_price}`
-                    : `₹${variant.actual_price}`
-                }
+            : `₹${variant.actual_price}`
+          }
                 <span class="tax-text">(Incl. taxes)</span>
               </div>
 

@@ -19,7 +19,7 @@ const ProductForm = () => {
       {
         color: '#ff0000',
         size: 'xl',
-        fabric:'',
+        fabric: '',
         stock: 0,
         actual_price: 0,
         offer: 0,
@@ -257,7 +257,7 @@ const ProductForm = () => {
                   color: '#ff0000',
                   size: 'xl',
                   stock: 0,
-                  fabric:'',
+                  fabric: '',
                   actual_price: mainPrice,
                   offer: 0,
                   offer_type: 'percentage',
@@ -355,11 +355,23 @@ const ProductForm = () => {
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Fabric
                     </label>
+
                     <input
                       type="text"
-                      {...register(`variants.${index}.fabric`)}
+                      {...register(`variants.${index}.fabric`, {
+                        required: {
+                          value: true,
+                          message: "Fabric is required",
+                        },
+                      })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
                     />
+
+                    {errors?.variants?.[index]?.fabric && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {errors.variants[index].fabric.message}
+                      </p>
+                    )}
                   </div>
 
                   {/* Price */}

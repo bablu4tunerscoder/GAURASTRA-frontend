@@ -20,7 +20,7 @@ const ReturnStatusPage = () => {
                 </p>
             </div>
         </div>
-        <ReturnStatus />;
+        <ReturnStatus />
     </>
 };
 
