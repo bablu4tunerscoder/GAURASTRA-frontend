@@ -159,7 +159,7 @@ export default function CategoryPageClient({
             {/* Show fetching indicator when updating in background */}
             {isFetching && !isLoading && (
               <div className="mb-2 text-sm text-gray-600">
-                Updating products...
+                Fetching products...
               </div>
             )}
 

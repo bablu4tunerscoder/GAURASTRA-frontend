@@ -11,44 +11,36 @@ const OccasionBased = ({ data }) => {
 
             <div
                 className="
-                    grid
-                    grid-flow-col
-                    auto-cols-[calc(33.333%-1rem)]
-                    md:auto-cols-[calc(33.333%-1rem)]
-                    lg:auto-cols-[calc(20%-1.2rem)]
-                    gap-4 md:gap-6
-                    overflow-x-auto scrollbar-hide
-                    pb-2
-                "
+      grid
+      grid-flow-col
+      auto-cols-[calc(33.333%-1rem)]
+      gap-6
+
+      overflow-x-auto no-scrollbar
+
+      md:grid-flow-row
+      md:grid-cols-3
+      md:overflow-visible
+      md:gap-10
+
+      lg:grid-cols-5
+      pb-2
+    "
             >
                 {data.map((card, index) => (
-                    <Link
-                        key={index}
-                        href={card.url}
-                        className="group"
-                    >
-                        <div
-                            key={index}
-                            className="
-              flex-shrink-0
-              text-center
-              cursor-pointer
-              group
-              w-[32%]
-              md:w-auto
-            "
-                        >
+                    <Link key={index} href={card.url}>
+                        <div className="text-center cursor-pointer">
                             {/* Image Box */}
-                            <div className="relative overflow-hidden rounded-xl">
+                            <div className="relative overflow-hidden">
                                 <img
                                     src={card.image}
                                     alt={card.title}
-                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                    className="w-full h-full object-cover transition-transform duration-300"
                                 />
                             </div>
 
                             {/* Label */}
-                            <p className="md:mt-3  mt-1 text-secondary font-serif text-xs md:text-3xl">
+                            <p className="mt-1 md:mt-3 text-secondary font-serif text-xs md:text-3xl">
                                 {card.title}
                             </p>
                         </div>
@@ -56,6 +48,7 @@ const OccasionBased = ({ data }) => {
                 ))}
             </div>
         </section>
+
 
     )
 }
