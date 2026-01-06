@@ -191,8 +191,11 @@ const SingleTableData = ({
     toggleRowExpansion,
     openEditPage,
     openDeleteModal,
-    GetData
+    GetData,
+    postApiCall
 }) => {
+
+
 
     return (
         <React.Fragment key={p._id}>
@@ -245,7 +248,9 @@ const SingleTableData = ({
                 <td className="px-3 py-3">
                     <button
                         type="button"
-                        onClick={() => printSingleClickVariantQRAsImage(p.variants, p.title)}
+                        onClick={async () => {
+                            printSingleClickVariantQRAsImage(p.variants, p.title)
+                        }}
                         className="p-1 border border-gray-400 text-gray-500 hover:bg-gray-100 rounded"
                         title="Print QR"
                     >
@@ -253,10 +258,13 @@ const SingleTableData = ({
                         <Image src="/assets/product-tag-qr.png" alt="QR Code" width={30} height={30} />
                     </button>
                 </td>
-                 <td className="px-3 py-3">
+                <td className="px-3 py-3">
                     <button
                         type="button"
-                        onClick={() => printSingleClickVariantQR(p.variants, p.title)}
+                        onClick={() => {
+                            printSingleClickVariantQR(p.variants, p.title)
+                        }}
+
                         className="p-1 border border-gray-400 text-gray-500 hover:bg-gray-100 rounded"
                         title="Print QR"
                     >
@@ -265,6 +273,19 @@ const SingleTableData = ({
                     </button>
                 </td>
 
+                <td className="px-6 py-4">
+                    <button className="cursor-pointer" onClick={() => postApiCall(p._id)}>
+                        {p.print ? (
+                            <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                Printed
+                            </span>
+                        ) : (
+                            <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                Not Printed
+                            </span>
+                        )}
+                    </button>
+                </td>
                 <td className="px-6 py-4">
                     {p.active ? (
                         <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">

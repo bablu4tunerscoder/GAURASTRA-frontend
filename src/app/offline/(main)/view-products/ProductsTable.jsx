@@ -15,55 +15,58 @@ export default function ProductsTable() {
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
 
-const [pagination, setPagination] = useState({
-  page: 1,
-  limit: 10,
-  totalPages: 1,
-  totalRecords: 0,
-});
+    const [pagination, setPagination] = useState({
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+        totalRecords: 0,
+    });
 
     // Fetch products with a search query
-   const fetchProducts = async (query = searchTerm) => {
-  try {
-    setLoading(true);
+    const fetchProducts = async (query = searchTerm) => {
+        try {
+            setLoading(true);
 
-    const { data } = await axiosInstanceWithOfflineToken.get(
-      "/api/offline/products/w",
-      {
-        params: {
-          search: query,
-          page: pagination.page,
-          limit: pagination.limit,
-        },
-      }
-    );
+            const { data } = await axiosInstanceWithOfflineToken.get(
+                "/api/offline/products/w",
+                {
+                    params: {
+                        search: query,
+                        page: pagination.page,
+                        limit: pagination.limit,
+                    },
+                }
+            );
 
-    setProducts(data.data || []);
+            setProducts(data.data || []);
 
-    const totalPages = Math.ceil(
-      data.pagination.total / data.pagination.limit
-    );
+            const totalPages = Math.ceil(
+                data.pagination.total / data.pagination.limit
+            );
 
-    setPagination((prev) => ({
-      ...prev,
-      page: data.pagination.page,
-      limit: data.pagination.limit,
-      totalRecords: data.pagination.total,
-      totalPages,
-    }));
-  } catch (error) {
-    console.error("Fetch error:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+            setPagination((prev) => ({
+                ...prev,
+                page: data.pagination.page,
+                limit: data.pagination.limit,
+                totalRecords: data.pagination.total,
+                totalPages,
+            }));
+        } catch (error) {
+            console.error("Fetch error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
 
-   const handleSearch = () => {
-  setPagination((prev) => ({ ...prev, page: 1 }));
-  fetchProducts(searchTerm);
-};
+
+
+
+    const handleSearch = () => {
+        setPagination((prev) => ({ ...prev, page: 1 }));
+        fetchProducts(searchTerm);
+    };
 
     // Delete Modal Logic
     const [deleteId, setDeleteId] = useState(null);
@@ -122,11 +125,30 @@ const [pagination, setPagination] = useState({
         router.push(`/offline/edit-product/${product.unique_id}`);
     };
 
+    // to know the print is done before or not
+    const handleAfterPrintApiCall = async (id) => {
+
+        try {
+            // Make the API call
+            const { data } = await axiosInstanceWithOfflineToken.put("/api/offline/products/print-done/" + id);
+
+            // Check if the API call was successful
+            if (data && data.success) {
+                // Call fetchProducts after successful response
+                fetchProducts();
+            } else {
+                console.log('API call failed or no data received');
+            }
+        } catch (error) {
+            console.error('Error during API call:', error);
+        }
+    };
+
     useEffect(() => {
         fetchProducts();
     }, [pagination.page, searchTerm]);
 
-    // console.log('products',products)
+    console.log('products', products)
 
     return (
         <>
@@ -184,8 +206,9 @@ const [pagination, setPagination] = useState({
                                 <th className="px-6 py-3 text-left font-semibold">Product</th>
                                 <th className="px-6 py-3 text-left font-semibold">Size Stock Details</th>
                                 <th className="px-6 py-3 text-left font-semibold">Image</th>
-                                 <th className="px-6 py-3 text-left font-semibold">Print image</th>
-                                 <th className="px-6 py-3 text-left font-semibold">Print PDF</th>
+                                <th className="px-6 py-3 text-left font-semibold">Print image</th>
+                                <th className="px-6 py-3 text-left font-semibold">Print PDF</th>
+                                <th className="px-6 py-3 text-left font-semibold">Printed Before</th>
                                 <th className="px-6 py-3 text-left font-semibold">Status</th>
                                 <th className="px-6 py-3 text-left font-semibold">Actions</th>
                             </tr>
@@ -203,6 +226,7 @@ const [pagination, setPagination] = useState({
                                 <SingleTableData
                                     key={p._id}
                                     p={p}
+                                    postApiCall={handleAfterPrintApiCall}
                                     index={index}
                                     expandedRows={expandedRows}
                                     toggleRowExpansion={toggleRowExpansion}
@@ -222,13 +246,13 @@ const [pagination, setPagination] = useState({
                 onConfirm={handleConfirmDelete}
             />
 
-     <Pagination
-  currentPage={pagination.page}
-  totalPages={pagination.totalPages}
-  onPageChange={(newPage) =>
-    setPagination((prev) => ({ ...prev, page: newPage }))
-  }
-/>
+            <Pagination
+                currentPage={pagination.page}
+                totalPages={pagination.totalPages}
+                onPageChange={(newPage) =>
+                    setPagination((prev) => ({ ...prev, page: newPage }))
+                }
+            />
         </>
     );
 }
