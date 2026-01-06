@@ -184,7 +184,8 @@ const [pagination, setPagination] = useState({
                                 <th className="px-6 py-3 text-left font-semibold">Product</th>
                                 <th className="px-6 py-3 text-left font-semibold">Size Stock Details</th>
                                 <th className="px-6 py-3 text-left font-semibold">Image</th>
-                                 <th className="px-6 py-3 text-left font-semibold">Print</th>
+                                 <th className="px-6 py-3 text-left font-semibold">Print image</th>
+                                 <th className="px-6 py-3 text-left font-semibold">Print PDF</th>
                                 <th className="px-6 py-3 text-left font-semibold">Status</th>
                                 <th className="px-6 py-3 text-left font-semibold">Actions</th>
                             </tr>

@@ -253,6 +253,17 @@ const SingleTableData = ({
                         <Image src="/assets/product-tag-qr.png" alt="QR Code" width={30} height={30} />
                     </button>
                 </td>
+                 <td className="px-3 py-3">
+                    <button
+                        type="button"
+                        onClick={() => printSingleClickVariantQR(p.variants, p.title)}
+                        className="p-1 border border-gray-400 text-gray-500 hover:bg-gray-100 rounded"
+                        title="Print QR"
+                    >
+                        {/* <QrCode className="w-4 h-4" /> */}
+                        <Image src="/assets/qr.png" alt="QR Code" width={30} height={30} />
+                    </button>
+                </td>
 
                 <td className="px-6 py-4">
                     {p.active ? (
