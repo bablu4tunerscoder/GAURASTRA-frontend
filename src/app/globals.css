@@ -15,7 +15,7 @@
 
 @layer components {
   .section-spacing {
-    @apply px-4 md:px-16 md:my-10 my-2;
+    @apply px-4 md:px-16 md:my-10 py-1;
   }
 }
 

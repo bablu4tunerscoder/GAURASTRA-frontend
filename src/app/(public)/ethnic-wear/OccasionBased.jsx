@@ -15,14 +15,11 @@ const OccasionBased = ({ data }) => {
       grid-flow-col
       auto-cols-[calc(33.333%-1rem)]
       gap-6
-
       overflow-x-auto no-scrollbar
-
       md:grid-flow-row
       md:grid-cols-3
       md:overflow-visible
-      md:gap-10
-
+      md:gap-20
       lg:grid-cols-5
       pb-2
     "
@@ -40,7 +37,7 @@ const OccasionBased = ({ data }) => {
                             </div>
 
                             {/* Label */}
-                            <p className="mt-1 md:mt-3 text-secondary font-serif text-xs md:text-3xl">
+                            <p className="mt-1 text-center md:mt-3 text-secondary font-serif text-md text-nowrap md:text-xl lg:text-3xl">
                                 {card.title}
                             </p>
                         </div>

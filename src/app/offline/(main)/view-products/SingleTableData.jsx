@@ -3,7 +3,7 @@ import { axiosInstanceWithOfflineToken } from "@/helpers/axiosinstance";
 import { printSingleClickVariantQR } from "@/utils/printSingleClickVariantQR";
 import { printSingleClickVariantQRAsImage } from "@/utils/printSingleClickVariantQRAsImage";
 import { printVariantQR } from "@/utils/printVariantQR";
-import { ChevronRight, Pencil, QrCode, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pencil, QrCode, Trash2 } from "lucide-react";
 import Image from "next/image";
 // import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -185,6 +185,8 @@ const VariantRow = ({ v, productId, GetData, productName }) => {
 
 
 const SingleTableData = ({
+    handleBulkIdAdd,
+    productIdsForBulkPrint,
     p,
     index,
     expandedRows,
@@ -204,17 +206,17 @@ const SingleTableData = ({
                 className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"
                     } hover:bg-gray-100 transition-colors`}
             >
-                <td className="p-0">
-                    <button
-                        onClick={() => toggleRowExpansion(p._id)}
-                        className="w-full h-full py-8 flex items-center justify-center cursor-pointer text-gray-600 hover:text-gray-900"
-                    >
-                        <ChevronRight
-                            className={`w-4 h-4 transition-transform ${expandedRows.has(p._id) ? "rotate-90" : ""
-                                }`}
-                        />
-                    </button>
+
+
+                <td className="px-3 py-3 text-center">
+                    <input
+                        type="checkbox"
+                        className="w-5 h-5 rounded-md accent-gray-400 checked:accent-blue-500 cursor-pointer"
+                        onChange={() => handleBulkIdAdd(p._id)}
+                        checked={productIdsForBulkPrint.includes(p._id)}
+                    />
                 </td>
+
 
 
                 <td className="px-6 py-4 text-gray-900 font-medium">
@@ -273,6 +275,7 @@ const SingleTableData = ({
                     </button>
                 </td>
 
+
                 <td className="px-6 py-4">
                     <button className="cursor-pointer" onClick={() => postApiCall(p._id)}>
                         {p.print ? (
@@ -298,8 +301,17 @@ const SingleTableData = ({
                     )}
                 </td>
 
-                <td className="px-6 py-4">
+                <td className="px-6">
                     <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => toggleRowExpansion(p._id)}
+                            className="w-full h-full py-8 flex items-center justify-center cursor-pointer text-gray-600 hover:text-gray-900"
+                        >
+                            <ChevronLeft
+                                className={`w-6 h-6 transition-transform hover:text-green-600 ${expandedRows.has(p._id) ? "-rotate-90" : ""
+                                    }`}
+                            />
+                        </button>
                         <button
                             onClick={() => openEditPage(p)}
                             className="p-2 text-blue-600 hover:bg-blue-50 rounded-md"

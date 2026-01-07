@@ -3,11 +3,12 @@ import OccasionBased from "./OccasionBased";
 import MenEthnicWearSection from "@/app/(home page components)/MenEthnicWearSection";
 import WomenEthnicWearSection from "@/app/(home page components)/WomenEthnicWearSection";
 import Image from "next/image";
+import Heading from "@/app/(home page components)/Heading";
 
 const CategoryCard = ({ img, title, large = false }) => {
   return (
     <div
-      className={`relative overflow-hidden rounded-3xl ${large ? "row-span-2" : ""
+      className={`relative overflow-hidden md:rounded-3xl rounded ${large ? "row-span-2" : ""
         }`}
     >
       <img
@@ -20,8 +21,8 @@ const CategoryCard = ({ img, title, large = false }) => {
       <div className="absolute inset-0 bg-black/20" />
 
       {/* Text */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-        <span className={`${large ? "bg-white/90 text-black" : "text-white/90"}  text-sm font-semibold px-4 py-1.5 rounded-full whitespace-nowrap`}>
+      <div className="absolute md:bottom-4 bottom-1 left-1/2 -translate-x-1/2">
+        <span className={`${large ? "bg-white/90 text-black" : "text-white/90"} text-xs md:text-sm md:font-semibold font-medium tracking-wider md:px-4 px-2 py-1.5 rounded-full whitespace-nowrap`}>
           {title}
         </span>
       </div>
@@ -205,29 +206,41 @@ export default function EthnicwearPage() {
   return (
     <section className="min-h-screen">
       {/* Banner */}
+      {/* done responsive */}
       <div className="w-full relative">
         <img
           src="/assets/ethnicPageBanner.png"
           alt="Ethnic Page"
           className="w-full h-auto object-cover" // Makes the image cover the full width and maintain its aspect ratio
         />
-        <div className="absolute top-1/2 left-10 transform -translate-y-1/2">
-          <h1 className="text-4xl font-bold mb-2 text-primary">Ethnic Wear Collection</h1>
-          <h2 className="text-xl mb-4 text-secondary">Celebrate Tradition • Wedding • Festive • Daily</h2>
-          <button className="bg-white text-primary py-2 px-6 rounded-lg hover:scale-105 transition duration-300">
+        <div className="absolute top-1/2 md:left-10 left-4 transform -translate-y-1/2">
+          <h1 className="md:text-4xl text-xl font-bold mb-2 text-primary
+                 drop-shadow-[0_2px_6px_rgba(255,255,255,0.9)]">
+            Ethnic Wear Collection
+          </h1>
+
+          <h2 className="md:text-xl text-md tracking-tight md:mb-4 mb-2 text-secondary
+                 drop-shadow-[0_1px_4px_rgba(255,255,255,0.8)]">
+            Celebrate Tradition • Wedding • Festive • Daily
+          </h2>
+
+          <button className="bg-white text-primary py-2 px-6 text-sm md:text-md rounded-lg hover:scale-105 transition duration-300">
             View All Ethnic Wear
           </button>
         </div>
+
       </div>
 
       {/* Occasion Based Section */}
+      {/* done responsive */}
       <OccasionBased data={occasionBasedWears} />
 
       {/* Products Section */}
+      {/* done responsive */}
       <div className="section-spacing">
 
         {/* Horizontal Scrollable Products */}
-        <div className="overflow-x-auto px-4 pb-4">
+        <div className="overflow-x-auto no-scrollbar ">
           <div className="flex justify-between gap-6">
             {ethnicProducts.map((product, index) => (
               <ProductCardEthnic
@@ -242,30 +255,39 @@ export default function EthnicwearPage() {
 
       {/* From Reception to Wedding  */}
       <section className="section-spacing">
-        <section className="py-16 px-4 md:px-16 bg-[url('/assets/ReceptionToWedding.png')] bg-cover">
+        <section className="section-spacing bg-[url('/assets/ReceptionToWedding.png')] bg-cover  py-6">
           {/* Heading */}
-          <div className="text-center mb-12 flex flex-col  items-center">
-            <img src="/assets/creativeBorderUp.png" alt="" />
-            <h2 className="text-2xl md:text-3xl font-semibold
+          <div className="text-center md:mb-12 mb-6 flex flex-col items-center">
+            <img src="/assets/creativeBorderUp.png" className="w-2/3 md:w-auto" alt="" />
+            <h2 className="text-xl md:text-3xl font-semibold
   bg-gradient-to-b
   from-[#FFECA7]
   via-[#F7DD95]
   to-[#FFB900]
-  bg-clip-text text-transparent font-serif">
+  bg-clip-text text-transparent font-serif
+  leading-none
+  ">
               From Reception to Wedding
             </h2>
-            <img src="/assets/creativeBorderDown.png" alt="" />
+            <img src="/assets/creativeBorderDown.png" className="w-2/3 md:w-auto" alt="" />
 
           </div>
 
           {/* Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="flex gap-6 justify-center overflow-x-auto no-scrollbar lg:overflow-x-hidden">
             {Array(4)
               .fill(null)
               .map((_, index) => (
                 <div
                   key={index}
-                  className="relative overflow-hidden rounded-3xl h-[360px]"
+                  className="
+          relative
+          flex-shrink-0
+          w-[200px] md:w-[280px] lg:w-[300px]
+          md:h-[360px] h-[250px]
+          overflow-hidden
+          rounded-3xl
+        "
                 >
                   {/* Image */}
                   <img
@@ -279,18 +301,24 @@ export default function EthnicwearPage() {
 
                   {/* Text */}
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-                    <span className="text-xl md:text-2xl font-semibold
-  bg-gradient-to-b
-  from-[#FFECA7]
-  via-[#F7DD95]
-  to-[#FFB900]
-  bg-clip-text text-transparent font-serif tracking-wide">
+                    <span
+                      className="
+              text-xl md:text-2xl font-semibold
+              bg-gradient-to-b
+              from-[#FFECA7]
+              via-[#F7DD95]
+              to-[#FFB900]
+              bg-clip-text text-transparent
+              font-serif tracking-wide
+            "
+                    >
                       Occasion
                     </span>
                   </div>
                 </div>
               ))}
           </div>
+
         </section>
       </section>
 
@@ -302,19 +330,19 @@ export default function EthnicwearPage() {
 
 
       {/* Premium & Elegant */}
+      {/* done responsive */}
       <section className="section-spacing">
 
-
-        <div className="bg-[url('/assets/premiumBg.png')] py-10">
-          <div className="max-w-xl mx-auto flex flex-col justify-between items-center text-center mb-10">
+        <div className="bg-[url('/assets/premiumBg.png')] pb-4 md:py-6">
+          <div className="md:max-w-xl max-w-lg mx-auto flex flex-col justify-between items-center text-center md:mb-10 mb-4">
             <img src="/assets/creativeBorderUp.png" alt="" />
-            <h1 className="text-4xl text-primary font-serif font-semibold">Premium & Elegant</h1>
-            <h2 className="text-3xl text-secondary">Handpicked ethnic wear crafted with elegance,
+            <h1 className="md:text-4xl text-2xl md:mt-0 -mt-3 text-primary font-serif font-semibold">Premium & Elegant</h1>
+            <h2 className="md:text-3xl text-lg text-secondary">Handpicked ethnic wear crafted with elegance,
               comfort & timeless design.</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+          <div className="grid grid-cols-3 md:gap-4 gap-1">
             {/* LEFT COLUMN */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col md:gap-4 gap-1">
               <CategoryCard
                 img="/assets/premium-sm-img.png"
                 title="Designer Sets"
@@ -335,7 +363,7 @@ export default function EthnicwearPage() {
             </div>
 
             {/* RIGHT COLUMN */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col md:gap-4 gap-1">
               <CategoryCard
                 img="/assets/premium-sm-img.png"
                 title="Evening Gowns"
@@ -352,14 +380,12 @@ export default function EthnicwearPage() {
       </section>
 
       {/*  Craft Chips */}
+      {/* done responscive */}
       <section className="section-spacing">
-        <div className="px-4 mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold">Shop by Fabric</h2>
-          <p className="text-gray-600 mt-2">Discover our premium fabric collection</p>
-        </div>
+        <Heading title="Craft Chips" />
 
         {/* Horizontal Scrollable Container */}
-        <div className="overflow-x-auto px-4 pb-4 scrollbar-hide">
+        <div className="overflow-x-auto px-4 pb-4 no-scrollbar">
           <div className="flex justify-between gap-4 md:gap-6">
             {craftChips.map((fabric, index) => (
               <div key={index} className="flex-shrink-0 w-40 md:w-56">
@@ -396,6 +422,7 @@ export default function EthnicwearPage() {
 
 
       {/* Lightweight cotton fabric for all-day comfort */}
+      {/* done responsive */}
       <section className="section-spacing">
         <div className="relative w-full">
           {/* IMAGE */}
@@ -408,13 +435,13 @@ export default function EthnicwearPage() {
           {/* OVERLAY CONTENT */}
           <div className="absolute inset-0 flex justify-end px-6 md:px-16">
             <div className="w-3/5 flex flex-col justify-center text-left">
-              <h2 className="text-2xl md:text-3xl font-serif text-[#2c1a10] leading-snug">
+              <h2 className="text-lg md:text-3xl font-serif text-[#2c1a10] leading-snug">
                 Lightweight cotton <br />
                 fabric for all-day comfort
               </h2>
 
               <div>
-                <button className="mt-6 rounded-full bg-black text-white px-6 py-2 text-sm hover:bg-black/90 transition">
+                <button className="md:mt-6 mt-1 rounded-2xl bg-black text-white px-6 py-2 md:text-sm text-xs hover:bg-black/90 transition">
                   Shop Now
                 </button>
               </div>
@@ -428,8 +455,9 @@ export default function EthnicwearPage() {
       <OccasionBased data={occasionBasedWears} />
 
       {/* banner wala */}
+      {/* done resppnsive */}
       <section className="section-spacing">
-        <div className="relative w-full overflow-hidden rounded-2xl">
+        <div className="relative w-full overflow-hidden ">
           {/* IMAGE */}
           <img
             src="/assets/sale-banner.png"
@@ -438,15 +466,15 @@ export default function EthnicwearPage() {
           />
 
           {/* OVERLAY CONTENT */}
-          <div className="absolute inset-0 flex items-center px-6 md:px-16">
+          <div className="absolute inset-0 flex items-center px-4 md:px-16">
             <div className="max-w-md text-white">
-              <h2 className="text-2xl md:text-3xl font-serif leading-snug">
+              <h2 className="text-sm md:text-lg lg:text-3xl font-serif leading-snug">
                 Wedding Season Sale
                 <br />
                 Flat 30% OFF
               </h2>
 
-              <button className="mt-6 rounded-full bg-white text-black px-6 py-2 text-sm font-medium hover:bg-white/90 transition">
+              <button className="lg:mt-6 md:mt-2 mt-1 md:rounded-2xl rounded bg-white text-black md:px-6 px-3 md:py-2 py-1 md:text-sm text-xs font-medium hover:bg-white/90 transition">
                 Shop Now
               </button>
             </div>
@@ -460,10 +488,11 @@ export default function EthnicwearPage() {
       <MenEthnicWearSection data={menEthnicWearSection} />
 
       {/* Products Section */}
+      {/* done responsive */}
       <div className="section-spacing">
 
         {/* Horizontal Scrollable Products */}
-        <div className="overflow-x-auto px-4 pb-4">
+        <div className="overflow-x-auto no-scrollbar ">
           <div className="flex justify-between gap-6">
             {ethnicProducts.map((product, index) => (
               <ProductCardEthnic
@@ -476,7 +505,7 @@ export default function EthnicwearPage() {
       </div>
 
       {/* banner wala and bottom 3 cards */}
-
+      {/* done responsive */}
       <section className="section-spacing space-y-10">
         {/* ================= TOP BANNER ================= */}
         <div className="relative w-full overflow-hidden">
@@ -490,14 +519,14 @@ export default function EthnicwearPage() {
           />
 
           <div className="absolute inset-0 flex items-center justify-end px-6 md:px-16">
-            <div className="w-1/3 text-white">
-              <h2 className="text-2xl md:text-3xl font-serif font-semibold">
+            <div className="md:w-1/3 w-1/2 md:px-0 px-10 text-white">
+              <h2 className="text-md md:text-3xl font-serif font-semibold">
                 Classic Ethnic Styles
                 <br />
                 for Modern Men
               </h2>
 
-              <button className="mt-6 rounded-full bg-white text-primary font-serif px-6 py-2 text-lg font-medium hover:bg-white/90 transition">
+              <button className="md:mt-6 mt-2 rounded-full bg-white text-primary font-serif px-6 py-2 md:text-sm text-xs font-medium hover:bg-white/90 transition">
                 Shop Now
               </button>
             </div>
@@ -505,25 +534,23 @@ export default function EthnicwearPage() {
         </div>
 
         {/* ================= BOTTOM 3 CARDS ================= */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-20">
+        <div className="grid grid-cols-3 gap-4 md:gap-20 w-full">
           {Array(3)
             .fill(null)
             .map((_, index) => (
               <div
                 key={index}
                 className="
-            relative
-            bg-cover bg-center bg-no-repeat
-            min-h-[240px]
-            aspect-square
-            p-32
-            flex items-center justify-center
-          "
+          relative
+          bg-contain bg-center bg-no-repeat
+          flex items-center justify-center
+              aspect-square
+        "
                 style={{
                   backgroundImage: "url('/assets/cardBg.png')",
                 }}
               >
-                <h3 className="text-white text-3xl md:text-5xl font-semibold text-center">
+                <h3 className="text-white text-lg sm:text-xl md:text-5xl font-semibold text-center px-2">
                   {index === 0 && "Under ₹200"}
                   {index === 1 && "Under ₹500"}
                   {index === 2 && "Best Deal"}
@@ -531,6 +558,7 @@ export default function EthnicwearPage() {
               </div>
             ))}
         </div>
+
       </section>
 
 

@@ -16,7 +16,7 @@ const MenEthnicWearSection = ({ data }) => {
                     lg:auto-cols-[calc(25%-0.75rem)]
                     gap-4
                     overflow-x-auto
-                    scrollbar-hide
+                    no-scrollbar
                 "
             >
                 {data.map((item, index) => (

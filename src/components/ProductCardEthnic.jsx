@@ -27,7 +27,7 @@ const ProductCardEthnic = ({ product }) => {
     defaultVariant?.pricing?.discount_percent || 0;
 
   return (
-    <div className="w-72 flex-shrink-0 relative group">
+    <div className="md:w-72 w-48 flex-shrink-0 relative group">
       <button
         // onClick={() => onToggleWishlist?.(product)}
         className="

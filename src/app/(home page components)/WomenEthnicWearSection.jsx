@@ -16,7 +16,7 @@ const WomenEthnicWearSection = ({ data }) => {
                     md:auto-cols-[calc(33.333%-1rem)]
                     lg:auto-cols-[calc(20%-1.2rem)]
                     gap-4 md:gap-6
-                    overflow-x-auto scrollbar-hide
+                    overflow-x-auto no-scrollbar
                     pb-2
                 "
             >

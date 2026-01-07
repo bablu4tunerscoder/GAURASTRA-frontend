@@ -6,14 +6,36 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import SingleTableData from "./SingleTableData";
-import { Box } from "lucide-react";
+import { Box, Printer } from "lucide-react";
 import Pagination from "../../_components/pagination";
+import { printBulkVariantQR } from "@/utils/printBulkVariantQR";
 
 export default function ProductsTable() {
     const [products, setProducts] = useState([]);
     const [expandedRows, setExpandedRows] = useState(new Set());
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(false);
+    const [productIdsForBulkPrint, setProductIdsForBulkPrint] = useState([]);
+
+    const handleBulkIdAdd = (productId) => {
+        setProductIdsForBulkPrint(prevIds => {
+            if (prevIds.includes(productId)) {
+                return prevIds.filter(id => id !== productId);
+            } else {
+                return [...prevIds, productId];
+            }
+        });
+    };
+
+
+
+    const handleSelectAll = (e) => {
+        if (e.target.checked) {
+            setProductIdsForBulkPrint(products.map(p => p._id));
+        } else {
+            setProductIdsForBulkPrint([]);
+        }
+    };
 
     const [pagination, setPagination] = useState({
         page: 1,
@@ -57,11 +79,6 @@ export default function ProductsTable() {
             setLoading(false);
         }
     };
-
-
-
-
-
 
     const handleSearch = () => {
         setPagination((prev) => ({ ...prev, page: 1 }));
@@ -126,16 +143,14 @@ export default function ProductsTable() {
     };
 
     // to know the print is done before or not
-    const handleAfterPrintApiCall = async (id) => {
-
+    const handleAfterPrintApiCall = async (id, singlePrintCall = true) => {
         try {
-            // Make the API call
             const { data } = await axiosInstanceWithOfflineToken.put("/api/offline/products/print-done/" + id);
 
-            // Check if the API call was successful
             if (data && data.success) {
-                // Call fetchProducts after successful response
-                fetchProducts();
+                if (singlePrintCall) {
+                    fetchProducts();
+                }
             } else {
                 console.log('API call failed or no data received');
             }
@@ -144,29 +159,37 @@ export default function ProductsTable() {
         }
     };
 
+    const handleBulkPrint = () => {
+        console.log("bulk print")
+        if (productIdsForBulkPrint.length === 0) {
+            toast.error("Please select at least one product to print");
+            return;
+        }
+
+        const selectedProducts = products.filter(p =>
+            productIdsForBulkPrint.includes(p._id)
+        );
+        printBulkVariantQR(selectedProducts);
+
+        productIdsForBulkPrint.forEach(id => {
+            handleAfterPrintApiCall(id, false);
+        });
+        fetchProducts();
+
+    };
+
     useEffect(() => {
         fetchProducts();
     }, [pagination.page, searchTerm]);
 
-    console.log('products', products)
-
     return (
         <>
             <div className="flex items-center justify-between mb-6">
-                {/* Left */}
-                {/* <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-xl shadow-md flex items-center justify-center">
-                        <Box className="w-5 h-5 text-indigo-600" />
-                    </div>
-                    <h1 className="text-lg text-gray-900">View Products</h1>
-                </div> */}
                 <div className="flex items-center gap-3">
-                    {/* Icon */}
                     <div className="bg-blue-600 md:p-3 p-2 shadow-lg rounded-2xl flex items-center justify-center">
                         <Box className="text-white w-8 h-8" />
                     </div>
 
-                    {/* Text */}
                     <div>
                         <h1 className="text-2xl font-semibold text-gray-900">View Products</h1>
                         <p className="text-gray-600 md:text-md text-sm">
@@ -175,20 +198,19 @@ export default function ProductsTable() {
                     </div>
                 </div>
 
-                {/* Right - Search */}
                 <div className="flex items-center gap-2">
                     <input
                         type="text"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)} // Update search term on input change
+                        onChange={(e) => setSearchTerm(e.target.value)}
                         onKeyDown={(e) => {
-                            if (e.key === "Enter") handleSearch(); // Trigger search on Enter key
+                            if (e.key === "Enter") handleSearch();
                         }}
                         placeholder="Search product..."
                         className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                     <button
-                        onClick={handleSearch} // Trigger search on button click
+                        onClick={handleSearch}
                         className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
                     >
                         Search
@@ -196,14 +218,44 @@ export default function ProductsTable() {
                 </div>
             </div>
 
-            {/* === SLEEK PRODUCT TABLE === */}
+            {/* Bulk Print Button */}
+            {productIdsForBulkPrint.length > 0 && (
+                <div className="mb-4 p-4 bg-blue-50 rounded-lg flex items-center justify-between">
+                    <span className="text-sm text-gray-700">
+                        {productIdsForBulkPrint.length} product(s) selected
+                    </span>
+                    <button
+                        onClick={handleBulkPrint}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                    >
+                        <Printer className="w-4 h-4" />
+                        Print Selected ({productIdsForBulkPrint.length})
+                    </button>
+                </div>
+            )}
+
             <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead className="bg-gray-800 text-white border-b border-border">
                             <tr>
-                                <th className="w-8 px-6 py-3"></th>
-                                <th className="px-6 py-3 text-left font-semibold">Product</th>
+                                <th className="px-6 py-3 text-center font-semibold">
+                                    <div className="flex gap-1 items-center">
+
+                                        <input
+                                            type="checkbox"
+                                            onChange={handleSelectAll}
+                                            id="all-checkbox-select"
+                                            checked={productIdsForBulkPrint.length === products.length && products.length > 0}
+                                            className="w-4 h-4 cursor-pointer  accent-gray-300"
+                                        />
+                                        <label className="cursor-pointer" htmlFor="all-checkbox-select">
+
+                                            Select All
+                                        </label>
+                                    </div>
+                                </th>
+                                <th className="px-6 py-3 text-left font-semibold ">Product</th>
                                 <th className="px-6 py-3 text-left font-semibold">Size Stock Details</th>
                                 <th className="px-6 py-3 text-left font-semibold">Image</th>
                                 <th className="px-6 py-3 text-left font-semibold">Print image</th>
@@ -217,7 +269,7 @@ export default function ProductsTable() {
                         <tbody className="divide-y divide-border">
                             {products.length === 0 && (
                                 <tr>
-                                    <td colSpan="6" className="py-12 text-center text-muted-foreground">
+                                    <td colSpan="10" className="py-12 text-center text-muted-foreground">
                                         No products found
                                     </td>
                                 </tr>
@@ -226,6 +278,9 @@ export default function ProductsTable() {
                                 <SingleTableData
                                     key={p._id}
                                     p={p}
+                                    GetData={fetchProducts}
+                                    productIdsForBulkPrint={productIdsForBulkPrint}
+                                    handleBulkIdAdd={handleBulkIdAdd}
                                     postApiCall={handleAfterPrintApiCall}
                                     index={index}
                                     expandedRows={expandedRows}
@@ -239,7 +294,6 @@ export default function ProductsTable() {
                 </div>
             </div>
 
-            {/* DELETE MODAL */}
             <DeleteModal
                 open={isModalOpen}
                 onClose={closeDeleteModal}
