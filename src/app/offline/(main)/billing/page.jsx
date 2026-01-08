@@ -612,9 +612,7 @@ export default function Billing() {
                                     {/* ===================== TOP SECTION ===================== */}
                                     <div>
                                         <div className="text-right space-y-1 flex justify-between mb-6">
-                                            <div className="w-24 h-24 overflow-hidden rounded-full">
-                                                <img src="/assets/logo.png" className="w-32 rounded-full" />
-                                            </div>
+                                            <img src="/assets/logo-white-text.svg" className="h-16" />
 
                                             <div className="space-y-1">
                                                 <h1 className="text-3xl font-bold text-[#E3C646]">INVOICE</h1>
@@ -642,7 +640,8 @@ export default function Billing() {
                                                 <h3 className="text-lg font-semibold text-[#E3C646]">Payable to:</h3>
                                                 <p className="font-semibold">Gaurastra</p>
                                                 <p className="text-sm">+91 9522474600</p>
-                                                <p className="text-sm">Indore, MP</p>
+                                                <p className="text-sm">726, Usha Nagar Ganesh Dwar Near La Cup Bashi, Indore
+                                                </p>
                                             </div>
                                         </div>
 
@@ -690,10 +689,11 @@ export default function Billing() {
                                     <div className="text-center pb-20 relative">
                                         <div className="flex justify-center gap-3 text-sm text-gray-300">
                                             <span>📞 +91-9522474600</span>
-                                            <span>🌐 www.Gaurastra.com</span>
+                                            <span>🌐 www.gaurastra.com</span>
                                         </div>
 
-                                        <p className="text-sm text-gray-400">📍 1701, New Dwarkapuri Indore</p>
+                                        <p className="text-sm text-gray-400">📍 726, Usha Nagar Ganesh Dwar Near La Cup Bashi, Indore
+                                        </p>
 
                                         <img src="/assets/thank-you.png" className="absolute bottom-0 right-8 h-32 opacity-80 -z-10" />
                                     </div>

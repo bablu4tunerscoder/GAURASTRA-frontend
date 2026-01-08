@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import SingleTableData from "./SingleTableData";
-import { Box, Printer } from "lucide-react";
+import { Box, Printer, X } from "lucide-react";
 import Pagination from "../../_components/pagination";
 import { printBulkVariantQR } from "@/utils/printBulkVariantQR";
 
@@ -14,7 +14,6 @@ export default function ProductsTable() {
     const [products, setProducts] = useState([]);
     const [expandedRows, setExpandedRows] = useState(new Set());
     const [searchTerm, setSearchTerm] = useState("");
-    const [loading, setLoading] = useState(false);
     const [productIdsForBulkPrint, setProductIdsForBulkPrint] = useState([]);
 
     const handleBulkIdAdd = (productId) => {
@@ -27,13 +26,31 @@ export default function ProductsTable() {
         });
     };
 
-
+    // Check if all current page products are selected
+    const isAllCurrentPageSelected = () => {
+        if (products.length === 0) return false;
+        return products.every(p => productIdsForBulkPrint.includes(p._id));
+    };
 
     const handleSelectAll = (e) => {
+        const currentPageIds = products.map(p => p._id);
+
         if (e.target.checked) {
-            setProductIdsForBulkPrint(products.map(p => p._id));
+            // Add all current page products to selection
+            setProductIdsForBulkPrint(prevIds => {
+                const newIds = [...prevIds];
+                currentPageIds.forEach(id => {
+                    if (!newIds.includes(id)) {
+                        newIds.push(id);
+                    }
+                });
+                return newIds;
+            });
         } else {
-            setProductIdsForBulkPrint([]);
+            // Remove all current page products from selection
+            setProductIdsForBulkPrint(prevIds =>
+                prevIds.filter(id => !currentPageIds.includes(id))
+            );
         }
     };
 
@@ -46,8 +63,9 @@ export default function ProductsTable() {
 
     // Fetch products with a search query
     const fetchProducts = async (query = searchTerm) => {
+
         try {
-            setLoading(true);
+
 
             const { data } = await axiosInstanceWithOfflineToken.get(
                 "/api/offline/products/w",
@@ -75,13 +93,13 @@ export default function ProductsTable() {
             }));
         } catch (error) {
             console.error("Fetch error:", error);
-        } finally {
-            setLoading(false);
         }
     };
 
     const handleSearch = () => {
         setPagination((prev) => ({ ...prev, page: 1 }));
+        // Clear selections on new search
+        setProductIdsForBulkPrint([]);
         fetchProducts(searchTerm);
     };
 
@@ -128,6 +146,8 @@ export default function ProductsTable() {
 
             toast.success("Product deleted successfully!");
             setProducts((prev) => prev.filter((p) => p._id !== deleteId));
+            // Remove from bulk print selection if exists
+            setProductIdsForBulkPrint(prev => prev.filter(id => id !== deleteId));
         } catch (error) {
             console.error("Delete error:", error);
             toast.error("Failed to delete product.");
@@ -174,13 +194,15 @@ export default function ProductsTable() {
         productIdsForBulkPrint.forEach(id => {
             handleAfterPrintApiCall(id, false);
         });
-        fetchProducts();
 
+        // Clear selections after printing
+        setProductIdsForBulkPrint([]);
+        fetchProducts();
     };
 
     useEffect(() => {
         fetchProducts();
-    }, [pagination.page, searchTerm]);
+    }, [pagination.page]);
 
     return (
         <>
@@ -199,6 +221,20 @@ export default function ProductsTable() {
                 </div>
 
                 <div className="flex items-center gap-2">
+                    {
+                        searchTerm && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    fetchProducts('');
+                                    setSearchTerm('');
+                                }}
+                                className="px-4 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-700 cursor-pointer"
+                            >
+                                Clear
+                            </button>
+                        )
+                    }
                     <input
                         type="text"
                         value={searchTerm}
@@ -211,7 +247,7 @@ export default function ProductsTable() {
                     />
                     <button
                         onClick={handleSearch}
-                        className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
+                        className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 cursor-pointer"
                     >
                         Search
                     </button>
@@ -222,7 +258,7 @@ export default function ProductsTable() {
             {productIdsForBulkPrint.length > 0 && (
                 <div className="mb-4 p-4 bg-blue-50 rounded-lg flex items-center justify-between">
                     <span className="text-sm text-gray-700">
-                        {productIdsForBulkPrint.length} product(s) selected
+                        {productIdsForBulkPrint.length} product(s) selected across all pages
                     </span>
                     <button
                         onClick={handleBulkPrint}
@@ -238,31 +274,29 @@ export default function ProductsTable() {
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead className="bg-gray-800 text-white border-b border-border">
-                            <tr>
-                                <th className="px-6 py-3 text-center font-semibold">
-                                    <div className="flex gap-1 items-center">
-
+                            <tr className="text-nowrap">
+                                <th className="px-6 py-4 text-center font-semibold ">
+                                    <div className="flex gap-1 items-center ">
                                         <input
                                             type="checkbox"
                                             onChange={handleSelectAll}
                                             id="all-checkbox-select"
-                                            checked={productIdsForBulkPrint.length === products.length && products.length > 0}
+                                            checked={isAllCurrentPageSelected()}
                                             className="w-4 h-4 cursor-pointer  accent-gray-300"
                                         />
                                         <label className="cursor-pointer" htmlFor="all-checkbox-select">
-
-                                            Select All
+                                            Select All (This Page)
                                         </label>
                                     </div>
                                 </th>
-                                <th className="px-6 py-3 text-left font-semibold ">Product</th>
-                                <th className="px-6 py-3 text-left font-semibold">Size Stock Details</th>
-                                <th className="px-6 py-3 text-left font-semibold">Image</th>
-                                <th className="px-6 py-3 text-left font-semibold">Print image</th>
-                                <th className="px-6 py-3 text-left font-semibold">Print PDF</th>
-                                <th className="px-6 py-3 text-left font-semibold">Printed Before</th>
-                                <th className="px-6 py-3 text-left font-semibold">Status</th>
-                                <th className="px-6 py-3 text-left font-semibold">Actions</th>
+                                <th className="px-6 py-4 text-left font-semibold ">Product</th>
+                                <th className="px-6 py-4 text-left font-semibold">Size Stock Details</th>
+                                <th className="px-6 py-4 text-left font-semibold">Image</th>
+                                <th className="px-6 py-4 text-left font-semibold">Print image</th>
+                                <th className="px-6 py-4 text-left font-semibold">Print PDF</th>
+                                <th className="px-6 py-4 text-left font-semibold">Printed Before</th>
+                                <th className="px-6 py-4 text-left font-semibold">Status</th>
+                                <th className="px-6 py-4 text-left font-semibold">Actions</th>
                             </tr>
                         </thead>
 

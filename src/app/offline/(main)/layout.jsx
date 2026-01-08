@@ -47,11 +47,9 @@ export default function MainLayout({ children }) {
           ${open ? "w-64" : "w-16"}
         `}
       >
-        <div className="md:p-6 p-2">
-          <div className="flex items-center gap-3 mb-10">
-            <img src="/assets/loginbg.webp" className="w-10" alt="" />
-            {open && <h2 className="text-lg font-semibold tracking-wide">Gaurastra</h2>}
-          </div>
+        <div className={`${open ? "p-3 " : "p-1 items-center"} my-4 flex  justify-center gap-3 flex-col`}>
+
+          {open ? <img src="/assets/logo-white-text.svg" className="w-full" alt="" /> : <img src="/assets/logo-icon.svg" className="h-12" alt="" />}
 
           {open && <p className="text-gray-400 text-xs">Store Panel</p>}
         </div>

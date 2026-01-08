@@ -2,6 +2,8 @@ export const openPrintWindow = (bill) => {
   const printWindow = window.open("", "_blank", "width=1200,height=900");
   const baseUrl = window.location.origin;
 
+  // console.log(baseUrl)
+
   const html = `
   <html>
   <head>
@@ -58,14 +60,11 @@ export const openPrintWindow = (bill) => {
       }
 
       .logo-wrapper {
-        width: 96px;
-        height: 96px;
-        border-radius: 50%;
-        overflow: hidden;
-      }
+        height: 64px;
+        }
 
       .logo-wrapper img {
-        width: 100%;
+        width: auto;
         height: 100%;
         object-fit: cover;
         filter: grayscale(100%);
@@ -224,7 +223,7 @@ export const openPrintWindow = (bill) => {
 
         <div class="header">
           <div class="logo-wrapper">
-            <img src="${baseUrl}/assets/logo.png" alt="Logo" />
+            <img src="${baseUrl}/assets/logo-black-text.svg" alt="Logo" />
           </div>
 
           <div class="text-right">
@@ -311,9 +310,9 @@ export const openPrintWindow = (bill) => {
       <!-- FOOTER -->
       <div class="footer">
         <div class="text-sm">
-          📞 +91-9522474600 &nbsp;&nbsp; | &nbsp;&nbsp; 🌐 www.Gaurastra.com
+          📞 +91-9522474600 &nbsp;&nbsp; | &nbsp;&nbsp; 🌐 www.gaurastra.com
         </div>
-        <p class="text-sm text-gray-500">📍 1701, New Dwarkapuri Indore</p>
+        <p class="text-sm text-gray-500">📍 726, Usha Nagar Ganesh Dwar Near La Cup Bashi, Indore</p>
         
         <p class="thank-text">Thank you</p>
       </div>
