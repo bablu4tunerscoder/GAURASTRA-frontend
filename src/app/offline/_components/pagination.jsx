@@ -1,13 +1,15 @@
-import React from "react";
+"use client";
+
+import { useRouter, useSearchParams } from "next/navigation";
 
 /**
- * Responsive Pagination Component
- * Props:
- * - currentPage: number
- * - totalPages: number
- * - onPageChange: (page:number) => void
+ * Responsive Pagination Component (Next.js App Router)
  */
-export default function Pagination({ currentPage, totalPages, onPageChange }) {
+export default function Pagination({ currentPage, totalPages }) {
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   if (totalPages <= 1) return null;
 
   const pages = [];
@@ -20,32 +22,36 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
     start = Math.max(1, end - maxVisible + 1);
   }
 
-  for (let i = start; i <= end; i++) {
-    pages.push(i);
-  }
+  for (let i = start; i <= end; i++) pages.push(i);
+
+  const changePage = (page) => {
+    if (page < 1 || page > totalPages) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", page);
+
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <div className="flex items-center justify-center gap-2 mt-6 flex-wrap">
-      {/* Previous */}
       <button
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={() => changePage(currentPage - 1)}
         disabled={currentPage === 1}
         className="px-3 py-1 rounded-lg border text-sm disabled:opacity-50 border-black text-black"
       >
         Prev
       </button>
 
-      {/* Mobile view (only current page) */}
       <span className="sm:hidden px-3 py-1 border rounded-lg text-sm">
         {currentPage} / {totalPages}
       </span>
 
-      {/* Desktop view (page numbers) */}
       <div className="hidden sm:flex gap-2">
         {pages.map((page) => (
           <button
             key={page}
-            onClick={() => onPageChange(page)}
+            onClick={() => changePage(page)}
             className={`px-3 py-1 rounded-lg border text-sm transition ${page === currentPage
               ? "bg-black text-white"
               : "hover:bg-gray-100 border-black text-black"
@@ -56,9 +62,8 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         ))}
       </div>
 
-      {/* Next */}
       <button
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={() => changePage(currentPage + 1)}
         disabled={currentPage === totalPages}
         className="px-3 py-1 rounded-lg border border-black text-black text-sm disabled:opacity-50"
       >
@@ -67,15 +72,3 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
     </div>
   );
 }
-
-/* Example Usage:
-
-const [page, setPage] = useState(1);
-
-<Pagination
-  currentPage={page}
-  totalPages={20}
-  onPageChange={setPage}
-/>
-
-*/

@@ -8,12 +8,14 @@ import { useRouter } from "next/navigation";
 import SingleTableData from "./SingleTableData";
 import { Box, Printer } from "lucide-react";
 import Pagination from "../../_components/pagination";
+import { useSearchParams } from "next/navigation";
 import { printBulkVariantQR } from "@/utils/printBulkVariantQR";
 
 export default function ProductsTable() {
     const [products, setProducts] = useState([]);
     const [expandedRows, setExpandedRows] = useState(new Set());
     const [searchTerm, setSearchTerm] = useState("");
+    const searchParams = useSearchParams();
     // Changed from IDs to full product objects for bulk print
     const [selectedProductsForBulkPrint, setSelectedProductsForBulkPrint] = useState([]);
 
@@ -58,11 +60,18 @@ export default function ProductsTable() {
     };
 
     const [pagination, setPagination] = useState({
-        page: 1,
+        page: parseInt(searchParams.get("page")) || 1,
         limit: 10,
         totalPages: 1,
         totalRecords: 0,
     });
+
+
+    // Update the useEffect to watch for URL changes:
+    useEffect(() => {
+        const pageFromUrl = parseInt(searchParams.get("page")) || 1;
+        setPagination(prev => ({ ...prev, page: pageFromUrl }));
+    }, [searchParams]);
 
     // Fetch products with a search query
     const fetchProducts = async (query = searchTerm) => {
@@ -337,9 +346,6 @@ export default function ProductsTable() {
             <Pagination
                 currentPage={pagination.page}
                 totalPages={pagination.totalPages}
-                onPageChange={(newPage) =>
-                    setPagination((prev) => ({ ...prev, page: newPage }))
-                }
             />
         </>
     );
