@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
+const sizeOptions = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL", "XXL"];
 
 export default function ProductForm() {
 
@@ -26,7 +26,7 @@ export default function ProductForm() {
                 color: '#ff0000',
                 size: 'xl',
                 stock: 0,
-                fabric:"",
+                fabric: "",
                 actual_price: 0,
                 offer: 0,
                 offer_type: 'percentage',
@@ -300,7 +300,7 @@ export default function ProductForm() {
                                     color: '#ff0000',
                                     size: 'xl',
                                     stock: 0,
-                                    fabric:'',
+                                    fabric: '',
                                     actual_price: mainPrice,
                                     offer: 0,
                                     offer_type: 'percentage',
@@ -398,7 +398,7 @@ export default function ProductForm() {
                    outline-none text-sm"
                                         />
                                     </div>
-                                     <div>
+                                    <div>
                                         <label className="block text-xs font-medium text-gray-700 mb-1">
                                             Fabric
                                         </label>

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import SingleTableData from "./SingleTableData";
-import { Box, Printer, X } from "lucide-react";
+import { Box, Printer } from "lucide-react";
 import Pagination from "../../_components/pagination";
 import { printBulkVariantQR } from "@/utils/printBulkVariantQR";
 
@@ -14,14 +14,16 @@ export default function ProductsTable() {
     const [products, setProducts] = useState([]);
     const [expandedRows, setExpandedRows] = useState(new Set());
     const [searchTerm, setSearchTerm] = useState("");
-    const [productIdsForBulkPrint, setProductIdsForBulkPrint] = useState([]);
+    // Changed from IDs to full product objects for bulk print
+    const [selectedProductsForBulkPrint, setSelectedProductsForBulkPrint] = useState([]);
 
-    const handleBulkIdAdd = (productId) => {
-        setProductIdsForBulkPrint(prevIds => {
-            if (prevIds.includes(productId)) {
-                return prevIds.filter(id => id !== productId);
+    const handleBulkProductToggle = (product) => {
+        setSelectedProductsForBulkPrint(prevProducts => {
+            const exists = prevProducts.some(p => p._id === product._id);
+            if (exists) {
+                return prevProducts.filter(p => p._id !== product._id);
             } else {
-                return [...prevIds, productId];
+                return [...prevProducts, product];
             }
         });
     };
@@ -29,27 +31,28 @@ export default function ProductsTable() {
     // Check if all current page products are selected
     const isAllCurrentPageSelected = () => {
         if (products.length === 0) return false;
-        return products.every(p => productIdsForBulkPrint.includes(p._id));
+        return products.every(p =>
+            selectedProductsForBulkPrint.some(selected => selected._id === p._id)
+        );
     };
 
     const handleSelectAll = (e) => {
-        const currentPageIds = products.map(p => p._id);
-
         if (e.target.checked) {
             // Add all current page products to selection
-            setProductIdsForBulkPrint(prevIds => {
-                const newIds = [...prevIds];
-                currentPageIds.forEach(id => {
-                    if (!newIds.includes(id)) {
-                        newIds.push(id);
+            setSelectedProductsForBulkPrint(prevProducts => {
+                const newProducts = [...prevProducts];
+                products.forEach(product => {
+                    if (!newProducts.some(p => p._id === product._id)) {
+                        newProducts.push(product);
                     }
                 });
-                return newIds;
+                return newProducts;
             });
         } else {
             // Remove all current page products from selection
-            setProductIdsForBulkPrint(prevIds =>
-                prevIds.filter(id => !currentPageIds.includes(id))
+            const currentPageIds = products.map(p => p._id);
+            setSelectedProductsForBulkPrint(prevProducts =>
+                prevProducts.filter(p => !currentPageIds.includes(p._id))
             );
         }
     };
@@ -63,10 +66,7 @@ export default function ProductsTable() {
 
     // Fetch products with a search query
     const fetchProducts = async (query = searchTerm) => {
-
         try {
-
-
             const { data } = await axiosInstanceWithOfflineToken.get(
                 "/api/offline/products/w",
                 {
@@ -99,7 +99,7 @@ export default function ProductsTable() {
     const handleSearch = () => {
         setPagination((prev) => ({ ...prev, page: 1 }));
         // Clear selections on new search
-        setProductIdsForBulkPrint([]);
+        // setSelectedProductsForBulkPrint([]);
         fetchProducts(searchTerm);
     };
 
@@ -147,7 +147,9 @@ export default function ProductsTable() {
             toast.success("Product deleted successfully!");
             setProducts((prev) => prev.filter((p) => p._id !== deleteId));
             // Remove from bulk print selection if exists
-            setProductIdsForBulkPrint(prev => prev.filter(id => id !== deleteId));
+            setSelectedProductsForBulkPrint(prev =>
+                prev.filter(p => p._id !== deleteId)
+            );
         } catch (error) {
             console.error("Delete error:", error);
             toast.error("Failed to delete product.");
@@ -165,7 +167,9 @@ export default function ProductsTable() {
     // to know the print is done before or not
     const handleAfterPrintApiCall = async (id, singlePrintCall = true) => {
         try {
-            const { data } = await axiosInstanceWithOfflineToken.put("/api/offline/products/print-done/" + id);
+            const { data } = await axiosInstanceWithOfflineToken.put(
+                "/api/offline/products/print-done/" + id
+            );
 
             if (data && data.success) {
                 if (singlePrintCall) {
@@ -180,23 +184,21 @@ export default function ProductsTable() {
     };
 
     const handleBulkPrint = () => {
-        console.log("bulk print")
-        if (productIdsForBulkPrint.length === 0) {
+        console.log("bulk print");
+        if (selectedProductsForBulkPrint.length === 0) {
             toast.error("Please select at least one product to print");
             return;
         }
 
-        const selectedProducts = products.filter(p =>
-            productIdsForBulkPrint.includes(p._id)
-        );
-        printBulkVariantQR(selectedProducts);
+        // No need to filter - we already have the full product objects
+        printBulkVariantQR(selectedProductsForBulkPrint);
 
-        productIdsForBulkPrint.forEach(id => {
-            handleAfterPrintApiCall(id, false);
+        selectedProductsForBulkPrint.forEach(product => {
+            handleAfterPrintApiCall(product._id, false);
         });
 
         // Clear selections after printing
-        setProductIdsForBulkPrint([]);
+        setSelectedProductsForBulkPrint([]);
         fetchProducts();
     };
 
@@ -221,20 +223,18 @@ export default function ProductsTable() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    {
-                        searchTerm && (
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    fetchProducts('');
-                                    setSearchTerm('');
-                                }}
-                                className="px-4 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-700 cursor-pointer"
-                            >
-                                Clear
-                            </button>
-                        )
-                    }
+                    {searchTerm && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                fetchProducts('');
+                                setSearchTerm('');
+                            }}
+                            className="px-4 py-2 text-sm text-white bg-red-600 rounded-lg hover:bg-red-700 cursor-pointer"
+                        >
+                            Clear
+                        </button>
+                    )}
                     <input
                         type="text"
                         value={searchTerm}
@@ -255,17 +255,17 @@ export default function ProductsTable() {
             </div>
 
             {/* Bulk Print Button */}
-            {productIdsForBulkPrint.length > 0 && (
+            {selectedProductsForBulkPrint.length > 0 && (
                 <div className="mb-4 p-4 bg-blue-50 rounded-lg flex items-center justify-between">
                     <span className="text-sm text-gray-700">
-                        {productIdsForBulkPrint.length} product(s) selected across all pages
+                        {selectedProductsForBulkPrint.length} product(s) selected across all pages
                     </span>
                     <button
                         onClick={handleBulkPrint}
                         className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                     >
                         <Printer className="w-4 h-4" />
-                        Print Selected ({productIdsForBulkPrint.length})
+                        Print Selected ({selectedProductsForBulkPrint.length})
                     </button>
                 </div>
             )}
@@ -313,8 +313,8 @@ export default function ProductsTable() {
                                     key={p._id}
                                     p={p}
                                     GetData={fetchProducts}
-                                    productIdsForBulkPrint={productIdsForBulkPrint}
-                                    handleBulkIdAdd={handleBulkIdAdd}
+                                    selectedProductsForBulkPrint={selectedProductsForBulkPrint}
+                                    handleBulkProductToggle={handleBulkProductToggle}
                                     postApiCall={handleAfterPrintApiCall}
                                     index={index}
                                     expandedRows={expandedRows}

@@ -185,8 +185,8 @@ const VariantRow = ({ v, productId, GetData, productName }) => {
 
 
 const SingleTableData = ({
-    handleBulkIdAdd,
-    productIdsForBulkPrint,
+    handleBulkProductToggle,
+    selectedProductsForBulkPrint,
     p,
     index,
     expandedRows,
@@ -196,9 +196,6 @@ const SingleTableData = ({
     GetData,
     postApiCall
 }) => {
-
-
-
     return (
         <React.Fragment key={p._id}>
             {/* MAIN PRODUCT ROW */}
@@ -206,18 +203,14 @@ const SingleTableData = ({
                 className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"
                     } hover:bg-gray-100 transition-colors`}
             >
-
-
                 <td className="px-3 py-3 text-center">
                     <input
                         type="checkbox"
                         className="w-5 h-5 rounded-md accent-gray-400 checked:accent-blue-500 cursor-pointer"
-                        onChange={() => handleBulkIdAdd(p._id)}
-                        checked={productIdsForBulkPrint.includes(p._id)}
+                        onChange={() => handleBulkProductToggle(p)}
+                        checked={selectedProductsForBulkPrint.some(product => product._id === p._id)}
                     />
                 </td>
-
-
 
                 <td className="px-6 py-4 text-gray-900 font-medium">
                     {p.title}
@@ -235,7 +228,6 @@ const SingleTableData = ({
                     ))}
                 </td>
 
-
                 <td className="px-6 py-4">
                     <Image
                         src={p.images?.[0]}
@@ -246,7 +238,6 @@ const SingleTableData = ({
                     />
                 </td>
 
-
                 <td className="px-3 py-3">
                     <button
                         type="button"
@@ -256,25 +247,22 @@ const SingleTableData = ({
                         className="p-1 border border-gray-400 text-gray-500 hover:bg-gray-100 rounded"
                         title="Print QR"
                     >
-                        {/* <QrCode className="w-4 h-4" /> */}
                         <Image src="/assets/product-tag-qr.png" alt="QR Code" width={30} height={30} />
                     </button>
                 </td>
+
                 <td className="px-3 py-3">
                     <button
                         type="button"
                         onClick={() => {
                             printSingleClickVariantQR(p.variants, p.title)
                         }}
-
                         className="p-1 border border-gray-400 text-gray-500 hover:bg-gray-100 rounded"
                         title="Print QR"
                     >
-                        {/* <QrCode className="w-4 h-4" /> */}
                         <Image src="/assets/qr.png" alt="QR Code" width={30} height={30} />
                     </button>
                 </td>
-
 
                 <td className="px-6 py-4">
                     <button className="cursor-pointer" onClick={() => postApiCall(p._id)}>
@@ -289,6 +277,7 @@ const SingleTableData = ({
                         )}
                     </button>
                 </td>
+
                 <td className="px-6 py-4">
                     {p.active ? (
                         <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -334,7 +323,6 @@ const SingleTableData = ({
                 <tr>
                     <td colSpan={12} className="px-6 pb-4">
                         <div className="bg-blue-50 border-gray-200 border border-b-0 rounded-lg overflow-hidden ">
-
                             <p className="flex items-center p-3 font-semibold text-blue-900">
                                 Product Variants
                             </p>

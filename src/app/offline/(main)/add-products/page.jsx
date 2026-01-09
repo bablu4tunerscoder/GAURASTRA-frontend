@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-const sizeOptions = ["XS", "S", "M", "L", "XL", "XXL"];
+const sizeOptions = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL", "XXL"];
 
 const ProductForm = () => {
   const defaultValues = {
