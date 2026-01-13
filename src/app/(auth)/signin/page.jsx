@@ -1,23 +1,21 @@
 "use client";
 import React, { useEffect, useState } from "react";
-
+import { Lock, LogIn, Phone } from "lucide-react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
-import GoogleAuth from "@/components/GoogleAuth";
-import Link from "next/link";
-
+// import { useNavigate } from "react-router-dom";
 // import { loginUser } from "../Redux/Slices/userSlice";
 
 export default function Login() {
   // const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
-  
  const [form, setForm] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
   });
  
   const [errors, setErrors] = useState({});
@@ -66,10 +64,16 @@ export default function Login() {
     // PASSWORD VALIDATION
     if (!passwordRegex.test(form.password)) {
       newErrors.password =
-        "Password must be 8–10 characters and include at least 1 special character";
+        "Password must be 5–10 characters and include at least 1 special character";
     }
  
-   
+    // CONFIRM PASSWORD VALIDATION
+    if (!form.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+ 
     // SET ERRORS
     setErrors(newErrors);
  
@@ -78,13 +82,20 @@ export default function Login() {
  
     console.log(form);
 
+    
+ 
     setForm({
       email: "",
       password: "",
+      confirmPassword: "",
     });
   };
 
-
+  // useEffect(() => {
+  //   if (user) {
+  //     // navigate("/OnlineAdmin");
+  //   }
+  // }, [user, navigate]);
 
   return (
      <div className='bg-[url("/assets/bg.svg")] sm:bg-cover lg:bg-contain w-full bg-no-repeat bg-center min-h-screen relative'>
@@ -92,7 +103,7 @@ export default function Login() {
         {/* header */}
         <div className="text-center">
           <h1 className="text-2xl sm:text-4xl font-bold">Welcome</h1>
-          <p className="text-md opacity-90">Login with Email</p>
+          <p className="text-md opacity-90">Sign in with Email</p>
         </div>
         {/* form starts */}
         <form className="space-y-4" onSubmit={handleSubmit} noValidate>
@@ -132,12 +143,34 @@ export default function Login() {
               <p className="text-yellow-300 text-sm mt-1">{errors.password}</p>
             )}
           </div>
-
-          <Link href='/forgot-password-request'>Forgot Password</Link>
+ 
+          {/* CONFIRM PASSWORD */}
+          <div>
+            <label className="text-lg block mb-1">Password</label>
+            <div className="relative">
+              <input
+                type="password"
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                placeholder="@#*%"
+                className="w-full rounded-lg bg-transparent border border-white/40 px-4 py-3.5 outline-none placeholder-white text-xl"
+              />
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 opacity-80 cursor-pointer">
+                <Image width={20} height={20} src="/assets/eye.png" alt="eye-image" />
+              </span>
+            </div>
+ 
+            {errors.confirmPassword && (
+              <p className="text-yellow-300 text-sm mt-1">
+                {errors.confirmPassword}
+              </p>
+            )}
+          </div>
  
           {/* BUTTON */}
           <button className="w-full bg-[#9C0131] hover:bg-red-800 rounded-lg py-3 font-medium mt-2">
-            Log In
+            Sign in
           </button>
         </form>
         {/* lower division */}
@@ -147,13 +180,16 @@ export default function Login() {
           <span className="flex-1 h-px bg-white/30"></span>
         </div>
  
-        
-       <GoogleAuth />
+        {/* GOOGLE BUTTON */}
+        <button className="w-full bg-white text-black rounded-lg py-3 flex items-center justify-center gap-2">
+          <Image width={20} height={20} src="/assets/google.png" alt="google" className="w-5 h-5" />
+          Continue with Google
+        </button>
  
         {/* FOOTER */}
         <p className="text-center text-sm mt-4 opacity-90">
           Don’t have account?{" "}
-          <Link href="/signin" className="font-semibold cursor-pointer">Sign In</Link>
+          <span className="font-semibold cursor-pointer">Register Now</span>
         </p>
       </div>
     </div>

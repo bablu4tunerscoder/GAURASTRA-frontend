@@ -3,13 +3,13 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 
-const Layout = ({ children }) => {
+const UserLayout = ({ children }) => {
   const router = useRouter();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   useEffect(() => {
     if (isAuthenticated === false) {
-      router.replace("/login"); // redirect
+      router.replace("/login"); 
     }
   }, [isAuthenticated, router]);
 
@@ -19,4 +19,4 @@ const Layout = ({ children }) => {
   return <>{children}</>;
 };
 
-export default Layout;
+export default UserLayout;

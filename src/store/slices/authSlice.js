@@ -31,10 +31,10 @@ export const registerUser = createAsyncThunk(
 
 // Login User
 export const loginUser = createAsyncThunk(
-  "auth/loginUser",
+  "auth/login",
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${BASE_URL}/api/auth/allLogins`, credentials);
+      const response = await axios.post(`${BASE_URL}/api/auth/login`, credentials);
 
       const { user, token } = response.data.data;
 

@@ -1,14 +1,17 @@
-import CarouselCard from './(home page components)/CarouselCard';
-import EthnicBannerSection from './(home page components)/EthnicBannerSection';
-import HeroSection from './(home page components)/HeroSection';
-import LimitedStockSection from './(home page components)/LimitedStockSection';
-import MarriageGlowSection from './(home page components)/MarriageGlowSection';
-import MenEthnicWearSection from './(home page components)/MenEthnicWearSection';
-import MensWearSection from './(home page components)/MensWearSection';
-import SignatureCollectionsSection from './(home page components)/SignatureCollectionsSection';
-import WhyChooseUsSection from './(home page components)/WhyChooseUsSection';
-import WomenEthnicWearSection from './(home page components)/WomenEthnicWearSection';
-import WomensWear from './(home page components)/WomensWear';
+import CarouselCard from "@/components/home_components/CarouselCard";
+import EthnicBannerSection from "@/components/home_components/EthnicBannerSection";
+import HeroSection from "@/components/home_components/HeroSection";
+import LimitedStockSection from "@/components/home_components/LimitedStockSection";
+import MarriageGlowSection from "@/components/home_components/MarriageGlowSection";
+import MenEthnicWearSection from "@/components/home_components/MenEthnicWearSection";
+import MensWearSection from "@/components/home_components/MensWearSection";
+import SignatureCollectionsSection from "@/components/home_components/SignatureCollectionsSection";
+import WhyChooseUsSection from "@/components/home_components/WhyChooseUsSection";
+import WomenEthnicWearSection from "@/components/home_components/WomenEthnicWearSection";
+import WomensWear from "@/components/home_components/WomensWear";
+
+
+
 
 const HomePage = () => {
   const womenEthnicWearSection = [
