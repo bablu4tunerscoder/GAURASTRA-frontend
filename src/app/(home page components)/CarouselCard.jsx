@@ -99,7 +99,7 @@ export default function CarouselCard({ title, products }) {
                                 <span className="text-secondary text-xs md:text-sm">
                                     {product.badge}
                                 </span>
-                                <h3 className="font-bold line-clamp-2 text-sm md:text-xl">
+                                <h3 className="font-bold text-black line-clamp-2 text-sm md:text-xl">
                                     {product.title}
                                 </h3>
                                 <p className="text-xs md:text-sm text-gray-600">{product.material}</p>

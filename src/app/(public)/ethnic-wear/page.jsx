@@ -4,6 +4,7 @@ import MenEthnicWearSection from "@/app/(home page components)/MenEthnicWearSect
 import WomenEthnicWearSection from "@/app/(home page components)/WomenEthnicWearSection";
 import Image from "next/image";
 import Heading from "@/app/(home page components)/Heading";
+import FAQ from "@/components/FAQ";
 
 const CategoryCard = ({ img, title, large = false }) => {
   return (
@@ -17,12 +18,26 @@ const CategoryCard = ({ img, title, large = false }) => {
         className="w-full h-full object-cover"
       />
 
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/20" />
+      {/* Bottom black overlay (30px) */}
+      <div
+        className="
+          absolute bottom-0 left-0 right-0
+          h-16
+          bg-gradient-to-t
+          from-black/90
+          via-black/80
+          to-transparent
+        "
+      />
 
       {/* Text */}
       <div className="absolute md:bottom-4 bottom-1 left-1/2 -translate-x-1/2">
-        <span className={`${large ? "bg-white/90 text-black" : "text-white/90"} text-xs md:text-sm md:font-semibold font-medium tracking-wider md:px-4 px-2 py-1.5 rounded-full whitespace-nowrap`}>
+        <span
+          className={`${large
+            ? "bg-white/90 text-black"
+            : "text-white/90"
+            } text-xs md:text-sm md:font-semibold font-medium tracking-wider md:px-4 px-2 py-1.5 rounded-full whitespace-nowrap`}
+        >
           {title}
         </span>
       </div>
@@ -35,32 +50,62 @@ export default function EthnicwearPage() {
   const occasionBasedWears = [
     {
       title: "Wedding Wear",
-      image: "/assets/occasion01.png",
+      image: "/assets/occasion-wedding-wear.png",
       url: "/women/lehenga"
     },
     {
       title: "Festive Wear",
-      image: "/assets/occasion01.png",
+      image: "/assets/occasion-festive-wear.png",
       url: "/women/kurti"
     },
     {
       title: "Party Wear",
-      image: "/assets/occasion01.png",
+      image: "/assets/occasion-party-wear.png",
       url: "/women/saree"
     },
     {
       title: "Daily Wear",
-      image: "/assets/occasion01.png",
+      image: "/assets/occasion-daily-wear.png",
       url: "/women/dupatta"
     },
     {
       title: "Office Wear",
-      image: "/assets/occasion01.png",
+      image: "/assets/occasion-office-wear.png",
       url: "/women/lehenga"
     },
   ];
 
-  const ethnicProducts = [
+
+
+  const occasionBasedMenWears = [
+    {
+      title: "  Cultural Events",
+      image: "/assets/occasion-men-cultural-events.png",
+      url: "/women/lehenga"
+    },
+    {
+      title: "Festive Wear",
+      image: "/assets/occasion-men-festive-wear.png",
+      url: "/women/kurti"
+    },
+    {
+      title: "Party Wear",
+      image: "/assets/occasion-men-party-wear.png",
+      url: "/women/saree"
+    },
+    {
+      title: "Puja  Cloths",
+      image: "/assets/occasion-men-puja-cloths.png",
+      url: "/women/dupatta"
+    },
+    {
+      title: "Office Wear",
+      image: "/assets/occasion-men-office-wear.png",
+      url: "/women/lehenga"
+    },
+  ];
+
+  const ethnicProductsWomen = [
     {
       product_name: "Indigo Cotton Bandhani Bush Shirt",
       brand: "LOOM",
@@ -69,7 +114,7 @@ export default function EthnicwearPage() {
         {
           images: [
             {
-              image_url: "http://localhost:3000/assets/commonImageEthnic.png",
+              image_url: "/assets/occasion-women-product-01.png",
               is_primary: true
             }
           ],
@@ -89,7 +134,7 @@ export default function EthnicwearPage() {
         {
           images: [
             {
-              image_url: "http://localhost:3000/assets/commonImageEthnic.png",
+              image_url: "/assets/occasion-women-product-02.png",
               is_primary: true
             }
           ],
@@ -109,7 +154,7 @@ export default function EthnicwearPage() {
         {
           images: [
             {
-              image_url: "http://localhost:3000/assets/commonImageEthnic.png",
+              image_url: "/assets/occasion-women-product-03.png",
               is_primary: true
             }
           ],
@@ -129,7 +174,91 @@ export default function EthnicwearPage() {
         {
           images: [
             {
-              image_url: "http://localhost:3000/assets/commonImageEthnic.png",
+              image_url: "/assets/occasion-women-product-04.png",
+              is_primary: true
+            }
+          ],
+          pricing: {
+            original_price: 3999,
+            discounted_price: 2999,
+            discount_percent: 25
+          }
+        }
+      ]
+    },
+
+  ];
+
+  const ethnicProductsMen = [
+    {
+      product_name: "Indigo Cotton Bandhani Bush Shirt",
+      brand: "LOOM",
+      canonicalURL: "indigo-cotton-bandhani-bush-shirt",
+      variants: [
+        {
+          images: [
+            {
+              image_url: "/assets/occasion-men-product-01.png",
+              is_primary: true
+            }
+          ],
+          pricing: {
+            original_price: 2499,
+            discounted_price: 2499,
+            discount_percent: 0
+          }
+        }
+      ]
+    },
+    {
+      product_name: "Indigo Cotton Bandhani Bush Shirt",
+      brand: "LOOM",
+      canonicalURL: "indigo-cotton-bandhani-bush-shirt-2",
+      variants: [
+        {
+          images: [
+            {
+              image_url: "/assets/occasion-men-product-02.png",
+              is_primary: true
+            }
+          ],
+          pricing: {
+            original_price: 2499,
+            discounted_price: 2499,
+            discount_percent: 0
+          }
+        }
+      ]
+    },
+    {
+      product_name: "Indigo Cotton Bandhani Bush Shirt",
+      brand: "LOOM",
+      canonicalURL: "indigo-cotton-bandhani-bush-shirt-3",
+      variants: [
+        {
+          images: [
+            {
+              image_url: "/assets/occasion-men-product-03.png",
+              is_primary: true
+            }
+          ],
+          pricing: {
+            original_price: 2499,
+            discounted_price: 2499,
+            discount_percent: 0
+          }
+        }
+      ]
+    },
+    {
+      product_name: "Purple Floral Lehenga Set",
+      brand: "LOOM",
+      canonicalURL: "purple-floral-lehenga",
+      variants: [
+        {
+          images: [
+            {
+              image_url: "/assets/occasion-men-product-04.png",
               is_primary: true
             }
           ],
@@ -146,29 +275,49 @@ export default function EthnicwearPage() {
 
   const womenEthnicWearSection = [
     {
-      name: "Lehenga",
-      image: "/assets/womenethnic01.png",
+      name: "Long Kurti",
+      image: "/assets/ethnic-long-kurti.png",
       url: "/women/lehenga"
     },
     {
-      name: "Kurti",
-      image: "/assets/EthnicSection01.png",
+      name: "Short Kurti",
+      image: "/assets/ethnic-short-kurti.png",
       url: "/women/kurti"
     },
     {
-      name: "Saree",
-      image: "/assets/EthnicSection01.png",
+      name: "Co-ord Sets",
+      image: "/assets/ethnic-co-ord-set.png",
       url: "/women/saree"
     },
     {
-      name: "Dupatta",
-      image: "/assets/EthnicSection01.png",
+      name: "Gown",
+      image: "/assets/ethnic-gown.png",
       url: "/women/dupatta"
     },
     {
-      name: "Lehenga",
-      image: "/assets/EthnicSection01.png",
+      name: "Sharara Set",
+      image: "/assets/ethnic-sharara-set.png",
       url: "/women/lehenga"
+    },
+  ]
+
+
+  const fromReceptiontoWedding = [
+    {
+      img: "/assets/reception.png",
+      title: "Reception"
+    },
+    {
+      img: "/assets/engagement.png",
+      title: "Engagement"
+    },
+    {
+      img: "/assets/sangeet.png",
+      title: "Sangeet"
+    },
+    {
+      img: "/assets/wedding.png",
+      title: "Wedding"
     },
   ]
 
@@ -181,30 +330,57 @@ export default function EthnicwearPage() {
 
   const craftChips = [
     {
-      img: "http://localhost:3000/assets/womenswear1.png",
+      img: "/assets/craft-silk.png",
       title: "Silk"
     },
     {
-      img: "http://localhost:3000/assets/womenswear1.png",
+      img: "/assets/craft-cotton.png",
       title: "Cotton"
     },
     {
-      img: "http://localhost:3000/assets/womenswear1.png",
+      img: "/assets/craft-chikankari.png",
       title: "Chikankari"
     },
     {
-      img: "http://localhost:3000/assets/womenswear1.png",
+      img: "/assets/craft-banarasi.png",
       title: "Banarasi"
     },
     {
-      img: "http://localhost:3000/assets/womenswear1.png",
+      img: "/assets/craft-handloom.png",
       title: "Handloom"
     }
   ];
 
+  const faqData = [
+    {
+      question: "How do I choose the right size?",
+      answer:
+        "You can refer to our detailed size guide available on every product page to find the perfect fit.",
+    },
+    {
+      question: "Are your products handcrafted or handloom?",
+      answer:
+        "Yes, all our products are carefully handcrafted using premium-quality fabrics.",
+    },
+    {
+      question: "Will the color fade after washing?",
+      answer:
+        "No, our products go through color-fastness testing to ensure long-lasting colors.",
+    },
+    {
+      question: "Do you deliver across India?",
+      answer:
+        "Yes, we deliver to all major cities and towns across India.",
+    },
+    {
+      question: "How long does delivery take?",
+      answer:
+        "Delivery usually takes 5–7 business days depending on your location.",
+    },
+  ];
 
   return (
-    <section className="min-h-screen">
+    <section className="min-h-screen dark:bg-white">
       {/* Banner */}
       {/* done responsive */}
       <div className="w-full relative">
@@ -233,7 +409,7 @@ export default function EthnicwearPage() {
 
       {/* Occasion Based Section */}
       {/* done responsive */}
-      <OccasionBased data={occasionBasedWears} />
+      <OccasionBased data={occasionBasedWears} title=" Occasion-Based Women Wear" />
 
       {/* Products Section */}
       {/* done responsive */}
@@ -242,7 +418,7 @@ export default function EthnicwearPage() {
         {/* Horizontal Scrollable Products */}
         <div className="overflow-x-auto no-scrollbar ">
           <div className="flex justify-between gap-6">
-            {ethnicProducts.map((product, index) => (
+            {ethnicProductsWomen.map((product, index) => (
               <ProductCardEthnic
                 key={index}
                 product={product}
@@ -275,9 +451,8 @@ export default function EthnicwearPage() {
 
           {/* Cards */}
           <div className="flex gap-6 justify-center overflow-x-auto no-scrollbar lg:overflow-x-hidden">
-            {Array(4)
-              .fill(null)
-              .map((_, index) => (
+            {fromReceptiontoWedding
+              .map((item, index) => (
                 <div
                   key={index}
                   className="
@@ -291,7 +466,7 @@ export default function EthnicwearPage() {
                 >
                   {/* Image */}
                   <img
-                    src="http://localhost:3000/assets/womenswear1.png"
+                    src={item.img}
                     alt="Occasion"
                     className="w-full h-full object-cover"
                   />
@@ -312,7 +487,7 @@ export default function EthnicwearPage() {
               font-serif tracking-wide
             "
                     >
-                      Occasion
+                      {item.title}
                     </span>
                   </div>
                 </div>
@@ -344,11 +519,11 @@ export default function EthnicwearPage() {
             {/* LEFT COLUMN */}
             <div className="flex flex-col md:gap-4 gap-1">
               <CategoryCard
-                img="/assets/premium-sm-img.png"
+                img="/assets/premium-designer-set.png"
                 title="Designer Sets"
               />
               <CategoryCard
-                img="/assets/premium-sm-img.png"
+                img="/assets/premium-daily-elegance.png"
                 title="Daily Elegance"
               />
             </div>
@@ -356,7 +531,7 @@ export default function EthnicwearPage() {
             {/* CENTER COLUMN */}
             <div className="flex">
               <CategoryCard
-                img="/assets/premium-lg-img.png"
+                img="/assets/premium-center-image.png"
                 title="View Collection"
                 large
               />
@@ -365,11 +540,11 @@ export default function EthnicwearPage() {
             {/* RIGHT COLUMN */}
             <div className="flex flex-col md:gap-4 gap-1">
               <CategoryCard
-                img="/assets/premium-sm-img.png"
+                img="/assets/premium-evening-gowns.png"
                 title="Evening Gowns"
               />
               <CategoryCard
-                img="/assets/premium-sm-img.png"
+                img="/assets/premium-casual-ethnic.png"
                 title="Casual Ethnic"
               />
             </div>
@@ -452,7 +627,7 @@ export default function EthnicwearPage() {
 
 
       {/* Occasion Based Section */}
-      <OccasionBased data={occasionBasedWears} />
+      <OccasionBased data={occasionBasedMenWears} title="Occasion Based Men Wear" />
 
       {/* banner wala */}
       {/* done resppnsive */}
@@ -493,8 +668,9 @@ export default function EthnicwearPage() {
 
         {/* Horizontal Scrollable Products */}
         <div className="overflow-x-auto no-scrollbar ">
+
           <div className="flex justify-between gap-6">
-            {ethnicProducts.map((product, index) => (
+            {ethnicProductsMen.map((product, index) => (
               <ProductCardEthnic
                 key={index}
                 product={product}
@@ -563,6 +739,10 @@ export default function EthnicwearPage() {
 
 
       {/* faq */}
+      <div className="section-spacing pb-10">
+        <Heading title="Frequently Asked Questions" />
+        <FAQ data={faqData} />
+      </div>
     </section>
   );
 }

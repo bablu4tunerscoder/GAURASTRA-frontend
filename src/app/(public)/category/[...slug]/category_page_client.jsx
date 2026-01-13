@@ -133,7 +133,7 @@ export default function CategoryPageClient({
   const showLoading = isLoading || (isFetching && products.length === 0);
 
   return (
-    <section>
+    <section className="min-h-screen bg-white">
       <Image
         src="/assets/productPageBanner.png"
         alt="Category Banner"

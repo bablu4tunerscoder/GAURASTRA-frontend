@@ -205,7 +205,7 @@ const HomePage = () => {
   ];
 
   return (
-    <main>
+    <main className='dark:bg-white'>
       {/* hero section */}
       {/* not responsive yet coz content not finalized */}
       <HeroSection />
@@ -232,13 +232,15 @@ const HomePage = () => {
 
       {/* bg gradient with new arrival cards */}
       {/* done responsive */}
-      <div className="relative">
-        {/* Background layer ONLY */}
+      <div className="relative min-h-screen z-10">
+        {/* Background image */}
         <div
-          className="absolute inset-x-0 top-0 h-[115%] 
-               bg-[url('/assets/bgImage.png')] 
-               bg-center bg-no-repeat bg-cover 
-               -z-10"
+          className="
+        absolute inset-x-0 top-0 h-[115%]
+        bg-[url('/assets/bgImage.png')]
+        bg-center bg-no-repeat bg-cover
+        -z-10
+      "
         />
 
         {/* Content layer */}
@@ -335,7 +337,7 @@ const HomePage = () => {
 
       {/*bg gradient with trending now */}
       {/* done responsive */}
-      <div className="relative">
+      <div className="relative min-h-screen z-10">
         {/* Background layer ONLY */}
         <div
           className="absolute inset-x-0 top-0 h-[115%] 

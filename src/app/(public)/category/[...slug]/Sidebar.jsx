@@ -187,7 +187,7 @@ const Sidebar = memo(({ slug, onChange, filters, onFilterChange }) => {
           {/* <div className="max-h-[calc(100vh-6rem)] overflow-y-auto  no-scrollbar p-4"> */}
           <div className=" no-scrollbar p-4 ps-0">
             <div className="space-y-2 mb-6">
-              <div className="flex gap-2 items-center font-normal">
+              <div className="flex gap-2 items-center font-normal text-gray-600">
                 <h2>Men's Wear</h2>
                 <h2>-Total Items(7)</h2>
               </div>
@@ -243,7 +243,7 @@ const Sidebar = memo(({ slug, onChange, filters, onFilterChange }) => {
               <div className="border-b border-gray-200 pb-4">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-gray-900">Size</h3>
-                  <button onClick={() => toggleSection('size')}>
+                  <button className="text-gray-700" onClick={() => toggleSection('size')}>
                     <Minus className="w-4 h-4" />
                   </button>
                 </div>
@@ -251,7 +251,7 @@ const Sidebar = memo(({ slug, onChange, filters, onFilterChange }) => {
                   {sizes.map(size => (
                     <button
                       key={size}
-                      className="px-2 py-1 border border-gray-300 rounded text-sm hover:border-gray-900 transition"
+                      className="px-2 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:border-gray-900 transition"
                     >
                       {size}
                     </button>
@@ -263,7 +263,7 @@ const Sidebar = memo(({ slug, onChange, filters, onFilterChange }) => {
               <div className="border-b border-gray-200 pb-4">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-gray-900">Price</h3>
-                  <button onClick={() => toggleSection('price')}>
+                  <button className="text-gray-700" onClick={() => toggleSection('price')}>
                     {expandedSections.price ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                   </button>
                 </div>
@@ -280,7 +280,7 @@ const Sidebar = memo(({ slug, onChange, filters, onFilterChange }) => {
               <div className="border-b border-gray-200 pb-4">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-gray-900">Color</h3>
-                  <button onClick={() => toggleSection('color')}>
+                  <button className="text-gray-700" onClick={() => toggleSection('color')}>
                     {expandedSections.color ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                   </button>
                 </div>
@@ -308,7 +308,7 @@ const Sidebar = memo(({ slug, onChange, filters, onFilterChange }) => {
               <div className="border-b border-gray-200 pb-4">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-gray-900">Discount</h3>
-                  <button onClick={() => toggleSection('discount')}>
+                  <button className="text-gray-700" onClick={() => toggleSection('discount')}>
                     {expandedSections.discount ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                   </button>
                 </div>
@@ -330,7 +330,7 @@ const Sidebar = memo(({ slug, onChange, filters, onFilterChange }) => {
               <div className="pb-4">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-sm font-semibold text-gray-900">Rating</h3>
-                  <button onClick={() => toggleSection('rating')}>
+                  <button className="text-gray-700" onClick={() => toggleSection('rating')}>
                     {expandedSections.rating ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                   </button>
                 </div>

@@ -3,11 +3,11 @@ import Heading from '@/app/(home page components)/Heading'
 import Link from 'next/link'
 import React from 'react'
 
-const OccasionBased = ({ data }) => {
+const OccasionBased = ({ data, title }) => {
     return (
 
         <section className="section-spacing">
-            <Heading title="Occasion-Based Women Wear" />
+            <Heading title={title} />
 
             <div
                 className="
@@ -37,7 +37,7 @@ const OccasionBased = ({ data }) => {
                             </div>
 
                             {/* Label */}
-                            <p className="mt-1 text-center md:mt-3 text-secondary font-serif text-md text-nowrap md:text-xl lg:text-3xl">
+                            <p className="mt-1 text-center text-secondary md:mt-3 text-head font-serif text-md text-nowrap md:text-xl lg:text-3xl">
                                 {card.title}
                             </p>
                         </div>

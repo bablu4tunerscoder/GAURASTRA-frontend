@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
         className={`
           ${montserrat.variable}
           ${playfair.variable}
-          antialiased bg-gray-50 text-gray-900
+          antialiased bg-white  text-gray-900
         `}
       >
 

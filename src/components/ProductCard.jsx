@@ -98,7 +98,7 @@ const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
 
         <h3
           title={product.product_name}
-          className="font-bold leading-tight line-clamp-2 text-sm md:text-base lg:text-lg mb-1"
+          className="font-bold leading-tight text-gray-700 line-clamp-2 text-sm md:text-base lg:text-lg mb-1"
         >
           {product.product_name}
         </h3>
@@ -108,12 +108,12 @@ const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
         </span>
 
         <div className="flex items-center gap-2">
-          <p className="font-bold text-sm md:text-base lg:text-lg">
+          <p className="font-bold text-sm md:text-base lg:text-lg text-gray-600">
             ₹{discountedPrice}
           </p>
 
           {discountPercent > 0 && (
-            <span className="text-xs md:text-sm line-through text-gray-400">
+            <span className="text-xs md:text-sm line-through text-gray-600">
               ₹{price}
             </span>
           )}

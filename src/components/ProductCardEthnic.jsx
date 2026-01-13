@@ -9,15 +9,17 @@ const ProductCardEthnic = ({ product }) => {
 
   const defaultVariant = product?.variants?.[0];
 
-  const rawImg = defaultVariant?.images?.find(img => img.is_primary)?.image_url
+  const finalImg = defaultVariant?.images?.find(img => img.is_primary)?.image_url
     || defaultVariant?.images?.[0]?.image_url;
 
-  const finalImg =
-    rawImg?.startsWith("http")
-      ? rawImg
-      : rawImg
-        ? "https://backend.gaurastra.com" + rawImg
-        : DEFAULT_IMAGE;
+  // const finalImg =
+  //   rawImg?.startsWith("http")
+  //     ? rawImg
+  //     : rawImg
+  //       ? "https://backend.gaurastra.com" + rawImg
+  //       : DEFAULT_IMAGE;
+
+  console.log(finalImg)
 
   const price = defaultVariant?.pricing?.original_price || 0;
   const discountedPrice =
@@ -83,7 +85,7 @@ const ProductCardEthnic = ({ product }) => {
       <div className="pt-2 md:pt-3">
         <h3
           title={product.product_name}
-          className="font-bold leading-tight line-clamp-2 text-sm md:text-base lg:text-lg mb-1"
+          className="font-bold leading-tight text-primary line-clamp-2 text-sm md:text-base lg:text-lg mb-1"
         >
           {product.product_name}
         </h3>
@@ -93,12 +95,12 @@ const ProductCardEthnic = ({ product }) => {
         </span>
 
         <div className="flex items-center gap-2">
-          <p className="font-bold text-sm md:text-base lg:text-lg">
+          <p className="font-bold text-sm md:text-base lg:text-lg text-gray-600 ">
             ₹{discountedPrice}
           </p>
 
           {discountPercent > 0 && (
-            <span className="text-xs md:text-sm line-through text-gray-400">
+            <span className="text-xs md:text-sm line-through text-gray-600">
               ₹{price}
             </span>
           )}
