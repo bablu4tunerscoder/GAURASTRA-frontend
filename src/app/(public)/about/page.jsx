@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const AboutUs = () => {
   return (
-    <section className="min-h-screen bg-white text-gray-800">
+    <section className="min-h-screen  text-gray-800">
       {/* 🔹 Hero Section */}
       <HeroBanner imgUrl="/assets/bg3.webp" title="About Us" />
 

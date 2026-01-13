@@ -22,21 +22,19 @@ const CategoryCard = ({ img, title, large = false }) => {
       <div
         className="
           absolute bottom-0 left-0 right-0
-          h-16
+          h-24
           bg-gradient-to-t
           from-black/90
           via-black/80
-          to-transparent
-        "
+          to-transparent"
       />
 
       {/* Text */}
-      <div className="absolute md:bottom-4 bottom-1 left-1/2 -translate-x-1/2">
+      <div className="absolute md:bottom-6 bottom-1 left-1/2 -translate-x-1/2">
         <span
-          className={`${large
-            ? "bg-white/90 text-black"
-            : "text-white/90"
-            } text-xs md:text-sm md:font-semibold font-medium tracking-wider md:px-4 px-2 py-1.5 rounded-full whitespace-nowrap`}
+          className={`text-sm md:text-xl md:font-semibold font-medium tracking-wider rounded-full whitespace-nowrap 
+            ${large && " px-10  bg-white/40 py-3 rounded-full"} `
+          }
         >
           {title}
         </span>
@@ -381,6 +379,7 @@ export default function EthnicwearPage() {
 
   return (
     <section className="min-h-screen dark:bg-white">
+
       {/* Banner */}
       {/* done responsive */}
       <div className="w-full relative">
@@ -389,18 +388,34 @@ export default function EthnicwearPage() {
           alt="Ethnic Page"
           className="w-full h-auto object-cover" // Makes the image cover the full width and maintain its aspect ratio
         />
-        <div className="absolute top-1/2 md:left-10 left-4 transform -translate-y-1/2">
-          <h1 className="md:text-4xl text-xl font-bold mb-2 text-primary
-                 drop-shadow-[0_2px_6px_rgba(255,255,255,0.9)]">
+        <div className="absolute top-1/2 md:left-10  w-1/2 left-4 transform -translate-y-1/2">
+          <h1
+            className="
+    md:text-4xl text-xl
+    font-medium
+    tracking-wide
+    font-serif
+    md:mb-2
+    text-primary
+    drop-shadow-[0_3px_8px_rgba(0,0,0,0.55)]
+  "
+          >
             Ethnic Wear Collection
           </h1>
-
-          <h2 className="md:text-xl text-md tracking-tight md:mb-4 mb-2 text-secondary
-                 drop-shadow-[0_1px_4px_rgba(255,255,255,0.8)]">
+          <h2
+            className="
+    md:text-xl text-sm
+    tracking-tight
+    md:mb-4 mb-2
+    text-secondary
+    drop-shadow-[0_2px_6px_rgba(0,0,0,0.45)]
+  "
+          >
             Celebrate Tradition • Wedding • Festive • Daily
           </h2>
 
-          <button className="bg-white text-primary py-2 px-6 text-sm md:text-md rounded-lg hover:scale-105 transition duration-300">
+
+          <button className="bg-white text-primary md:py-2 py-1 md:px-6 px-3 text-sm md:text-lg font-serif rounded-lg hover:scale-105 transition duration-300">
             View All Ethnic Wear
           </button>
         </div>
@@ -649,7 +664,7 @@ export default function EthnicwearPage() {
                 Flat 30% OFF
               </h2>
 
-              <button className="lg:mt-6 md:mt-2 mt-1 md:rounded-2xl rounded bg-white text-black md:px-6 px-3 md:py-2 py-1 md:text-sm text-xs font-medium hover:bg-white/90 transition">
+              <button className="lg:mt-6 md:mt-2 mt-1 md:rounded-full rounded text-primary bg-white font-serif md:px-6 px-3 md:py-2 py-1 md:text-lg text-xs font-medium hover:bg-white/90 transition">
                 Shop Now
               </button>
             </div>
@@ -694,15 +709,15 @@ export default function EthnicwearPage() {
             priority
           />
 
-          <div className="absolute inset-0 flex items-center justify-end px-6 md:px-16">
-            <div className="md:w-1/3 w-1/2 md:px-0 px-10 text-white">
-              <h2 className="text-md md:text-3xl font-serif font-semibold">
+          <div className="absolute inset-0 flex items-center justify-end">
+            <div className="md:w-1/3 w-1/2 ps-6 text-white">
+              <h2 className="text-xs md:text-3xl md:font-serif md:font-semibold tracking-widest">
                 Classic Ethnic Styles
                 <br />
                 for Modern Men
               </h2>
 
-              <button className="md:mt-6 mt-2 rounded-full bg-white text-primary font-serif px-6 py-2 md:text-sm text-xs font-medium hover:bg-white/90 transition">
+              <button className="md:mt-6 mt-2 rounded-full bg-white text-primary font-serif px-6 py-1 text-sm  font-medium hover:bg-white/90 transition">
                 Shop Now
               </button>
             </div>
@@ -717,22 +732,23 @@ export default function EthnicwearPage() {
               <div
                 key={index}
                 className="
-          relative
-          bg-contain bg-center bg-no-repeat
-          flex items-center justify-center
-              aspect-square
-        "
+        relative
+        bg-contain bg-center bg-no-repeat
+        flex items-center justify-center
+        aspect-square
+      "
                 style={{
                   backgroundImage: "url('/assets/cardBg.png')",
                 }}
               >
-                <h3 className="text-white text-lg sm:text-xl md:text-5xl font-semibold text-center px-2">
-                  {index === 0 && "Under ₹200"}
-                  {index === 1 && "Under ₹500"}
+                <h3 className="text-white text-lg sm:text-xl md:text-5xl font-semibold text-center px-2 whitespace-pre-line">
+                  {index === 0 && "Under\n₹200"}
+                  {index === 1 && "Under\n₹500"}
                   {index === 2 && "Best Deal"}
                 </h3>
               </div>
             ))}
+
         </div>
 
       </section>

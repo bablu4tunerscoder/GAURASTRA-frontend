@@ -10,7 +10,7 @@ const ProductCardEthnic = ({ product }) => {
   const defaultVariant = product?.variants?.[0];
 
   const finalImg = defaultVariant?.images?.find(img => img.is_primary)?.image_url
-    || defaultVariant?.images?.[0]?.image_url;
+    || defaultVariant?.images?.[0]?.image_url || DEFAULT_IMAGE;
 
   // const finalImg =
   //   rawImg?.startsWith("http")
@@ -18,8 +18,6 @@ const ProductCardEthnic = ({ product }) => {
   //     : rawImg
   //       ? "https://backend.gaurastra.com" + rawImg
   //       : DEFAULT_IMAGE;
-
-  console.log(finalImg)
 
   const price = defaultVariant?.pricing?.original_price || 0;
   const discountedPrice =
