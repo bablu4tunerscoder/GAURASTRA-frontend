@@ -1,6 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage";
-import { persistReducer, persistStore } from "redux-persist";
 import { combineReducers } from "redux";
 
 import cartReducer from "./slices/cartSlice";
@@ -23,26 +21,8 @@ import { productsApi } from "./api/productsApi";
 import sidebarReducer, { sidebarApi } from "./slices/sidebarSlice";
 import { cartApi } from "./api/cartApi";
 
-/* ============================
-   Persist Configs
-============================ */
-const persistConfig = {
-  key: "root",
-  storage,
-  blacklist: ["products", "categories"],
-};
-
-const authPersistConfig = {
-  key: "auth",
-  storage,
-  whitelist: ["user", "token", "isAuthenticated"],
-};
-
-/* ============================
-   Root Reducer
-============================ */
 const rootReducer = combineReducers({
-  auth: persistReducer(authPersistConfig, authReducer),
+  auth: authReducer,
   blog: BlogSliceReducer,
   cart: cartReducer,
   filters: filtersReducer,
@@ -57,22 +37,15 @@ const rootReducer = combineReducers({
   recommendedProducts: recommendedProductsReducer,
   offerBanner: offerBannerReducer,
   productByUniqueId: productByUniqueIdReducer,
-
   sidebar: sidebarReducer,
 
-  // RTK Query APIs ✅
   [productsApi.reducerPath]: productsApi.reducer,
   [sidebarApi.reducerPath]: sidebarApi.reducer,
   [cartApi.reducerPath]: cartApi.reducer,
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-/* ============================
-   Store
-============================ */
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       immutableCheck: false,
@@ -82,5 +55,3 @@ export const store = configureStore({
       .concat(cartApi.middleware)
       .concat(sidebarApi.middleware),
 });
-
-export const persistor = persistStore(store);

@@ -4,15 +4,14 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axiosInstance from "@/helpers/axiosinstance";
 import GoogleAuth from "@/components/GoogleAuth";
-import { loginUser } from "@/store/slices/authSlice";
+import { loginSuccess } from "@/store/slices/authSlice";
 import { useDispatch } from "react-redux";
 
 export default function Login() {
-  const router = useRouter();
   const [loginType, setLoginType] = useState("email");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -36,16 +35,21 @@ export default function Login() {
 
     try {
       const res = await axiosInstance.post("/api/auth/login", data);
-      console.log(res.data.data)
 
-      dispatch(loginUser(res.data.data));
+      const { user, token } = res.data.data;
+
+      dispatch(
+        loginSuccess({
+          user,
+          token,
+        })
+      );
 
       toast.success("Login successful");
-      // router.push("/profile");
+      window.location.href = "/";
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Login failed"
-      );
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -54,7 +58,6 @@ export default function Login() {
   return (
     <div className='bg-[url("/assets/bg.svg")] sm:bg-cover lg:bg-contain w-full bg-no-repeat bg-center min-h-screen relative'>
       <div className="max-w-lg w-full m-auto h-fit absolute inset-0 bg-white/20 backdrop-blur-lg text-white border border-dashed border-white/30 p-6 rounded-2xl">
-
         {/* HEADER */}
         <div className="text-center mb-6">
           <h1 className="text-2xl sm:text-4xl font-bold">Welcome</h1>
@@ -90,7 +93,6 @@ export default function Login() {
 
         {/* FORM */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
           {/* EMAIL / MOBILE */}
           <div>
             <label className="text-lg block mb-1">
@@ -99,19 +101,21 @@ export default function Login() {
 
             <input
               type={loginType === "email" ? "email" : "tel"}
-              placeholder={loginType === "email" ? "example@gmail.com" : "9876543210"}
+              placeholder={
+                loginType === "email" ? "example@gmail.com" : "9876543210"
+              }
               className="
-    w-full
-    rounded-lg
-    bg-transparent
-    border border-white/40
-    px-4 py-3.5
-    outline-none
-    text-xl
-    text-white
-    placeholder-white
-    autofill:text-white
-  "
+                w-full
+                rounded-lg
+                bg-transparent
+                border border-white/40
+                px-4 py-3.5
+                outline-none
+                text-xl
+                text-white
+                placeholder-white
+                autofill:text-white
+              "
               {...register("emailOrPhone", {
                 required: "This field is required",
                 validate: (value) =>
@@ -120,7 +124,6 @@ export default function Login() {
                     : phoneRegex.test(value) || "Invalid mobile number",
               })}
             />
-
 
             {errors.emailOrPhone && (
               <p className="text-yellow-300 text-sm mt-1">
@@ -138,17 +141,17 @@ export default function Login() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 className="
-    w-full
-    rounded-lg
-    bg-transparent
-    border border-white/40
-    px-4 py-3.5
-    outline-none
-    text-xl
-    text-white
-    placeholder-white
-    pr-12
-  "
+                      w-full
+                      rounded-lg
+                      bg-transparent
+                      border border-white/40
+                      px-4 py-3.5
+                      outline-none
+                      text-xl
+                      text-white
+                      placeholder-white
+                      pr-12
+                    "
                 {...register("password", {
                   required: "Password is required",
                   minLength: {
