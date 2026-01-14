@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   items: [],
-  buyNowItem: null, // For temporary Buy Now items
+  buyNowItem: null,
   popupOpen: false,
 };
 
@@ -10,60 +10,45 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart: (state, action) => {
+    addToCartLocal: (state, action) => {
+
       const existingItem = state.items.find(
         (item) =>
-          item.id === action.payload.id &&
-          item.selectedColor === action.payload.selectedColor &&
-          item.selectedSize === action.payload.selectedSize
-      );
+          item._id === action.payload._id);
 
       if (existingItem) {
-        existingItem.quantity += action.payload.quantity;
+        existingItem.quantity += action.payload.quantity || 1;
       } else {
-        state.items.push({
-          ...action.payload,
-          quantity: action.payload.quantity || 1,
-        });
+        state.items.push({ ...action.payload, quantity: 1 });
       }
     },
-    removeFromCart: (state, action) => {
-      state.items = state.items.filter(
-        (item) =>
-          item.product_id !== action.payload.id ||
-          item.selectedColor !== action.payload.selectedColor ||
-          item.selectedSize !== action.payload.selectedSize
-      );
+
+    increaseQuantityLocal: (state, action) => {
+      const item = state.items.find((i) => i._id === action.payload);
+      if (item) item.quantity += 1;
     },
-    updateQuantity: (state, action) => {
-      const item = state.items.find(
-        (item) =>
-          item.product_id === action.payload.id &&
-          item.selectedColor === action.payload.selectedColor &&
-          item.selectedSize === action.payload.selectedSize
-      );
-      if (item) {
-        item.quantity += action.payload.quantity;
-        if (item.quantity <= 0) {
-          state.items = state.items.filter(
-            (i) =>
-              i.product_id !== item.id ||
-              i.selectedColor !== item.selectedColor ||
-              i.selectedSize !== item.selectedSize
-          );
-        }
-      }
+
+    decreaseQuantityLocal: (state, action) => {
+      const item = state.items.find((i) => i._id === action.payload);
+      if (item && item.quantity > 1) item.quantity -= 1;
     },
-    clearCart: (state) => {
+
+    removeFromCartLocal: (state, action) => {
+      state.items = state.items.filter((i) => i._id !== action.payload);
+    },
+
+    clearCartLocal: (state) => {
       state.items = [];
     },
+
     setBuyNowItem: (state, action) => {
-      console.log(action.payload)
       state.buyNowItem = action.payload;
     },
+
     clearBuyNowItem: (state) => {
       state.buyNowItem = null;
     },
+
     toggleCartPopup: (state, action) => {
       state.popupOpen = action.payload;
     },
@@ -71,13 +56,14 @@ const cartSlice = createSlice({
 });
 
 export const {
-  addToCart,
-  removeFromCart,
-  updateQuantity,
-  clearCart,
+  addToCartLocal,
+  increaseQuantityLocal,
+  decreaseQuantityLocal,
+  removeFromCartLocal,
+  clearCartLocal,
   setBuyNowItem,
   clearBuyNowItem,
   toggleCartPopup,
 } = cartSlice.actions;
-export default cartSlice.reducer;
 
+export default cartSlice.reducer;

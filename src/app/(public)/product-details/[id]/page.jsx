@@ -5,7 +5,7 @@ import ProductDetailClient from "./ProductDetailClient";
 async function GetData(id) {
   try {
     const { data } = await axiosInstance.get(
-      `/api/Productes/by-canonical/${id}`
+      `/api/Productes/by-slug/${id}`
     );
 
     return data?.data || null;
@@ -19,6 +19,7 @@ async function GetData(id) {
 export default async function ProductDetailPage({ params }) {
   const { id } = await params || null;
   const product = await GetData(id);
+
 
   return (
     <ProductDetailClient

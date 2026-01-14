@@ -29,6 +29,7 @@ const ProductCardEthnic = ({ product }) => {
   return (
     <div className="md:w-72 w-48 flex-shrink-0 relative group">
       <button
+
         // onClick={() => onToggleWishlist?.(product)}
         className="
           absolute top-3 right-3 md:top-4 md:right-4 z-10
@@ -83,7 +84,7 @@ const ProductCardEthnic = ({ product }) => {
       <div className="pt-2 md:pt-3">
         <h3
           title={product.product_name}
-          className="font-bold leading-tight text-primary line-clamp-2 text-sm md:text-base lg:text-lg mb-1"
+          className="font-bold leading-tight text-gray-800 line-clamp-2 text-sm md:text-base lg:text-lg mb-1"
         >
           {product.product_name}
         </h3>

@@ -1,6 +1,8 @@
+"use client";
 import { Handbag, Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 const DEFAULT_IMAGE = "/assets/default-product.png";
 
@@ -10,16 +12,22 @@ const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
   // 👉 DEFAULT VARIANT
   const defaultVariant = product?.variants?.[0];
 
-  // IMAGE
-  const rawImg = defaultVariant?.images?.find(img => img.is_primary)?.image_url
-    || defaultVariant?.images?.[0]?.image_url;
+  // IMAGE (raw)
+  const rawImg =
+    defaultVariant?.images?.find(img => img.is_primary)?.image_url ||
+    defaultVariant?.images?.[0]?.image_url;
 
-  const finalImg =
-    rawImg?.startsWith("http")
+  // FINAL IMAGE (absolute url or fallback)
+  const finalImg = rawImg
+    ? rawImg.startsWith("http")
       ? rawImg
-      : rawImg
-        ? "https://backend.gaurastra.com" + rawImg
-        : DEFAULT_IMAGE;
+      : `https://backend.gaurastra.com${rawImg}`
+    : DEFAULT_IMAGE;
+
+  // STATE (after finalImg exists)
+  const [imgSrc, setImgSrc] = useState(finalImg);
+
+
 
   // PRICE
   const price = defaultVariant?.pricing?.original_price || 0;
@@ -44,9 +52,8 @@ const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
       >
         <Heart className="w-4 h-4 md:w-5 md:h-5 text-gray-600 hover:text-primary" />
       </button>
-
       {/* Image Container */}
-      <Link href={`/product/${product?.canonicalURL}`}>
+      <Link href={`/product-details/${product?.slug}`}>
         <div className="
           relative w-full aspect-[3/4]
           overflow-hidden 
@@ -55,11 +62,11 @@ const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
           p-2 md:p-4
         ">
           <Image
-            src={DEFAULT_IMAGE || finalImg}
+            src={imgSrc}
             alt={product.product_name}
             fill
-            decoding="async"
             className="object-cover p-3 w-full h-full"
+            onError={() => setImgSrc(DEFAULT_IMAGE)}
           />
 
           {discountPercent > 0 && (

@@ -1,191 +1,328 @@
 "use client";
+import { useDispatch, useSelector } from "react-redux";
+
+
+import { useDecreaseCartMutation, useIncreaseCartMutation } from "@/store/api/cartApi";
+import { clearCartLocal, decreaseQuantityLocal, increaseQuantityLocal, removeFromCartLocal } from "@/store/slices/cartSlice";
+import { Eye, Minus, Plus, X } from "lucide-react";
 import Image from "next/image";
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { removeFromCart } from "@/store/slices/cartSlice";
-import Link from "next/link";
-// import { Link } from "next/link";
+import { useState } from "react";
 
-const CartPage = () => {
+export default function CartPage() {
   const dispatch = useDispatch();
-  const cartProducts = useSelector((state) => state?.cart?.items || []);
 
-  // Price calculations
-  const subtotal = cartProducts.reduce(
-    (total, item) => total + item.discountedPrice * item.quantity,
-    0
-  );
+  const cartItems = useSelector((state) => state.cart.items);
+  const isLoggedIn = useSelector((state) => state.auth.isAuthenticated);
 
-  const totalDiscount = cartProducts.reduce(
-    (total, item) =>
-      total + (item.originalPrice - item.discountedPrice) * item.quantity,
-    0
-  );
+  const [increaseCart] = useIncreaseCartMutation();
+  const [decreaseCart] = useDecreaseCartMutation();
 
-  const shippingCharge = 0;
-  const totalAmount = subtotal + shippingCharge;
+  const [discountCode, setDiscountCode] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState(0);
 
-  // Get primary image or first image
-  const getProductImage = (images) => {
-    if (!images || images.length === 0) return "/assets/default-product.png";
+  const cartSummaryImages = ["/assets/multiple-payment-options.png", "/assets/easy-returns.png", "/assets/secure-payment.png"]
 
-    const primary =
-      images.find((img) => img.is_primary) ||
-      images[0] ||
-      { image_url: "" };
+  // Update quantity
+  const updateQuantity = (itemId, variantSku, newQuantity) => {
 
-    let url = primary.image_url || "";
+    if (newQuantity < 1) return;
 
-    // 🔥 If URL does NOT start with http or https → add backend prefix
-    if (!url.startsWith("http")) {
-      url = `https://backend.gaurastra.com${url}`;
+    const item = cartItems.find((i) => i._id === itemId);
+    if (!item) return;
+
+    const variant = item.variants.find((v) => v.sku === variantSku);
+
+    if (!variant) return;
+
+    const maxQty = variant.stock?.stock_quantity || 1;
+    const finalQty = Math.min(newQuantity, maxQty);
+
+    const diff = finalQty - item.quantity;
+
+
+
+    if (isLoggedIn) {
+      if (diff > 0) {
+        increaseCart({ itemId, quantity: diff });
+      } else if (diff < 0) {
+        console.log("decreaseCart", { itemId, quantity: Math.abs(diff) });
+        decreaseCart({ itemId, quantity: Math.abs(diff) });
+      }
+    } else {
+      if (diff > 0) {
+        dispatch(increaseQuantityLocal(itemId));
+      } else if (diff < 0) {
+        dispatch(decreaseQuantityLocal(itemId));
+      }
     }
+  };
 
-    return url;
+  // Remove item
+  const removeItem = (itemId) => {
+    if (isLoggedIn) {
+      decreaseCart({ itemId, remove: true });
+    } else {
+      dispatch(removeFromCartLocal(itemId));
+    }
+  };
+
+  // Clear cart
+  const clearCart = () => {
+    if (isLoggedIn) {
+      // Optional API endpoint if available
+      // clearCartApi()
+    }
+    dispatch(clearCartLocal());
   };
 
 
+  // Calculate totals
+  const subtotal = cartItems.reduce((sum, item) => {
+    const variant = item.selectedVariant || item.variants?.[0];
+    return sum + (variant?.pricing?.discounted_price || 0) * item.quantity;
+  }, 0);
+
+
+
+  const applyDiscount = () => {
+    if (discountCode.toLowerCase() === "save10") {
+      setAppliedDiscount(subtotal * 0.1);
+    } else {
+      setAppliedDiscount(0);
+    }
+  };
+
+
+  const total = subtotal - appliedDiscount;
+
+
+
   return (
-    <div className="min-h-screen bg-gray-50 pb-16">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-10">
-        {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-bold tracking-tight">Your Cart</h1>
-          <p className="text-gray-600 mt-2">{cartProducts.length} items</p>
-        </div>
+    <div className="min-h-screen">
+      <Image
+        src="/assets/cart-banner.png"
+        alt="Background"
+        width={0}
+        height={0}
+        sizes="100vw"
+        style={{ width: "100%", height: "auto" }}
+      />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 section-spacing">
+        {/* Cart Items Section */}
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-lg  p-6">
+            <div className=" mb-6">
+              <h1 className="md:text-3xl text-xl  font-bold font-serif ">Cart</h1>
+              <p className="text-gray-600 text-sm">
+                Check items and proceed to checkout
+              </p>
+            </div>
 
-        {cartProducts.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-gray-500 text-lg">Your cart is empty</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            {/* Table Header */}
+            <div className="hidden md:grid grid-cols-12 gap-4 py-4 border-y border-gray-200 text-xl text-gray-900">
+              <div className="col-span-5">Product</div>
+              <div className="col-span-2 text-center">Price</div>
+              <div className="col-span-3 text-center">Quantity</div>
+              <div className="col-span-2 text-right">Total</div>
+            </div>
+
             {/* Cart Items */}
-            <div className="lg:col-span-2 space-y-6">
-              {cartProducts.map((item, index) => (
-                <div
-                  key={`${item.product_id}-${item.selectedSize}-${index}`}
-                  className="bg-white rounded-xl shadow p-6 border border-gray-100"
+            {cartItems.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg mb-4">Your cart is empty</p>
+                <a
+                  href="/category/all-products"
+                  className="inline-block px-6 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition"
                 >
-                  <div className="flex gap-6">
-                    {/* Image */}
-                    <div className="w-28 h-28 md:w-36 md:h-36 rounded-lg overflow-hidden bg-gray-100">
-                      <Image
-                        src={getProductImage(item.images)}
-                        width={150}
-                        height={150}
-                        alt={item.product_name}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
+                  Continue Shopping
+                </a>
+              </div>
+            ) : (
+              <div className="divide-y">
+                {cartItems.map((item) => {
+                  const variant = item.selectedVariant || item.variants[0];
+                  const primaryImage = variant.images.find(img => img.is_primary) || variant.images[0];
+                  const itemTotal = variant.pricing.discounted_price * item.quantity;
 
-                    {/* Content */}
-                    <div className="flex-1">
-                      {/* Title + Remove */}
-                      <div className="flex justify-between">
-                        <h3 className="font-semibold text-lg">
-                          {item.product_name}
-                        </h3>
-                        <button
-                          onClick={() => dispatch(
-                            removeFromCart(item)
-                          )}
-                          className="text-gray-500 hover:text-red-600 text-sm"
-                        >
-                          Remove
-                        </button>
+                  return (
+                    <div
+                      key={`${item._id}-${variant.sku}`}
+                      className="py-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
+                    >
+                      {/* Product Info */}
+                      <div className="col-span-1 md:col-span-5 flex gap-4">
+                        <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100">
+                          <Image
+                            src={primaryImage?.image_url || "/placeholder.png"}
+                            alt={item.product_name}
+                            fill
+                            className="object-cover rounded-lg"
+                          />
+                          <button
+                            onClick={() => removeItem(item._id)}
+                            className="absolute -top-1 -right-1 w-4 h-4 bg-gray-700 text-white rounded-full flex items-center justify-center hover:bg-gray-900 transition"
+                          >
+                            <X size={10} strokeWidth={6} />
+                            {/* <AArrowDown strokeWidth={3} /> */}
+                          </button>
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-medium text-gray-900 mb-1">
+                            {item.product_name}
+                          </h3>
+                          <p className="text-xs text-gray-500 mb-1">
+                            Color: {variant.attributes.color}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Size: {variant.attributes.size}
+                          </p>
+                        </div>
                       </div>
 
-                      {item.brand && (
-                        <p className="text-gray-500 text-sm mt-1">
-                          {item.brand}
-                        </p>
-                      )}
-
-                      <p className="text-gray-600 mt-1">
-                        Size:{" "}
-                        <span className="font-medium">
-                          {item.selectedSize}
-                        </span>
-                      </p>
-
                       {/* Price */}
-                      <div className="flex items-center gap-2 mt-3">
-                        <span className="text-xl font-bold">
-                          ₹{item.discountedPrice}
-                        </span>
-
-                        {item.originalPrice > item.discountedPrice && (
-                          <>
-                            <span className="line-through text-gray-400 text-sm">
-                              ₹{item.originalPrice}
-                            </span>
-                            <span className="text-green-600 text-sm font-medium">
-                              {Math.round(
-                                ((item.originalPrice - item.discountedPrice) /
-                                  item.originalPrice) *
-                                100
-                              )}
-                              % off
-                            </span>
-                          </>
+                      <div className="col-span-1 md:col-span-2 text-left md:text-center">
+                        <p className="font-semibold text-gray-900">
+                          ₹{variant.pricing.discounted_price.toFixed(2)}
+                        </p>
+                        {variant.pricing.original_price > variant.pricing.discounted_price && (
+                          <p className="text-xs text-gray-400 line-through">
+                            ₹{variant.pricing.original_price.toFixed(2)}
+                          </p>
                         )}
                       </div>
 
                       {/* Quantity */}
-                      <div className="mt-4 flex items-center gap-3">
-                        <span className="text-gray-700 font-medium">Qty:</span>
-                        <div className="bg-gray-100 rounded-full px-4 py-1">
-                          <span className="font-medium">{item.quantity}</span>
+                      <div className="col-span-1 md:col-span-3 flex items-center justify-start md:justify-center gap-2">
+                        <div className="flex items-center border border-gray-300 rounded-lg">
+                          <button
+                            onClick={() => updateQuantity(item._id, variant.sku, item.quantity - 1)}
+                            className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-gray-50 transition"
+                          >
+                            <Minus size={16} />
+                          </button>
+                          <span className="w-12 text-center font-medium">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(item._id, variant.sku, item.quantity + 1)}
+                            className="w-8 h-8 flex items-center justify-center text-green-500 hover:bg-gray-50 transition"
+                          >
+                            <Plus size={16} />
+                          </button>
                         </div>
                       </div>
+
+                      {/* Total */}
+                      <div className="col-span-1 md:col-span-2 text-left md:text-right">
+                        <p className="font-bold text-gray-900">
+                          ₹{itemTotal.toFixed(2)}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            {cartItems.length > 0 && (
+              <div className="flex justify-end gap-4 mt-6 pt-6 border-t">
+
+                <button
+                  onClick={clearCart}
+                  className="px-6 py-2 bg-primary/90  text-white hover:bg-primary transition font-medium"
+                >
+                  Clear Cart
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Order Summary Section */}
+        <div className="lg:col-span-1">
+          <div className="bg-white p-6 sticky top-8">
+            <h2 className="md:text-3xl text-xl  font-bold font-serif">Summary Order</h2>
+
+            {/* Discount Code */}
+            <div className="mb-6">
+              <label className="block text-sm text-gray-600 mb-2">
+                Do you have any discount code?
+              </label>
+              <div className="flex">
+                <input
+                  type="text"
+                  value={discountCode}
+                  onChange={(e) => setDiscountCode(e.target.value)}
+                  placeholder="SKD832"
+                  className="flex-1 px-4 py-2 border border-gray-300  focus:outline-none focus:border-primary"
+                />
+                <button
+                  onClick={applyDiscount}
+                  className="w-20 h-12 bg-primary/90 text-white  hover:bg-primary transition flex items-center justify-center"
+                >
+                  <Eye size={20} />
+                </button>
+              </div>
             </div>
 
-            {/* Summary */}
-            <div className="bg-white h-fit p-6 rounded-xl shadow border border-gray-100">
-              <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+            {/* Summary Details */}
+            <div className="space-y-4 mb-6">
+              <div className="flex justify-between text-gray-700">
+                <span>Subtotals:</span>
+                <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
+              </div>
 
-              <div className="space-y-3 text-gray-700">
-                <div className="flex justify-between">
-                  <span>Subtotal</span>
-                  <span>₹{subtotal.toFixed(2)}</span>
+              {appliedDiscount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Discount:</span>
+                  <span className="font-semibold">-₹{appliedDiscount.toFixed(2)}</span>
                 </div>
+              )}
 
-                <div className="flex justify-between text-green-600 font-medium">
-                  <span>Discount</span>
-                  <span>-₹{totalDiscount.toFixed(2)}</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span className="text-green-600">Free</span>
-                </div>
-
-                <hr className="my-4" />
-
-                <div className="flex justify-between text-lg font-semibold">
-                  <span>Total</span>
-                  <span>₹{totalAmount.toFixed(2)}</span>
-                </div>
-                <div className="flex  mt-6">
-                  <Link
-                    href="/checkout"
-                    className="bg-black text-center text-white rounded-lg py-2 px-3.5 flex-1  hover:bg-gray-800 transition"
-                  >
-                    Proceed to Checkout
-                  </Link>
+              <div className="pt-4 border-t">
+                <div className="flex justify-between text-lg font-bold">
+                  <span>Totals:</span>
+                  <span>₹{total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
+
+            {/* Shipping Info */}
+            <div className="mb-6">
+              <p className="text-sm text-primary flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                Shipping & taxes calculated at checkout
+              </p>
+            </div>
+
+            {/* Checkout Button */}
+            <button
+              disabled={cartItems.length === 0}
+              className="w-full py-2 bg-black text-white hover:bg-gray-800 transition font-medium disabled:bg-gray-300 disabled:cursor-not-allowed mb-4"
+            >
+              Proceed To Checkout
+            </button>
+
+            {/* Payment Methods */}
+            <div className="space-y-3 mt-4">
+              {
+                cartSummaryImages.map((image, index) => (
+                  <Image
+                    src={image}
+                    alt="Background"
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    style={{ width: "100%", height: "auto" }}
+                  />
+                ))
+              }
+            </div>
           </div>
-        )}
+        </div>
+
       </div>
     </div>
   );
-};
-
-export default CartPage;
+}

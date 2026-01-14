@@ -1,21 +1,15 @@
 "use client";
 
 import Breadcrumbs from "@/components/Breadcrumbs";
+import Pagination from "@/components/Pagination";
 import ProductCard from "@/components/ProductCard";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
-import Image from "next/image";
-import { useEffect, useState, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Sidebar from "./Sidebar";
 import { useGetProductsQuery } from "@/store/api/productsApi";
-import {
-  setFilter,
-  clearFilters,
-  setCategoryAndSubcategory,
-  selectFilters,
-  selectAllProducts,
-} from "@/store/slices/productSlice";
-import Pagination from "@/components/Pagination";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import Sidebar from "./Sidebar";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCartLocal } from "@/store/slices/cartSlice";
 
 // Debounce hook
 const useDebounce = (value, delay) => {
@@ -26,73 +20,62 @@ const useDebounce = (value, delay) => {
       setDebouncedValue(value);
     }, delay);
 
-    return () => {
-      clearTimeout(handler);
-    };
+    return () => clearTimeout(handler);
   }, [value, delay]);
 
   return debouncedValue;
 };
 
-
 export default function CategoryPageClient({
   initialProducts = [],
   initialSlug = ["all-products"],
 }) {
-  console.log("initialProducts", initialProducts);
-  const dispatch = useDispatch();
-  const [slug, setSlug] = useState(initialSlug);
 
-  // Get filters from Redux
-  const filters = useSelector(selectFilters);
-  const productsFromRedux = useSelector(selectAllProducts);
+
+  const dispatch = useDispatch()
+  const searchParams = useSearchParams();
+  const [slug, setSlug] = useState(initialSlug);
+  const { items: cartItems } = useSelector(state => state.cart)
+  console.log(cartItems)
+
+  // Initialize filters from URL search params
+  const [filters, setFilters] = useState({
+    search: searchParams.get("search") || "",
+    min_price: searchParams.get("min_price") || "",
+    max_price: searchParams.get("max_price") || "",
+    sort: searchParams.get("sort") || "",
+    on_sale: searchParams.get("on_sale") || "",
+    color: searchParams.get("color") || "",
+  });
 
   // Debounced filters for API calls
   const debouncedFilters = useDebounce(filters, 500);
 
   // Parse category and subcategory from slug
   const [categorySlug, subcategorySlug] = slug;
-  const category = categorySlug?.split("-")?.join(" ");
-  const subcategory = subcategorySlug?.split("-")?.join(" ") || "";
-
-  // Update Redux with current category/subcategory
-  useEffect(() => {
-    dispatch(
-      setCategoryAndSubcategory({
-        category: category,
-        subcategory: subcategory,
-      })
-    );
-  }, [category, subcategory, dispatch]);
 
   // Build query payload
   const queryPayload = useMemo(() => {
     const payload = {
-      category_name: category || "",
-      subcategory_name: subcategory || "",
+      category_name: categorySlug || "",
+      subcategory_name: subcategorySlug || "",
     };
 
+
     // Add filters if they have values
-    if (debouncedFilters.search) {
-      payload.search = debouncedFilters.search;
-    }
-    if (debouncedFilters.min_price) {
-      payload.min_price = parseFloat(debouncedFilters.min_price);
-    }
-    if (debouncedFilters.max_price) {
-      payload.max_price = parseFloat(debouncedFilters.max_price);
-    }
-    if (debouncedFilters.sort) {
-      payload.sort = debouncedFilters.sort;
-    }
-    if (debouncedFilters.on_sale) {
-      payload.on_sale = debouncedFilters.on_sale;
-    }
+    if (debouncedFilters.search) payload.search = debouncedFilters.search;
+    if (debouncedFilters.min_price) payload.min_price = parseFloat(debouncedFilters.min_price);
+    if (debouncedFilters.max_price) payload.max_price = parseFloat(debouncedFilters.max_price);
+    if (debouncedFilters.sort) payload.sort = debouncedFilters.sort;
+    if (debouncedFilters.on_sale) payload.on_sale = debouncedFilters.on_sale;
+    if (debouncedFilters.color) payload.color = debouncedFilters.color;
+    if (debouncedFilters.size) payload.size = debouncedFilters.size;
 
     return payload;
-  }, [category, subcategory, debouncedFilters]);
+  }, [categorySlug, subcategorySlug, debouncedFilters]);
 
-  // RTK Query hook - automatically handles caching and loading
+
+  // RTK Query hook
   const {
     data: products = initialProducts,
     isLoading,
@@ -101,47 +84,61 @@ export default function CategoryPageClient({
     error,
   } = useGetProductsQuery(queryPayload);
 
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+    });
+
+    const queryString = params.toString();
+    const newUrl = `/category/${slug.join("/")}${queryString ? `?${queryString}` : ""}`;
+
+    window.history.replaceState({}, "", newUrl);
+  }, [filters, slug]);
 
   // Handle filter changes
   const handleFilterChange = (key, value) => {
     if (key === "clear") {
-      dispatch(clearFilters());
+      setFilters({
+        search: "",
+        min_price: "",
+        max_price: "",
+        sort: "",
+        on_sale: "",
+        color: "",
+        size: "",
+      });
     } else {
-      dispatch(setFilter({ key, value }));
+      setFilters(prev => ({
+        ...prev,
+        [key]: value,
+      }));
     }
   };
 
-  // Handle category/sidebar navigation
-  const handleChange = (slugStr) => {
-    const parts = slugStr.split("/");
-    setSlug(parts);
-    window.history.pushState({ slug: parts }, "", `/category/${slugStr}`);
+  // Handle category/subcategory navigation
+  const handleCategoryChange = (category_name, subcategory_name = null) => {
+    const newSlug = subcategory_name
+      ? [category_name, subcategory_name]
+      : [category_name];
+
+
+    setSlug(newSlug);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  // Browser back/forward
-  useEffect(() => {
-    const handler = (e) => {
-      const stateSlug = e.state?.slug || initialSlug;
-      setSlug(stateSlug);
-    };
-    window.addEventListener("popstate", handler);
-    return () => window.removeEventListener("popstate", handler);
-  }, [initialSlug]);
 
   // Show loading state
   const showLoading = isLoading || (isFetching && products.length === 0);
 
+  const handleAddToCart = (product) => {
+    dispatch(addToCartLocal(product));
+
+  };
+
   return (
     <section className="min-h-screen bg-white">
-      <Image
-        src="/assets/productPageBanner.png"
-        alt="Category Banner"
-        width={0}
-        height={0}
-        sizes="100vw"
-        style={{ width: "100%", height: "auto" }}
-      />
       <div className="md:px-16 px-4 py-6">
         <Breadcrumbs />
         <div className="grid grid-cols-12 gap-6">
@@ -150,20 +147,17 @@ export default function CategoryPageClient({
             slug={slug}
             filters={filters}
             onFilterChange={handleFilterChange}
-            onChange={handleChange}
+            onCategoryChange={handleCategoryChange}
           />
 
           {/* Products */}
           <div className="col-span-12 md:col-span-9">
-
-            {/* Show fetching indicator when updating in background */}
+            {/* Fetching indicator */}
             {isFetching && !isLoading && (
               <div className="mb-2 text-sm text-gray-600">
-                Fetching products...
+                Updating products...
               </div>
             )}
-
-
 
             {/* Error State */}
             {isError && (
@@ -178,7 +172,7 @@ export default function CategoryPageClient({
             {/* Loading State */}
             {showLoading ? (
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                {[...Array(8)].map((_, i) => (
+                {[...Array(9)].map((_, i) => (
                   <ProductCardSkeleton key={i} />
                 ))}
               </div>
@@ -186,7 +180,7 @@ export default function CategoryPageClient({
               <div className="space-y-4">
                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
                   {products.map((p) => (
-                    <ProductCard key={p._id} product={p} />
+                    <ProductCard key={p._id} product={p} onAddToCart={handleAddToCart} />
                   ))}
                 </div>
                 {/* Pagination */}

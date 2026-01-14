@@ -1,10 +1,11 @@
 import ProductCardEthnic from "@/components/ProductCardEthnic";
 import OccasionBased from "./OccasionBased";
-import MenEthnicWearSection from "@/app/(home page components)/MenEthnicWearSection";
-import WomenEthnicWearSection from "@/app/(home page components)/WomenEthnicWearSection";
+
 import Image from "next/image";
-import Heading from "@/app/(home page components)/Heading";
 import FAQ from "@/components/FAQ";
+import Heading from "@/components/home_components/Heading";
+import WomenEthnicWearSection from "@/components/home_components/WomenEthnicWearSection";
+import MenEthnicWearSection from "@/components/home_components/MenEthnicWearSection";
 
 const CategoryCard = ({ img, title, large = false }) => {
   return (

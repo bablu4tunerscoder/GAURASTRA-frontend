@@ -1,5 +1,5 @@
 
-import Heading from '@/app/(home page components)/Heading'
+import Heading from '@/components/home_components/Heading'
 import Link from 'next/link'
 import React from 'react'
 

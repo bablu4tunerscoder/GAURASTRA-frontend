@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import { combineReducers } from "redux";
+
 import cartReducer from "./slices/cartSlice";
 import filtersReducer from "./slices/filterSlice";
 import productReducer from "./slices/productSlice";
@@ -13,25 +14,33 @@ import BlogSliceReducer from "./slices/blogSlice";
 import orderReducer from "./slices/orderSlice";
 import paymentReducer from "./slices/paymentSlice";
 import eventReducer from "./slices/eventSlice";
-import couponReducer from "./slices/couponSlice"; // Add this line
+import couponReducer from "./slices/couponSlice";
 import recommendedProductsReducer from "./slices/RecommendedProductsSlice";
-import offerBannerReducer from './slices/offerBannerSlice';
+import offerBannerReducer from "./slices/offerBannerSlice";
 import productByUniqueIdReducer from "./slices/ProductByUniqueIdSlice";
-import { productsApi } from "./api/productsApi";
-import { productSidebarApi } from "./api/productSidebarApi";
 
+import { productsApi } from "./api/productsApi";
+import sidebarReducer, { sidebarApi } from "./slices/sidebarSlice";
+import { cartApi } from "./api/cartApi";
+
+/* ============================
+   Persist Configs
+============================ */
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["products", "categories"], // ✅ productSlice को persist से ब्लैकलिस्ट किया ताकि filterProducts सही से अपडेट हो
+  blacklist: ["products", "categories"],
 };
 
 const authPersistConfig = {
   key: "auth",
   storage,
-  whitelist: ["user", "token", "isAuthenticated"], // ✅ Persist only essential auth data
+  whitelist: ["user", "token", "isAuthenticated"],
 };
 
+/* ============================
+   Root Reducer
+============================ */
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authReducer),
   blog: BlogSliceReducer,
@@ -44,23 +53,34 @@ const rootReducer = combineReducers({
   order: orderReducer,
   payment: paymentReducer,
   event: eventReducer,
-  coupon: couponReducer, // Add this line
+  coupon: couponReducer,
   recommendedProducts: recommendedProductsReducer,
   offerBanner: offerBannerReducer,
   productByUniqueId: productByUniqueIdReducer,
+
+  sidebar: sidebarReducer,
+
+  // RTK Query APIs ✅
   [productsApi.reducerPath]: productsApi.reducer,
-  [productSidebarApi.reducerPath]: productSidebarApi.reducer,
+  [sidebarApi.reducerPath]: sidebarApi.reducer,
+  [cartApi.reducerPath]: cartApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
+/* ============================
+   Store
+============================ */
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      immutableCheck: false, // ✅ Disable to fix performance warning
-      serializableCheck: false, // ✅ Redux Persist की वॉर्निंग हटाने के लिए
-    }).concat(productsApi.middleware).concat(productSidebarApi.middleware),
+      immutableCheck: false,
+      serializableCheck: false,
+    })
+      .concat(productsApi.middleware)
+      .concat(cartApi.middleware)
+      .concat(sidebarApi.middleware),
 });
 
 export const persistor = persistStore(store);

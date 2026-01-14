@@ -74,9 +74,9 @@ export default function Header() {
             <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
               <Heart className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <Link href="/cart" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
               <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
-            </button>
+            </Link>
           </div>
         </div>
 
