@@ -23,6 +23,7 @@
 
 
 
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -56,6 +57,3 @@ body {
         scrollbar-width: none;  /* Firefox */
       }
     }
-input,textarea,select{
-  color:black;
-}

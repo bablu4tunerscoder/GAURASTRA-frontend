@@ -16,45 +16,6 @@ const initialState = {
   error: null,
 };
 
-// Register User
-export const registerUser = createAsyncThunk(
-  "auth/registerUser",
-  async (userData, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${BASE_URL}/api/auth/allRegister`, userData);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Registration failed");
-    }
-  }
-);
-
-// Login User
-export const loginUser = createAsyncThunk(
-  "auth/login",
-  async (credentials, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${BASE_URL}/api/auth/login`, credentials);
-
-      const { user, token } = response.data.data;
-
-      // 👉 Store in Cookies
-      Cookies.set("token", token, { expires: 7 });
-      Cookies.set("user", JSON.stringify(user), { expires: 7 });
-
-      return { ...user, token };
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.message || "Login failed");
-    }
-  }
-);
-
-// Logout User
-export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
-  Cookies.remove("token");
-  Cookies.remove("user");
-  return null;
-});
 
 // Google Auth
 export const googleAuthUser = createAsyncThunk(
@@ -116,37 +77,20 @@ const authSlice = createSlice({
     clearAuthError: (state) => {
       state.error = null;
     },
+    loginUser: (state, action) => {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.isAuthenticated = true;
+    },
+    logoutUser: (state) => {
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+    },
   },
 
   extraReducers: (builder) => {
     builder
-      // Register
-      .addCase(registerUser.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.status = "succeeded";
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-
-      // Login
-      .addCase(loginUser.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.user = action.payload;
-        state.token = action.payload.token;
-        state.isAuthenticated = true;
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
-
       // Google Auth
       .addCase(googleAuthUser.pending, (state) => {
         state.status = "loading";
@@ -162,15 +106,8 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // Logout
-      .addCase(logoutUser.fulfilled, (state) => {
-        state.user = null;
-        state.token = null;
-        state.isAuthenticated = false;
-        state.status = "idle";
-      });
   },
 });
 
-export const { resetAuthState, clearAuthError } = authSlice.actions;
+export const { resetAuthState, clearAuthError, loginUser, logoutUser } = authSlice.actions;
 export default authSlice.reducer;

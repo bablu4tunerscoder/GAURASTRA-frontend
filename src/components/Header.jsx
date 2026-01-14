@@ -3,9 +3,11 @@ import { Search, Heart, ShoppingCart, MapPin, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import AnnouncementBar from './AnnouncementBar';
+import { useSelector } from 'react-redux';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const cartitemCount = useSelector(state => state?.cart?.items).length;
 
   const mainNavLinks = [
     { label: 'Man', href: '/category/man' },
@@ -74,9 +76,38 @@ export default function Header() {
             <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
               <Heart className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
             </button>
-            <Link href="/cart" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <Link
+              href="/cart"
+              className="relative p-2 rounded-full transition-colors"
+            >
+              {/* CART COUNT BADGE */}
+              {cartitemCount > 0 && (
+                <span
+                  className="
+        absolute
+        top-0
+        right-0
+        min-w-[18px]
+        h-[18px]
+        px-1
+        flex
+        items-center
+        justify-center
+        rounded-full
+        bg-primary
+        text-white
+        text-[10px]
+        font-semibold
+        leading-none
+      "
+                >
+                  {cartitemCount}
+                </span>
+              )}
+
               <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
             </Link>
+
           </div>
         </div>
 
