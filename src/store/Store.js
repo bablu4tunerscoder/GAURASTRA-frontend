@@ -19,7 +19,10 @@ import productByUniqueIdReducer from "./slices/ProductByUniqueIdSlice";
 
 import { productsApi } from "./api/productsApi";
 import sidebarReducer, { sidebarApi } from "./slices/sidebarSlice";
+import wishlistReducer from "./slices/wishlistSlice";
+
 import { cartApi } from "./api/cartApi";
+import { wishlistApi } from "./api/wishlistApi";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -38,10 +41,12 @@ const rootReducer = combineReducers({
   offerBanner: offerBannerReducer,
   productByUniqueId: productByUniqueIdReducer,
   sidebar: sidebarReducer,
+  wishlist: wishlistReducer,
 
   [productsApi.reducerPath]: productsApi.reducer,
   [sidebarApi.reducerPath]: sidebarApi.reducer,
   [cartApi.reducerPath]: cartApi.reducer,
+  [wishlistApi.reducerPath]: wishlistApi.reducer,
 });
 
 export const store = configureStore({
@@ -53,5 +58,6 @@ export const store = configureStore({
     })
       .concat(productsApi.middleware)
       .concat(cartApi.middleware)
+      .concat(wishlistApi.middleware)
       .concat(sidebarApi.middleware),
 });

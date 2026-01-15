@@ -7,6 +7,9 @@ import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCartLocal } from "@/store/slices/cartSlice";
 import Modal from "./Modal";
+import { useAddWishlistItemMutation } from "@/store/api/wishlistApi";
+import { useRouter } from 'next/navigation';
+
 
 const DEFAULT_IMAGE = "/assets/default-product.png";
 
@@ -14,6 +17,7 @@ const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
   if (!product) return null;
 
   const dispatch = useDispatch();
+  const router = useRouter();
   const { user } = useSelector((state) => state.auth || {});
 
   const [modalData, setModalData] = useState(null);
@@ -172,6 +176,7 @@ const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
     setModalData(null);
   };
 
+
   const openModal = (e) => {
     e.preventDefault();
     setSelectedColor(uniqueColors[0] || "");
@@ -181,17 +186,37 @@ const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
   };
 
   const closeModal = () => {
+
     setModalData(null);
     setSelectedColor("");
     setSelectedSize("");
     setQuantity(1);
+  };
+  const [addWishlistItem] = useAddWishlistItemMutation();
+
+  const handleWishlist = async ({ product_id, sku }) => {
+
+    if (!user) {
+      toast.error("Please login to add to wishlist");
+      return;
+    }
+
+    try {
+      await addWishlistItem({ product_id, sku }).unwrap();
+
+      toast.success("Added to wishlist ❤️");
+    } catch (error) {
+      toast.error(
+        error?.data?.message || "Failed to add to wishlist"
+      );
+    }
   };
 
   return (
     <div className="w-full relative group">
       {/* Wishlist */}
       <button
-        onClick={() => onToggleWishlist?.(product)}
+        onClick={() => handleWishlist({ product_id: product?._id, sku: product?.variants[0]?.sku })}
         className="absolute top-3 right-3 md:top-4 md:right-4 z-10 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition"
       >
         <Heart className="w-4 h-4 md:w-5 md:h-5 text-gray-600 hover:text-primary" />

@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 const Modal = ({ data, onClose, children }) => {
     if (!data) return null;
 
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             {/* Overlay */}
