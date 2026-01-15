@@ -1,10 +1,18 @@
+"use client";
+
 import { createSlice } from "@reduxjs/toolkit";
 
+
+const isBrowser = typeof window !== "undefined";
+
 const initialState = {
-  items: localStorage.getItem("cart_items") ? JSON.parse(localStorage.getItem("cart_items")) : [],
+  items: isBrowser
+    ? JSON.parse(localStorage.getItem("cart_items"))
+    : [],
   buyNowItem: null,
   popupOpen: false,
 };
+
 
 const saveCartToLocalStorage = (state) => {
   localStorage.setItem("cart_items", JSON.stringify(state.items));

@@ -8,8 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import {
     clearBuyNowItem,
     setBuyNowItem,
-    updateQuantity,
+    // updateQuantity,
 } from "@/store/slices/cartSlice";
+
 import { clearOrder } from "@/store/slices/orderSlice";
 import { resetPayment } from "@/store/slices/paymentSlice";
 import { updateUser } from "@/store/slices/userSlice";
@@ -102,14 +103,14 @@ const CheckoutPage = () => {
                 })
             );
         } else {
-            dispatch(
-                updateQuantity({
-                    id: item.id,
-                    selectedColor: item.selectedColor,
-                    selectedSize: item.selectedSize,
-                    quantity: change,
-                })
-            );
+            // dispatch(
+            //     updateQuantity({
+            //         id: item.id,
+            //         selectedColor: item.selectedColor,
+            //         selectedSize: item.selectedSize,
+            //         quantity: change,
+            //     })
+            // );
         }
     };
 
