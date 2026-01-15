@@ -23,36 +23,38 @@ export default function CartPage() {
   const cartSummaryImages = ["/assets/multiple-payment-options.png", "/assets/easy-returns.png", "/assets/secure-payment.png"]
 
   // Update quantity
-  const updateQuantity = (itemId, variantSku, newQuantity) => {
-
+  const updateQuantity = ({ itemId, variantSku, newQuantity }) => {
     if (newQuantity < 1) return;
 
     const item = cartItems.find((i) => i._id === itemId);
     if (!item) return;
 
-    const variant = item.variants.find((v) => v.sku === variantSku);
-
+    // Find the variant in the product's variants array
+    const variant = item.variants?.find((v) => v.sku === variantSku);
     if (!variant) return;
 
     const maxQty = variant.stock?.stock_quantity || 1;
     const finalQty = Math.min(newQuantity, maxQty);
 
-    const diff = finalQty - item.quantity;
+    // Get current quantity from the cart item's variant
+    const currentQty = item.variant?.quantity || 1;
+    const diff = finalQty - currentQty;
 
+    if (diff === 0) return; // No change needed
 
 
     if (isLoggedIn) {
       if (diff > 0) {
         increaseCart({ itemId, quantity: diff });
       } else if (diff < 0) {
-        console.log("decreaseCart", { itemId, quantity: Math.abs(diff) });
         decreaseCart({ itemId, quantity: Math.abs(diff) });
       }
     } else {
       if (diff > 0) {
-        dispatch(increaseQuantityLocal(itemId));
+        dispatch(increaseQuantityLocal({ productId: itemId, sku: variantSku }));
       } else if (diff < 0) {
-        dispatch(decreaseQuantityLocal(itemId));
+
+        dispatch(decreaseQuantityLocal({ productId: itemId, sku: variantSku }));
       }
     }
   };
@@ -107,12 +109,13 @@ export default function CartPage() {
         sizes="100vw"
         style={{ width: "100%", height: "auto" }}
       />
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 section-spacing">
         {/* Cart Items Section */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg  p-6">
-            <div className=" mb-6">
-              <h1 className="md:text-3xl text-xl  font-bold font-serif ">Cart</h1>
+          <div className="bg-white rounded-lg p-6">
+            <div className="mb-6">
+              <h1 className="md:text-3xl text-xl font-bold font-serif">Cart</h1>
               <p className="text-gray-600 text-sm">
                 Check items and proceed to checkout
               </p>
@@ -139,98 +142,141 @@ export default function CartPage() {
               </div>
             ) : (
               <div className="divide-y">
-                {cartItems.map((item) => {
-                  const variant = item.selectedVariant || item.variants[0];
-                  const primaryImage = variant.images.find(img => img.is_primary) || variant.images[0];
-                  const itemTotal = variant.pricing.discounted_price * item.quantity;
 
-                  return (
-                    <div
-                      key={`${item._id}-${variant.sku}`}
-                      className="py-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
-                    >
-                      {/* Product Info */}
-                      <div className="col-span-1 md:col-span-5 flex gap-4">
-                        <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100">
-                          <Image
-                            src={primaryImage?.image_url || "/placeholder.png"}
-                            alt={item.product_name}
-                            fill
-                            className="object-cover rounded-lg"
-                          />
-                          <button
-                            onClick={() => removeItem(item._id)}
-                            className="absolute -top-1 -right-1 w-4 h-4 bg-gray-700 text-white rounded-full flex items-center justify-center hover:bg-gray-900 transition"
-                          >
-                            <X size={10} strokeWidth={6} />
-                            {/* <AArrowDown strokeWidth={3} /> */}
-                          </button>
+                {cartItems.map((item) =>
+                  item.variants.map((variant) => {
+                    const primaryImage =
+                      variant?.images?.find((img) => img.is_primary) ||
+                      variant?.images?.[0];
+
+                    const itemTotal =
+                      variant?.pricing?.discounted_price * variant.quantity;
+
+                    return (
+                      <div
+                        key={`${item._id}-${variant.sku}`}
+                        className="py-6 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
+                      >
+                        {/* Product Info */}
+                        <div className="col-span-1 md:col-span-5 flex gap-4">
+                          <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100">
+                            <Image
+                              src={primaryImage?.image_url || "/placeholder.png"}
+                              alt={item.product_name}
+                              fill
+                              loading="eager"
+                              className="object-cover rounded-lg"
+                            />
+                            <button
+                              onClick={() =>
+                                removeItem({
+                                  productId: item._id,
+                                  sku: variant.sku,
+                                })
+                              }
+                              className="absolute -top-1 -right-1 w-4 h-4 bg-gray-700 text-white rounded-full flex items-center justify-center hover:bg-gray-900 transition"
+                            >
+                              <X size={10} strokeWidth={6} />
+                            </button>
+                          </div>
+
+                          <div className="flex-1">
+                            <h3 className="font-medium text-gray-900 mb-1">
+                              {item.product_name}
+                            </h3>
+
+                            <p className="text-xs text-gray-500 flex items-center gap-2 mb-1">
+                              Color: {variant?.attributes?.color}
+                              <span
+                                className="relative w-4 h-4 rounded-full flex items-center justify-center ring-1"
+                                style={{
+                                  boxShadow: `0 0 0 1px ${variant?.attributes?.color}`,
+                                }}
+                              >
+                                <div
+                                  className="w-3 h-3 rounded-full"
+                                  style={{
+                                    backgroundColor: variant?.attributes?.color,
+                                  }}
+                                />
+                              </span>
+                            </p>
+
+                            <p className="text-xs text-gray-500">
+                              Size: {variant?.attributes?.size}
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-900 mb-1">
-                            {item.product_name}
-                          </h3>
-                          <p className="text-xs text-gray-500 mb-1">
-                            Color: {variant.attributes.color}
+
+                        {/* Price */}
+                        <div className="col-span-1 md:col-span-2 text-left md:text-center">
+                          <p className="font-semibold text-gray-900">
+                            ₹{variant?.pricing?.discounted_price?.toFixed(2)}
                           </p>
-                          <p className="text-xs text-gray-500">
-                            Size: {variant.attributes.size}
+                          {variant?.pricing?.original_price >
+                            variant?.pricing?.discounted_price && (
+                              <p className="text-xs text-gray-400 line-through">
+                                ₹{variant?.pricing?.original_price?.toFixed(2)}
+                              </p>
+                            )}
+                        </div>
+
+                        {/* Quantity */}
+                        <div className="col-span-1 md:col-span-3 flex items-center justify-start md:justify-center gap-2">
+                          <div className="flex items-center border border-gray-300 rounded-lg">
+                            <button
+                              onClick={() =>
+                                updateQuantity({
+                                  itemId: item._id,
+                                  variantSku: variant.sku,
+                                  newQuantity: variant.quantity - 1,
+                                })
+                              }
+                              className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-gray-50 transition"
+                            >
+                              <Minus size={16} />
+                            </button>
+
+                            <span className="w-12 text-center font-medium">
+                              {variant.quantity}
+                            </span>
+
+                            <button
+
+                              onClick={() =>
+                                updateQuantity({
+                                  itemId: item._id,
+                                  variantSku: variant.sku,
+                                  newQuantity: variant.quantity + 1,
+                                })
+                              }
+                              className="w-8 h-8 flex items-center justify-center text-green-500 hover:bg-gray-50 transition"
+                            >
+                              <Plus size={16} />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Total */}
+                        <div className="col-span-1 md:col-span-2 text-left md:text-right">
+                          <p className="font-bold text-gray-900">
+                            ₹{itemTotal.toFixed(2)}
                           </p>
                         </div>
                       </div>
+                    );
+                  })
+                )}
 
-                      {/* Price */}
-                      <div className="col-span-1 md:col-span-2 text-left md:text-center">
-                        <p className="font-semibold text-gray-900">
-                          ₹{variant.pricing.discounted_price.toFixed(2)}
-                        </p>
-                        {variant.pricing.original_price > variant.pricing.discounted_price && (
-                          <p className="text-xs text-gray-400 line-through">
-                            ₹{variant.pricing.original_price.toFixed(2)}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Quantity */}
-                      <div className="col-span-1 md:col-span-3 flex items-center justify-start md:justify-center gap-2">
-                        <div className="flex items-center border border-gray-300 rounded-lg">
-                          <button
-                            onClick={() => updateQuantity(item._id, variant.sku, item.quantity - 1)}
-                            className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-gray-50 transition"
-                          >
-                            <Minus size={16} />
-                          </button>
-                          <span className="w-12 text-center font-medium">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() => updateQuantity(item._id, variant.sku, item.quantity + 1)}
-                            className="w-8 h-8 flex items-center justify-center text-green-500 hover:bg-gray-50 transition"
-                          >
-                            <Plus size={16} />
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Total */}
-                      <div className="col-span-1 md:col-span-2 text-left md:text-right">
-                        <p className="font-bold text-gray-900">
-                          ₹{itemTotal.toFixed(2)}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
               </div>
+
             )}
 
-            {/* Action Buttons */}
             {cartItems.length > 0 && (
               <div className="flex justify-end gap-4 mt-6 pt-6 border-t">
-
                 <button
                   onClick={clearCart}
-                  className="px-6 py-2 bg-primary/90  text-white hover:bg-primary transition font-medium"
+                  className="px-6 py-2 bg-primary/90 text-white hover:bg-primary transition font-medium"
                 >
                   Clear Cart
                 </button>
@@ -239,12 +285,13 @@ export default function CartPage() {
           </div>
         </div>
 
-        {/* Order Summary Section */}
+        {/* Order Summary */}
         <div className="lg:col-span-1">
           <div className="bg-white p-6 sticky top-8">
-            <h2 className="md:text-3xl text-xl  font-bold font-serif">Summary Order</h2>
+            <h2 className="md:text-3xl text-xl font-bold font-serif">
+              Summary Order
+            </h2>
 
-            {/* Discount Code */}
             <div className="mb-6">
               <label className="block text-sm text-gray-600 mb-2">
                 Do you have any discount code?
@@ -255,28 +302,31 @@ export default function CartPage() {
                   value={discountCode}
                   onChange={(e) => setDiscountCode(e.target.value)}
                   placeholder="SKD832"
-                  className="flex-1 px-4 py-2 border border-gray-300  focus:outline-none focus:border-primary"
+                  className="flex-1 px-4 py-2 border border-gray-300 focus:outline-none focus:border-primary"
                 />
                 <button
                   onClick={applyDiscount}
-                  className="w-20 h-12 bg-primary/90 text-white  hover:bg-primary transition flex items-center justify-center"
+                  className="w-20 h-12 bg-primary/90 text-white hover:bg-primary transition flex items-center justify-center"
                 >
                   <Eye size={20} />
                 </button>
               </div>
             </div>
 
-            {/* Summary Details */}
             <div className="space-y-4 mb-6">
               <div className="flex justify-between text-gray-700">
                 <span>Subtotals:</span>
-                <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
+                <span className="font-semibold">
+                  ₹{subtotal.toFixed(2)}
+                </span>
               </div>
 
               {appliedDiscount > 0 && (
                 <div className="flex justify-between text-green-600">
                   <span>Discount:</span>
-                  <span className="font-semibold">-₹{appliedDiscount.toFixed(2)}</span>
+                  <span className="font-semibold">
+                    -₹{appliedDiscount.toFixed(2)}
+                  </span>
                 </div>
               )}
 
@@ -288,15 +338,13 @@ export default function CartPage() {
               </div>
             </div>
 
-            {/* Shipping Info */}
             <div className="mb-6">
               <p className="text-sm text-primary flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span className="w-2 h-2 bg-green-500 rounded-full" />
                 Shipping & taxes calculated at checkout
               </p>
             </div>
 
-            {/* Checkout Button */}
             <button
               disabled={cartItems.length === 0}
               className="w-full py-2 bg-black text-white hover:bg-gray-800 transition font-medium disabled:bg-gray-300 disabled:cursor-not-allowed mb-4"
@@ -304,24 +352,21 @@ export default function CartPage() {
               Proceed To Checkout
             </button>
 
-            {/* Payment Methods */}
             <div className="space-y-3 mt-4">
-              {
-                cartSummaryImages.map((image, index) => (
-                  <Image
-                    src={image}
-                    alt="Background"
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    style={{ width: "100%", height: "auto" }}
-                  />
-                ))
-              }
+              {cartSummaryImages.map((image, index) => (
+                <Image
+                  key={index}
+                  src={image}
+                  alt="Payment Method"
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  style={{ width: "100%", height: "auto" }}
+                />
+              ))}
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

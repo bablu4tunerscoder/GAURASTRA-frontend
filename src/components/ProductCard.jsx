@@ -12,6 +12,8 @@ const ProductCard = ({ product, onAddToCart, onToggleWishlist }) => {
   // 👉 DEFAULT VARIANT
   const defaultVariant = product?.variants?.[0];
 
+  console.log(defaultVariant)
+
   // IMAGE (raw)
   const rawImg =
     defaultVariant?.images?.find(img => img.is_primary)?.image_url ||

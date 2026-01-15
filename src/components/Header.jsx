@@ -7,7 +7,13 @@ import { useSelector } from 'react-redux';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const cartitemCount = useSelector(state => state?.cart?.items).length;
+  const cartItemCount = useSelector(state =>
+    state?.cart?.items?.reduce((total, item) => {
+
+      return total + (item?.variants?.length || 0);
+    }, 0) || 0
+  );
+
 
   const mainNavLinks = [
     { label: 'Man', href: '/category/man' },
@@ -81,7 +87,7 @@ export default function Header() {
               className="relative p-2 rounded-full transition-colors"
             >
               {/* CART COUNT BADGE */}
-              {cartitemCount > 0 && (
+              {cartItemCount > 0 && (
                 <span
                   className="
         absolute
@@ -101,7 +107,7 @@ export default function Header() {
         leading-none
       "
                 >
-                  {cartitemCount}
+                  {cartItemCount}
                 </span>
               )}
 

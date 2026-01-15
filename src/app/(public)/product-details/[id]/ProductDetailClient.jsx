@@ -1,16 +1,17 @@
 "use client"
+import { addToCartLocal } from "@/store/slices/cartSlice"
 import { ChevronDown, ChevronUp, ShoppingCart } from "lucide-react"
-import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "react-hot-toast"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 const ProductDetailClient = ({ initialProducts }) => {
 
   // ================== HOOKS ==================
   const router = useRouter();
   const { user } = useSelector((state) => state.auth || {});
+  const dispatch = useDispatch()
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState("");
@@ -21,6 +22,8 @@ const ProductDetailClient = ({ initialProducts }) => {
   const product = initialProducts?.details || {};
   const variants = product?.variants || [];
 
+
+  // console.log(initialProducts)
 
   const productName = product?.product_name || "Product Name";
 
@@ -157,7 +160,7 @@ const ProductDetailClient = ({ initialProducts }) => {
     setQuantity((prev) => prev + 1);
   };
 
-  const handleAddToBag = () => {
+  const handleAddToBag = (product) => {
     if (!selectedColor || !selectedSize) {
       toast.error("Please select color and size");
       return;
@@ -168,8 +171,36 @@ const ProductDetailClient = ({ initialProducts }) => {
       return;
     }
 
+    // Use currentVariant instead of selected_variant
+    if (!currentVariant) {
+      toast.error("Selected variant not found");
+      return;
+    }
+
+    // Remove unwanted keys
+    const { variants, selected_variant, ...rest } = product;
+
+    // Build variant with quantity INSIDE using currentVariant
+    const variantWithQuantity = {
+      ...currentVariant,
+      quantity: quantity, // Use the actual quantity state
+    };
+
+    const cartPayload = {
+      ...rest,
+      variant: variantWithQuantity,
+    };
+
+    if (!user) {
+      dispatch(addToCartLocal(cartPayload));
+      toast.success("Item added to Cart");
+      return;
+    }
+
+    // Add your logged-in user cart logic here
     toast.success("Item added to bag");
   };
+
 
   const handleBuyNow = () => {
     if (!selectedColor || !selectedSize) {
@@ -294,6 +325,28 @@ const ProductDetailClient = ({ initialProducts }) => {
                   <span className="text-sm text-gray-600">4.5 (212 reviews)</span>
                 </div>
 
+                {/* Size Selection */}
+                <div className="pt-2">
+                  <p className="text-sm font-medium mb-3">
+                    Size: <span className="font-bold">{selectedSize || "Select"}</span>
+                  </p>
+
+                  <div className="flex gap-3 flex-wrap">
+                    {availableSizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => handleSizeChange(size)}
+                        className={`px-4 py-0.5 text-xs font-medium rounded border-2 transition-all ${selectedSize === size
+                          ? "bg-red-700 text-white border-red-700"
+                          : "border-gray-300 hover:border-gray-400 text-gray-700"
+                          }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Color Selection */}
                 <div className="pt-2">
                   <p className="text-sm font-medium mb-3">
@@ -319,31 +372,11 @@ const ProductDetailClient = ({ initialProducts }) => {
                   </div>
                 </div>
 
-                {/* Size Selection */}
-                <div className="pt-2">
-                  <p className="text-sm font-medium mb-3">
-                    Size: <span className="font-bold">{selectedSize || "Select"}</span>
-                  </p>
 
-                  <div className="flex gap-3 flex-wrap">
-                    {availableSizes.map((size) => (
-                      <button
-                        key={size}
-                        onClick={() => handleSizeChange(size)}
-                        className={`px-4 py-0.5 text-xs font-medium rounded border-2 transition-all ${selectedSize === size
-                          ? "bg-red-700 text-white border-red-700"
-                          : "border-gray-300 hover:border-gray-400 text-gray-700"
-                          }`}
-                      >
-                        {size}
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
                 {/* Add to Cart Button */}
                 <button
-                  onClick={handleAddToBag}
+                  onClick={() => handleAddToBag(product)}
                   disabled={!selectedColor || !selectedSize}
                   className="mt-4 w-full bg-red-700 hover:bg-red-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition text-white rounded-lg py-2.5 px-4 flex items-center gap-3 font-semibold text-base"
                 >
@@ -455,7 +488,7 @@ const ProductDetailClient = ({ initialProducts }) => {
               </div>
             </div>
             {/* RIGHT INFO */}
-            <div className="flex hidden xl:block">
+            <div className="block">
               <div className="flex items-center gap-6 flex-wrap justify-center lg:justify-start">
                 <div className="flex flex-col items-center text-center text-xs">
                   <img src="/img1.svg" alt="" className="w-14" />
