@@ -1,9 +1,10 @@
 "use client";
-import { Search, Heart, ShoppingCart, MapPin, Menu, X } from 'lucide-react';
+import { Search, Heart, ShoppingCart, MapPin, Menu, X, User, CircleUserRound, Link2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import AnnouncementBar from './AnnouncementBar';
 import { useSelector } from 'react-redux';
+import Image from 'next/image';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -13,6 +14,8 @@ export default function Header() {
       return total + (item?.variants?.length || 0);
     }, 0) || 0
   );
+
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
 
   const mainNavLinks = [
@@ -49,10 +52,12 @@ export default function Header() {
 
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 ">
-            <img
+            <Image
               src="/assets/updated-logo.png"
               alt="Gaurastra Logo"
               className="h-8 md:h-12"
+              width={150}
+              height={70}
               onError={(e) => {
                 e.target.style.display = 'none';
                 e.target.nextSibling.style.display = 'block';
@@ -79,9 +84,23 @@ export default function Header() {
 
           {/* Right Icons */}
           <div className="flex items-center  gap-2 md:gap-4">
-            <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+
+            {
+              isAuthenticated ?<Link href='/profile' className="p-2 flex gap-1 items-center ">
+              <CircleUserRound className="w-5 h-5 md:w-6 md:h-6 text-gray-700" /> <span className='text-gray-700'>User</span>
+            </Link> : <Link href='/login' className="p-2 flex gap-1 items-center">
+              <CircleUserRound className="w-5 h-5 md:w-6 md:h-6 text-gray-700" /> <span className='text-gray-700'>Login</span>
+            </Link>
+            }
+            
+            {
+              isAuthenticated ? <Link href='/wishlist' className="p-2 hover:bg-gray-100 rounded-full transition-colors">
               <Heart className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
-            </button>
+            </Link> : <Link href='/login' className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <Heart className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
+            </Link>
+            }
+            
             <Link
               href="/cart"
               className="relative p-2 rounded-full transition-colors"

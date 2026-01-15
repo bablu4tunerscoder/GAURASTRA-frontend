@@ -1,11 +1,31 @@
 "use client";
+
 import { ChevronDownIcon, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
+
+
+
 
 export default function AnnouncementBar() {
-  const [open, setOpen] = useState(true);
-  const phoneNumber = "1234567890";
+  const [open, setOpen] = useState(false);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  // 👉 Check cookie on mount
+  useEffect(() => {
+    const isClosed = Cookies.get("announcement_closed");
+    if (!isClosed) {
+      setOpen(true);
+    }
+  }, []);
+
+  const handleClose = () => {
+    // 👉 Save cookie for 5 days
+    Cookies.set("announcement_closed", "true", { expires: 5 });
+    setOpen(false);
+  };
 
   if (!open) return null;
 
@@ -13,39 +33,43 @@ export default function AnnouncementBar() {
     <div className="w-full bg-black text-gray-50 border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-16 py-2 flex items-center justify-between text-xs sm:text-sm">
 
-        {/* Left: Phone (hidden on very small screens) */}
+        {/* Left */}
         <a
-          href={`tel:+91${phoneNumber}`}
+          href={`tel:+91${process.env.NEXT_PUBLIC_PHONE_NUMBER}`}
           className="hidden sm:block whitespace-nowrap"
         >
-          +91 {phoneNumber}
+          +91 {process.env.NEXT_PUBLIC_PHONE_NUMBER}
         </a>
 
-        {/* Center: Announcement */}
+        {/* Center */}
         <p className="flex-1 text-center truncate px-2">
           Free Shipping on Orders Above ₹1000
         </p>
 
-        {/* Right Actions */}
+        {/* Right */}
         <div className="flex items-center gap-3 sm:gap-4">
-
-          {/* Login (hidden on mobile) */}
-          <Link
+          {
+            !isAuthenticated ? <Link
             href="/login"
             className="hidden md:block uppercase whitespace-nowrap"
           >
             Login
+          </Link> : <Link
+            href="/profile"
+            className="hidden md:block uppercase whitespace-nowrap"
+          >
+            Profile
           </Link>
+          }
+          
 
-          {/* Language Selector (hidden on mobile) */}
-          <button className="hidden md:flex items-center gap-1 whitespace-nowrap">
+          {/* <button className="hidden md:flex items-center gap-1 whitespace-nowrap">
             Eng <ChevronDownIcon size={14} />
-          </button>
+          </button> */}
 
-          {/* Close Button (always visible) */}
           <button
-            onClick={() => setOpen(false)}
-            className="hover:text-gray-300 transition"
+            onClick={handleClose}
+            className="hover:text-gray-300 ml-4 transition"
             aria-label="Close announcement"
           >
             <X size={16} />
