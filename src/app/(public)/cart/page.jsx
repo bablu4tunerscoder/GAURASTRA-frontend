@@ -29,16 +29,20 @@ export default function CartPage() {
     const item = cartItems.find((i) => i._id === itemId);
     if (!item) return;
 
+
     // Find the variant in the product's variants array
     const variant = item.variants?.find((v) => v.sku === variantSku);
     if (!variant) return;
+
 
     const maxQty = variant.stock?.stock_quantity || 1;
     const finalQty = Math.min(newQuantity, maxQty);
 
     // Get current quantity from the cart item's variant
-    const currentQty = item.variant?.quantity || 1;
+    const currentQty = variant.quantity || 1;
     const diff = finalQty - currentQty;
+
+
 
     if (diff === 0) return; // No change needed
 
@@ -78,11 +82,19 @@ export default function CartPage() {
   };
 
 
-  // Calculate totals
   const subtotal = cartItems.reduce((sum, item) => {
-    const variant = item.selectedVariant || item.variants?.[0];
-    return sum + (variant?.pricing?.discounted_price || 0) * item.quantity;
+    const variantTotal = item.variants.reduce((total, variant) => {
+      const price =
+        variant?.pricing?.discounted_price ??
+        variant?.pricing?.original_price ??
+        0;
+
+      return total + price * variant.quantity;
+    }, 0); // ✅ initial value
+
+    return sum + variantTotal;
   }, 0);
+
 
 
 
