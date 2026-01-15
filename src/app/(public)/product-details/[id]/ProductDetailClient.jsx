@@ -243,17 +243,13 @@ const ProductDetailClient = ({ initialProducts }) => {
 
 
   return (
-    <section className="py-4">
-      <div className="max-w-[1400px] w-full mx-auto px-4 lg:px-6 py-2 border-x-0 border-y border-dashed mt-2 border-[#E7E7E5]">
-        <p className="text-red-700 text-sm">100 people bought in last 7 days</p>
-      </div>
-      {/* new code  */}
+    <section className="py-4 md:px-16 px-4">
 
-      <div className="max-w-[1400px] w-full mx-auto px-4 lg:px-6 py-2 border-x-0 border-y border-dashed mt-2 border-[#E7E7E5]">
+      <div className=" w-full mx-auto px-4 lg:px-6 py-2 border-x-0 border-y border-dashed mt-2 border-[#E7E7E5]">
         <p className="text-red-700 text-sm">100 people bought in last 7 days</p>
       </div>
 
-      <div className="max-w-[1400px] w-full mx-auto py-6 mt-6 lg:mt-10">
+      <div className="w-full mx-auto py-6 mt-6 lg:mt-10">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-[3fr_1fr] md:gap-4 lg:grid-cols-[3fr_1fr]">
           <div className="w-full mx-auto">
             <div className="flex flex-col lg:flex-row gap-5 lg:gap-6">

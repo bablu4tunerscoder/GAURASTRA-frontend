@@ -31,7 +31,6 @@ export default function CategoryPageClient({
   initialSlug = ["all-products"],
 }) {
 
-
   const dispatch = useDispatch()
   const searchParams = useSearchParams();
   const [slug, setSlug] = useState(initialSlug);
