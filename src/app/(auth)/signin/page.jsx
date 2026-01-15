@@ -58,7 +58,7 @@ export default function SignIn() {
      
       toast.success("Registration successful, Verify your email");
       setTimeout(() => {
-        // router.push("/user-verify");
+        router.push("/user-verify");
       }, 1000);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Login failed");

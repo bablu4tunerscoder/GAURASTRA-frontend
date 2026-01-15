@@ -48,7 +48,7 @@ export default function Login() {
       toast.success("Login successful");
       window.location.href = "/";
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       toast.error(error?.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
