@@ -35,8 +35,6 @@ export default function CategoryPageClient({
   const dispatch = useDispatch()
   const searchParams = useSearchParams();
   const [slug, setSlug] = useState(initialSlug);
-  const { items: cartItems } = useSelector(state => state.cart)
-  console.log(cartItems)
 
   // Initialize filters from URL search params
   const [filters, setFilters] = useState({

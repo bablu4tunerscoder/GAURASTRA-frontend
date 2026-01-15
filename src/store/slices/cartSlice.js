@@ -6,53 +6,119 @@ const initialState = {
   popupOpen: false,
 };
 
+const saveCartToLocalStorage = (state) => {
+  localStorage.setItem("cart_items", JSON.stringify(state.items));
+  localStorage.setItem("buy_now_item", JSON.stringify(state.buyNowItem));
+  localStorage.setItem("cart_popup_open", JSON.stringify(state.popupOpen));
+};
+
+
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
     addToCartLocal: (state, action) => {
+      const { variant, ...product } = action.payload;
 
-      const existingItem = state.items.find(
-        (item) =>
-          item._id === action.payload._id);
+      const existingProduct = state.items.find(
+        (item) => item._id === product._id
+      );
 
-      if (existingItem) {
-        existingItem.quantity += action.payload.quantity || 1;
+
+      if (existingProduct) {
+
+        const existingVariant = existingProduct.variants.find(
+          (v) => v.sku === variant.sku
+        );
+
+        if (existingVariant) {
+          existingVariant.quantity += variant.quantity || 1;
+        } else {
+          existingProduct.variants.push({
+            ...variant,
+            quantity: variant.quantity || 1,
+          });
+        }
       } else {
-        state.items.push({ ...action.payload, quantity: 1 });
+        state.items.push({
+          ...product,
+          variants: [
+            variant,
+          ],
+        });
       }
+
+      saveCartToLocalStorage(state);
     },
+
 
     increaseQuantityLocal: (state, action) => {
-      const item = state.items.find((i) => i._id === action.payload);
-      if (item) item.quantity += 1;
+      const { productId, sku } = action.payload;
+      console.log(productId, sku)
+
+      const product = state.items.find((i) => i._id === productId);
+      const variant = product?.variants.find((v) => v.sku === sku);
+
+      if (variant) variant.quantity += 1;
+
+      saveCartToLocalStorage(state);
     },
+
 
     decreaseQuantityLocal: (state, action) => {
-      const item = state.items.find((i) => i._id === action.payload);
-      if (item && item.quantity > 1) item.quantity -= 1;
+      const { productId, sku } = action.payload;
+
+
+
+      const product = state.items.find((i) => i._id === productId);
+      if (!product) return;
+
+      const variant = product.variants.find((v) => v.sku === sku);
+
+      if (variant && variant.quantity > 1) {
+        variant.quantity -= 1;
+      }
+
+      saveCartToLocalStorage(state);
     },
 
+
     removeFromCartLocal: (state, action) => {
-      state.items = state.items.filter((i) => i._id !== action.payload);
+      const { productId, sku } = action.payload;
+
+      const product = state.items.find((i) => i._id === productId);
+      if (!product) return;
+
+      product.variants = product.variants.filter((v) => v.sku !== sku);
+
+      if (product.variants.length === 0) {
+        state.items = state.items.filter((i) => i._id !== productId);
+      }
+
+      saveCartToLocalStorage(state);
     },
 
     clearCartLocal: (state) => {
       state.items = [];
+      saveCartToLocalStorage(state);
     },
 
     setBuyNowItem: (state, action) => {
       state.buyNowItem = action.payload;
+      saveCartToLocalStorage(state);
     },
 
     clearBuyNowItem: (state) => {
       state.buyNowItem = null;
+      saveCartToLocalStorage(state);
     },
 
     toggleCartPopup: (state, action) => {
       state.popupOpen = action.payload;
+      saveCartToLocalStorage(state);
     },
   },
+
 });
 
 export const {
