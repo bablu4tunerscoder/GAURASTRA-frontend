@@ -55,14 +55,16 @@ export default function Header() {
             <Image
               src="/assets/updated-logo.png"
               alt="Gaurastra Logo"
-              className="h-8 md:h-12"
               width={150}
               height={70}
+              className="w-auto h-auto max-h-12 md:max-h-16"
+              style={{ width: "auto", height: "auto" }}
               onError={(e) => {
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'block';
+                e.currentTarget.style.display = "none";
+                e.currentTarget.nextSibling.style.display = "block";
               }}
             />
+
             <div className="hidden text-xl md:text-2xl font-bold text-gray-800">
               GAUR<span className="text-amber-600">A</span>STRA
             </div>
@@ -86,21 +88,21 @@ export default function Header() {
           <div className="flex items-center  gap-2 md:gap-4">
 
             {
-              isAuthenticated ?<Link href='/profile' className="p-2 flex gap-1 items-center ">
-              <CircleUserRound className="w-5 h-5 md:w-6 md:h-6 text-gray-700" /> <span className='text-gray-700'>User</span>
-            </Link> : <Link href='/login' className="p-2 flex gap-1 items-center">
-              <CircleUserRound className="w-5 h-5 md:w-6 md:h-6 text-gray-700" /> <span className='text-gray-700'>Login</span>
-            </Link>
+              isAuthenticated ? <Link href='/profile' className="p-2 flex gap-1 items-center ">
+                <CircleUserRound className="w-5 h-5 md:w-6 md:h-6 text-gray-700" /> <span className='text-gray-700'>User</span>
+              </Link> : <Link href='/login' className="p-2 flex gap-1 items-center">
+                <CircleUserRound className="w-5 h-5 md:w-6 md:h-6 text-gray-700" /> <span className='text-gray-700'>Login</span>
+              </Link>
             }
-            
+
             {
               isAuthenticated ? <Link href='/wishlist' className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <Heart className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
-            </Link> : <Link href='/login' className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <Heart className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
-            </Link>
+                <Heart className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
+              </Link> : <Link href='/login' className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <Heart className="w-5 h-5 md:w-6 md:h-6 text-gray-700" />
+              </Link>
             }
-            
+
             <Link
               href="/cart"
               className="relative p-2 rounded-full transition-colors"

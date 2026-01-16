@@ -131,7 +131,6 @@ export default function CategoryPageClient({
 
   const handleAddToCart = (product) => {
     dispatch(addToCartLocal(product));
-
   };
 
   return (

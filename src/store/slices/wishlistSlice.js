@@ -20,11 +20,9 @@ const wishlistSlice = createSlice({
             )
             .addMatcher(
                 wishlistApi.endpoints.getWishlistItems.matchFulfilled,
-                // console.log("getWishlistItems.fulfilled"),
                 (state, action) => {
-                    console.log(action);
                     state.loading = false;
-                    state.items = action;
+                    state.items = action.payload.data;
                 }
             )
             .addMatcher(

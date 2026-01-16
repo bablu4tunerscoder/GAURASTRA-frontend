@@ -122,11 +122,12 @@ export default function CartPage() {
         style={{ width: "100%", height: "auto" }}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 section-spacing">
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 md:gap-8 gap-2 section-spacing">
         {/* Cart Items Section */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg p-6">
-            <div className="mb-6">
+          <div className="bg-white rounded-lg md:p-6">
+            <div className="md:mb-6">
               <h1 className="md:text-3xl text-xl font-bold font-serif">Cart</h1>
               <p className="text-gray-600 text-sm">
                 Check items and proceed to checkout
