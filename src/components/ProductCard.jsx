@@ -7,68 +7,68 @@ import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import ProductAddToCartModal from "./ProductAddToCartModal";
 import { useAddWishlistItemMutation } from "@/store/api/wishlistApi";
-
+ 
 const DEFAULT_IMAGE = "/assets/default-product.png";
-
+ 
 const ProductCard = ({ product }) => {
   if (!product) return null;
-
-
-
+ 
+ 
+ 
   const { user } = useSelector((state) => state.auth || {});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imgSrc, setImgSrc] = useState(DEFAULT_IMAGE);
   const [addWishlistItem] = useAddWishlistItemMutation();
-
+ 
   // Default variant for card display
   const defaultVariant = product?.variants?.[0];
-
+ 
   // Image for card
   const rawImg =
     defaultVariant?.images?.find((img) => img.is_primary)?.image_url ||
     defaultVariant?.images?.[0]?.image_url;
-
+ 
   const finalImg = rawImg
     ? rawImg.startsWith("http")
       ? rawImg
       : `https://backend.gaurastra.com${rawImg}`
     : DEFAULT_IMAGE;
-
+ 
   // Price for card
   const price = defaultVariant?.pricing?.original_price || 0;
   const discountedPrice = defaultVariant?.pricing?.discounted_price || price;
   const discountPercent = defaultVariant?.pricing?.discount_percent || 0;
-
+ 
   // Handlers
   const openModal = (e) => {
     e.preventDefault();
     setIsModalOpen(true);
   };
-
+ 
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
+ 
   const handleWishlist = async (e) => {
     e.preventDefault();
-
+ 
     if (!user) {
       toast.error("Please login to add to wishlist");
       return;
     }
-
+ 
     try {
       await addWishlistItem({
         product_id: product?._id,
         sku: product?.variants[0]?.sku,
       }).unwrap();
-
+ 
       toast.success("Added to wishlist ❤️");
     } catch (error) {
       toast.error(error?.data?.message || "Failed to add to wishlist");
     }
   };
-
+ 
   return (
     <>
       <div className="w-full relative group">
@@ -79,7 +79,7 @@ const ProductCard = ({ product }) => {
         >
           <Heart className="w-4 h-4 md:w-5 md:h-5 text-gray-600 hover:text-primary" />
         </button>
-
+ 
         {/* Image Container */}
         <Link href={`/product-details/${product?.slug}`}>
           <div className="relative w-full aspect-[3/4] overflow-hidden bg-[url('/assets/bgImageContainer.png')] bg-no-repeat bg-cover bg-center p-2 md:p-4">
@@ -90,13 +90,13 @@ const ProductCard = ({ product }) => {
               className="object-cover p-3 w-full h-full"
               onError={() => setImgSrc(DEFAULT_IMAGE)}
             />
-
+ 
             {discountPercent > 0 && (
               <span className="text-xs absolute top-4 left-4 md:top-6 md:left-6 bg-red-200 px-2 py-0.5 text-primary font-medium">
                 {discountPercent}% OFF
               </span>
             )}
-
+ 
             {/* Add to Cart Button */}
             <button
               onClick={openModal}
@@ -107,29 +107,29 @@ const ProductCard = ({ product }) => {
             </button>
           </div>
         </Link>
-
+ 
         {/* Product Info */}
         <div className="pt-2 md:pt-3">
           <span className="text-secondary text-xs md:text-sm capitalize block mb-1">
             just In
           </span>
-
+ 
           <h3
             title={product.product_name}
             className="font-bold leading-tight text-gray-700 line-clamp-2 text-sm md:text-base lg:text-lg mb-1"
           >
             {product.product_name}
           </h3>
-
+ 
           <span className="text-xs text-gray-600 capitalize block mb-2">
             {product?.brand}
           </span>
-
+ 
           <div className="flex items-center gap-2">
             <p className="font-bold text-sm md:text-base lg:text-lg text-gray-600">
               ₹{discountedPrice}
             </p>
-
+ 
             {discountPercent > 0 && (
               <span className="text-xs md:text-sm line-through text-gray-600">
                 ₹{price}
@@ -138,7 +138,7 @@ const ProductCard = ({ product }) => {
           </div>
         </div>
       </div>
-
+ 
       {/* Modal Component - All logic is inside */}
       <ProductAddToCartModal
         product={product}
@@ -148,5 +148,5 @@ const ProductCard = ({ product }) => {
     </>
   );
 };
-
+ 
 export default ProductCard;
