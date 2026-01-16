@@ -5,15 +5,17 @@ import { useState } from 'react';
 import AnnouncementBar from './AnnouncementBar';
 import { useSelector } from 'react-redux';
 import Image from 'next/image';
+import { useGetCartQuery } from '@/store/api/cartApi';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const cartItemCount = useSelector(state =>
-    state?.cart?.items?.reduce((total, item) => {
 
-      return total + (item?.variants?.length || 0);
-    }, 0) || 0
-  );
+
+  const { items: cartItems, cart_summary } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth || {});
+  const isLoggedIn = !!user;
+
+  const cartItemCount = cart_summary?.total_items || 0;
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const wishlistCount = useSelector((state) => state.wishlist?.items).length;

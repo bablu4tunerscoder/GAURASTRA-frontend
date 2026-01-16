@@ -1,10 +1,11 @@
 "use client";
 import { useDispatch, useSelector } from "react-redux";
-import { useDecreaseCartMutation, useIncreaseCartMutation, useGetCartQuery } from "@/store/api/cartApi";
+import { useDecreaseCartMutation, useIncreaseCartMutation, useGetCartQuery, useCleanCartMutation } from "@/store/api/cartApi";
 import { clearCartLocal, decreaseQuantityLocal, increaseQuantityLocal, removeFromCartLocal } from "@/store/slices/cartSlice";
 import { Eye, Minus, Plus, X } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function CartPage() {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ export default function CartPage() {
 
   const [increaseCart] = useIncreaseCartMutation();
   const [decreaseCart] = useDecreaseCartMutation();
+  const [cleanCart] = useCleanCartMutation();
 
 
   const [discountCode, setDiscountCode] = useState("");
@@ -49,7 +51,7 @@ export default function CartPage() {
 
   // Handle decrease quantity
   const handleDecrease = async (item) => {
-    if (item.quantity <= 1) return;
+    // if (item.quantity <= 1) return;
 
     if (isLoggedIn) {
       try {
@@ -88,10 +90,16 @@ export default function CartPage() {
   };
 
   // Clear cart
-  const clearCart = () => {
+  const clearCart = async () => {
     if (isLoggedIn) {
       // Optional: Call clear cart API if available
-      console.log("Clear cart API not implemented yet");
+      try {
+        await cleanCart().unwrap();
+        toast.success("Cart cleared!");
+        return
+      } catch (error) {
+        console.log("Failed to clean cart", error)
+      }
     }
     dispatch(clearCartLocal());
   };
@@ -171,26 +179,26 @@ export default function CartPage() {
                             loading="eager"
                             className="object-cover rounded-lg"
                           />
-                          <button
-                            onClick={() => handleRemove(item)}
-                            className="absolute -top-1 -right-1 w-4 h-4 bg-gray-700 text-white rounded-full flex items-center justify-center hover:bg-gray-900 transition"
-                          >
-                            <X size={10} strokeWidth={6} />
-                          </button>
                         </div>
 
                         <div className="flex-1">
-                          <h3 className="font-medium text-gray-900 mb-1">
+                          <h3 className="font-medium text-gray-900 ">
                             {item.product_name}
                           </h3>
 
-                          <p className="text-xs text-gray-500 mb-1">
+                          <p className="text-xs text-gray-500">
                             Brand: {item.brand}
                           </p>
+                          {/* size */}
+                          {/* <p className="text-xs text-gray-500">
+                            Brand: {item.brand}
+                          </p> */}
+                          {/* color */}
 
-                          <p className="text-xs text-gray-500">
-                            SKU: {item.sku}
-                          </p>
+                          {/* <p className="text-xs text-gray-500">
+                            Brand: {item.brand}
+                          </p> */}
+                          {/* {console.log(item)} */}
                         </div>
                       </div>
 
@@ -211,7 +219,7 @@ export default function CartPage() {
                         <div className="flex items-center border border-gray-300 rounded-lg">
                           <button
                             onClick={() => handleDecrease(item)}
-                            disabled={item.quantity <= 1}
+                            // disabled={item.quantity <= 1}
                             className="w-8 h-8 flex items-center justify-center text-red-500 hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <Minus size={16} />

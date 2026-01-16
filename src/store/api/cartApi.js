@@ -19,6 +19,14 @@ export const cartApi = createApi({
             }),
             invalidatesTags: ["Cart"],
         }),
+        addBulkCart: builder.mutation({
+            query: (data) => ({
+                url: "/api/cart/add-bulk-cart",
+                method: "POST",
+                body: data,
+            }),
+            invalidatesTags: ["Cart"],
+        }),
 
         increaseCart: builder.mutation({
             query: (data) => ({
@@ -37,6 +45,13 @@ export const cartApi = createApi({
             }),
             invalidatesTags: ["Cart"],
         }),
+        cleanCart: builder.mutation({
+            query: (data) => ({
+                url: "/api/cart/clear-cart",
+                method: "POST",
+            }),
+            invalidatesTags: ["Cart"],
+        }),
     }),
 });
 
@@ -45,4 +60,6 @@ export const {
     useAddToCartMutation,
     useIncreaseCartMutation,
     useDecreaseCartMutation,
+    useCleanCartMutation,
+    useAddBulkCartMutation,
 } = cartApi;

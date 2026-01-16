@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useAddToCartMutation } from "@/store/api/cartApi";
+import { useAddBulkCartMutation } from "@/store/api/cartApi";
 import { clearCartLocal } from "@/store/slices/cartSlice";
 import { toast } from "react-hot-toast";
 import { cartApi } from "@/store/api/cartApi"; // ✅ Import to trigger refetch
@@ -14,7 +14,11 @@ export const useCartSync = () => {
     const { user } = useSelector((state) => state.auth || {});
     const { items: localCartItems } = useSelector((state) => state.cart || {});
 
-    const [addToCart] = useAddToCartMutation();
+    // const [addToCart] = useAddToCartMutation();
+
+    // uncomment this if you want to use bulk cart
+
+    const [addToCartBulk] = useAddBulkCartMutation();
     const hasSynced = useRef(false);
 
     useEffect(() => {
@@ -30,33 +34,33 @@ export const useCartSync = () => {
         }
     }, [user, localCartItems]);
 
+    // console.log(localCartItems)
     const syncCart = async () => {
         try {
             // Flatten all variants from all products
             const itemsToSync = [];
 
             localCartItems.forEach((product) => {
-                product.variants.forEach((variant) => {
-                    itemsToSync.push({
-                        product_id: product._id,
-                        sku: variant.sku,
-                        quantity: variant.quantity || 1,
-                    });
-                });
+                itemsToSync.push({ sku: product.sku, quantity: product.quantity, product_id: product.product_id });
             });
 
             if (itemsToSync.length === 0) return;
 
+
+
             // Add all items to cart via API
-            const promises = itemsToSync.map((item) =>
-                addToCart(item).unwrap()
-            );
+            // const promises = itemsToSync.map((item) =>
+            //     addToCart(item).unwrap()
+            // );
+
+            // uncomment this if you want to use bulk cart
+
+            await addToCartBulk(itemsToSync).unwrap();
 
             await Promise.all(promises);
 
             // Clear local storage after successful sync
             dispatch(clearCartLocal());
-            localStorage.removeItem("cart_items");
 
             // ✅ Trigger a refetch of the cart to update Redux state
             dispatch(cartApi.util.invalidateTags(["Cart"]));

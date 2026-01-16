@@ -181,6 +181,15 @@ const cartSlice = createSlice({
           }
         }
       )
+      // .addMatcher(
+      //   cartApi.endpoints.addBulkCart.matchFulfilled,
+      //   (state, action) => {
+      //     if (action.payload?.data) {
+      //       state.items = action.payload.data;
+      //       state.cart_summary = action.payload.cart_summary || calculateCartSummary(action.payload.data);
+      //     }
+      //   }
+      // )
 
       // When addToCart mutation is fulfilled, update local state
       .addMatcher(
@@ -213,7 +222,18 @@ const cartSlice = createSlice({
             state.cart_summary = action.payload.cart_summary || calculateCartSummary(action.payload.data);
           }
         }
-      );
+      )
+      .addMatcher(
+        cartApi.endpoints.cleanCart.matchFulfilled,
+        (state, action) => {
+          const items = action.payload?.data || [];
+          state.items = items;
+          state.cart_summary =
+            action.payload?.cart_summary || calculateCartSummary(items);
+        }
+      )
+      ;
+
   },
 });
 
