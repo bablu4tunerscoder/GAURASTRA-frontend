@@ -37,7 +37,13 @@ const authSlice = createSlice({
 
       Cookies.remove("token");
       Cookies.remove("user");
+
+      // reload after logout
+      setTimeout(() => {
+        window.location.reload();
+      }, 0);
     },
+
   },
 });
 

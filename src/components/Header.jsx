@@ -3,10 +3,9 @@ import { Search, Heart, ShoppingCart, MapPin, Menu, X, User, CircleUserRound, Li
 import Link from 'next/link';
 import { useState } from 'react';
 import AnnouncementBar from './AnnouncementBar';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Image from 'next/image';
 import { useGetCartQuery } from '@/store/api/cartApi';
-import { logoutUser } from '@/store/slices/authSlice';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -41,11 +40,11 @@ export default function Header() {
     <header className="w-full border-gray-200">
       <AnnouncementBar />
       {/* Top Section */}
-      <div className="bg-white px-4 md:px-16 py-2">
+      <div className="bg-white px-4 lg:px-16 py-2">
         <div className=" mx-auto flex items-center justify-between gap-4 md:gap-8">
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2"
+            className="lg:hidden p-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? (

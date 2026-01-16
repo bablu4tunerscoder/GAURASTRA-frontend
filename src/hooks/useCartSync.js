@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useAddBulkCartMutation } from "@/store/api/cartApi";
@@ -12,7 +13,8 @@ import { cartApi } from "@/store/api/cartApi"; // ✅ Import to trigger refetch
 export const useCartSync = () => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth || {});
-    const { items: localCartItems } = useSelector((state) => state.cart || {});
+
+    const localCartItems = localStorage.getItem('cart_items') ? JSON.parse(localStorage.getItem('cart_items')) : { items: [] };
 
     // const [addToCart] = useAddToCartMutation();
 
@@ -23,7 +25,7 @@ export const useCartSync = () => {
 
     useEffect(() => {
         // Only sync once when user logs in and has items in local cart
-        if (user && localCartItems.length > 0 && !hasSynced.current) {
+        if (user && localCartItems?.length > 0 && !hasSynced.current) {
             syncCart();
             hasSynced.current = true;
         }
