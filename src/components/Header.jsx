@@ -3,9 +3,10 @@ import { Search, Heart, ShoppingCart, MapPin, Menu, X, User, CircleUserRound, Li
 import Link from 'next/link';
 import { useState } from 'react';
 import AnnouncementBar from './AnnouncementBar';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Image from 'next/image';
 import { useGetCartQuery } from '@/store/api/cartApi';
+import { logoutUser } from '@/store/slices/authSlice';
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

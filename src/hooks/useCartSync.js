@@ -54,10 +54,10 @@ export const useCartSync = () => {
             // );
 
             // uncomment this if you want to use bulk cart
+            console.log(itemsToSync)
+            await addToCartBulk({ items: itemsToSync }).unwrap();
 
-            await addToCartBulk(itemsToSync).unwrap();
-
-            await Promise.all(promises);
+            // await Promise.all(promises);
 
             // Clear local storage after successful sync
             dispatch(clearCartLocal());

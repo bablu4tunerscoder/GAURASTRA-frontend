@@ -51,7 +51,6 @@ export default function CartPage() {
 
   // Handle decrease quantity
   const handleDecrease = async (item) => {
-    // if (item.quantity <= 1) return;
 
     if (isLoggedIn) {
       try {
@@ -63,6 +62,15 @@ export default function CartPage() {
         console.error("Failed to decrease quantity:", error);
       }
     } else {
+      if (item.quantity <= 1) {
+        dispatch(removeFromCartLocal({
+          productId: item.product_id,
+          sku: item.sku,
+        })
+        );
+        return
+      };
+
       dispatch(decreaseQuantityLocal({
         productId: item.product_id,
         sku: item.sku,
