@@ -10,12 +10,15 @@ import axiosInstance from "@/helpers/axiosinstance";
 import GoogleAuth from "@/components/GoogleAuth";
 import { loginSuccess } from "@/store/slices/authSlice";
 import { useDispatch } from "react-redux";
+import { useCartSync } from "@/hooks/useCartSync"; // ✅ ADD THIS IMPORT
 
 export default function Login() {
   const [loginType, setLoginType] = useState("email");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+
+  useCartSync(); // ✅ ADD THIS LINE - That's it!
 
   const {
     register,
@@ -48,7 +51,6 @@ export default function Login() {
       toast.success("Login successful");
       window.location.href = "/";
     } catch (error) {
-      // console.log(error);
       toast.error(error?.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
@@ -201,7 +203,7 @@ export default function Login() {
         <GoogleAuth />
 
         <p className="text-center text-sm mt-4 opacity-90">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <Link href="/signin" className="underline font-semibold">
             Sign Up
           </Link>

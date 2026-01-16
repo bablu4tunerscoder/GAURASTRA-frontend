@@ -13,6 +13,8 @@ const DEFAULT_IMAGE = "/assets/default-product.png";
 const ProductCard = ({ product }) => {
   if (!product) return null;
 
+  console.log(product)
+
   const { user } = useSelector((state) => state.auth || {});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imgSrc, setImgSrc] = useState(DEFAULT_IMAGE);

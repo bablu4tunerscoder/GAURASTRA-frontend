@@ -17,6 +17,7 @@ const Wishlist = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
+
     // QUERY: auto fetch wishlist
     const { data: items = [], isLoading } = useGetWishlistItemsQuery();
 

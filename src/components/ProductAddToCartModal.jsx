@@ -4,24 +4,16 @@ import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCartLocal } from "@/store/slices/cartSlice";
-import {
-    useGetCartQuery,
-    useAddToCartMutation,
-    useIncreaseCartMutation,
-    useDecreaseCartMutation
-} from "@/store/api/cartApi";
+import { useAddToCartMutation } from "@/store/api/cartApi"; // Add this import
 
 const DEFAULT_IMAGE = "/assets/default-product.png";
 
 const ProductAddToCartModal = ({ product, isOpen, onClose }) => {
     const dispatch = useDispatch();
+    const { user } = useSelector((state) => state.auth || {});
 
-    const isLoggedIn = useSelector((state) => state.auth.isAuthenticated);
-
-    const [increaseCart] = useIncreaseCartMutation();
-    const [decreaseCart] = useDecreaseCartMutation();
-    const [addToCart] = useAddToCartMutation();
-
+    // API mutation
+    const [addToCart, { isLoading: isAdding }] = useAddToCartMutation();
 
     // Modal state - MUST be declared before any conditional returns
     const [selectedColor, setSelectedColor] = useState("");
@@ -128,7 +120,7 @@ const ProductAddToCartModal = ({ product, isOpen, onClose }) => {
         }
     };
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         if (!selectedColor || !selectedSize) {
             toast.error("Please select color and size");
             return;
@@ -144,6 +136,24 @@ const ProductAddToCartModal = ({ product, isOpen, onClose }) => {
             return;
         }
 
+        // For logged-in users: Call API
+        if (user) {
+            try {
+                await addToCart({
+                    product_id: product._id,
+                    sku: currentVariant.sku,
+                    quantity: quantity,
+                }).unwrap();
+
+                toast.success("Item added to cart");
+                handleClose();
+            } catch (error) {
+                toast.error(error?.data?.message || "Failed to add to cart");
+            }
+            return;
+        }
+
+        // For guest users: Save to local storage
         const { variants: _, selected_variant: __, ...rest } = product;
 
         const variantWithQuantity = {
@@ -156,16 +166,8 @@ const ProductAddToCartModal = ({ product, isOpen, onClose }) => {
             variant: variantWithQuantity,
         };
 
-        if (!isLoggedIn) {
-            dispatch(addToCartLocal(cartPayload));
-            toast.success("Item added to Cart");
-            handleClose();
-            return;
-        }
-
-        // Add your API call here for logged-in users
-
-        toast.success("Item added to bag");
+        dispatch(addToCartLocal(cartPayload));
+        toast.success("Item added to Cart");
         handleClose();
     };
 
@@ -254,11 +256,11 @@ const ProductAddToCartModal = ({ product, isOpen, onClose }) => {
                             {/* Add to Cart Button */}
                             <button
                                 onClick={handleAddToCart}
-                                disabled={!selectedColor || !selectedSize}
+                                disabled={!selectedColor || !selectedSize || isAdding}
                                 className="w-full flex items-center justify-center gap-2 bg-primary/90 text-white py-3 rounded-lg hover:bg-primary transition disabled:bg-gray-400 disabled:cursor-not-allowed mt-2"
                             >
                                 <Handbag className="w-5 h-5" />
-                                ADD TO CART
+                                {isAdding ? "ADDING..." : "ADD TO CART"}
                             </button>
                         </div>
                     </div>
@@ -277,8 +279,8 @@ const ProductAddToCartModal = ({ product, isOpen, onClose }) => {
                                         key={size}
                                         onClick={() => handleSizeChange(size)}
                                         className={`px-6 py-1 font-medium rounded border-2 transition-all ${selectedSize === size
-                                            ? "bg-primary text-white border-primary"
-                                            : "border-gray-300 hover:border-gray-400 text-gray-700"
+                                                ? "bg-primary text-white border-primary"
+                                                : "border-gray-300 hover:border-gray-400 text-gray-700"
                                             }`}
                                     >
                                         {size}
@@ -294,8 +296,8 @@ const ProductAddToCartModal = ({ product, isOpen, onClose }) => {
                                         key={color}
                                         onClick={() => handleColorChange(color)}
                                         className={`relative w-8 h-8 p-0.5 rounded-full overflow-hidden transition-all border-2 ${selectedColor === color
-                                            ? "ring-2 ring-primary border-primary"
-                                            : "border-gray-300 hover:border-gray-400"
+                                                ? "ring-2 ring-primary border-primary"
+                                                : "border-gray-300 hover:border-gray-400"
                                             }`}
                                     >
                                         <div

@@ -6,35 +6,43 @@ import DiscountPopup from '@/components/DiscountPopup'
 import { usePathname } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useCartSync } from '@/hooks/useCartSync';
+import CartFetcher from '@/components/CartFetcher'; // ✅ Optional: Auto-fetch cart
 
-
-export function Providers({ children }) {
+function ProvidersContent({ children }) {
+  useCartSync(); // ✅ Sync local cart to API on login
 
   const pathname = usePathname();
-
   const isOfflineRoute = pathname.startsWith("/offline");
 
-
   return (
-    <Provider store={store}>
+    <>
+      <CartFetcher /> {/* ✅ Auto-fetch cart for logged-in users */}
+
       {!isOfflineRoute && <Header />}
-
       {!isOfflineRoute && <DiscountPopup />}
-      {
-        isOfflineRoute ?
-          // offline
-          <main>
-            {children}
-          </main> :
-          // online
-          <main>
-            {children}
-          </main>
-      }
 
+      {isOfflineRoute ? (
+        <main>
+          {children}
+        </main>
+      ) : (
+        <main>
+          {children}
+        </main>
+      )}
 
       {!isOfflineRoute && <Footer />}
+    </>
+  );
+}
 
+export function Providers({ children }) {
+  return (
+    <Provider store={store}>
+      <ProvidersContent>
+        {children}
+      </ProvidersContent>
     </Provider>
-  )
+  );
 }
